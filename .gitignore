@@ -130,3 +130,6 @@ dmypy.json
 
 # Any .env files
 *.env
+
+# IP File
+latest_ip.txt
