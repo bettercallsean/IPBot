@@ -728,3 +728,4 @@ bot_python
 
 # Config file
 config.json
+creds.env
