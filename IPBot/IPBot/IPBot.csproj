@@ -15,12 +15,8 @@
     <PackageReference Include="Microsoft.Extensions.Configuration.FileExtensions" Version="5.0.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="5.0.0" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="5.0.2" />
+    <PackageReference Include="SteamQueryNet" Version="1.0.6" />
     <PackageReference Include="System.Net.Primitives" Version="4.3.1" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\IPBot.Commands\IPBot.Commands.csproj" />
-    <ProjectReference Include="..\IPBot.Infrastructure\IPBot.Infrastructure.csproj" />
   </ItemGroup>
 
   <ItemGroup>

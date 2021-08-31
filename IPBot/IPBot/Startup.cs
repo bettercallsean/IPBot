@@ -2,7 +2,6 @@
 using System.Threading.Tasks;
 using Discord.Commands;
 using Discord.WebSocket;
-using IPBot.Infrastructure;
 using IPBot.Services;
 using MCServerStatus;
 using Microsoft.Extensions.Configuration;
