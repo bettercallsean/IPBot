@@ -53,9 +53,6 @@ namespace IPBot.Services
 
         private Task OnReady()
         {
-            Console.WriteLine($"Logged in as {_discord.CurrentUser.Username}#{_discord.CurrentUser.Discriminator}");
-            Console.WriteLine(Constants.BaseDirectory);
-
             _timer = new Timer(CheckForUpdatedIP, null, TimeSpan.FromSeconds(1), TimeSpan.FromMinutes(1));
 
             return Task.CompletedTask;
