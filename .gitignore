@@ -733,3 +733,6 @@ bot
 config.json
 creds.env
 /IPBot/IPBot/discord_channels.json
+
+# What does this file even do?
+.DS_Store
