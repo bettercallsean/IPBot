@@ -1,9 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
 using Discord.Commands;
 using Discord.WebSocket;
-using IPBot.Infrastructure;
 using Microsoft.Extensions.Configuration;
+using Newtonsoft.Json;
 
 namespace IPBot.Services
 {
@@ -13,6 +16,8 @@ namespace IPBot.Services
         public static DiscordSocketClient _discord;
         public static CommandService _commands;
         public static IConfigurationRoot _config;
+        private Timer _timer;
+        private readonly Dictionary<ulong, ulong> _discordChannels;
 
         public CommandHandler(IServiceProvider provider, DiscordSocketClient discord, CommandService command, IConfigurationRoot config)
         {
@@ -20,6 +25,8 @@ namespace IPBot.Services
             _discord = discord;
             _commands = command;
             _config = config;
+
+            _discordChannels = JsonConvert.DeserializeObject<Dictionary<ulong, ulong>>(File.ReadAllText("discord_channels.json"));
 
             _discord.Ready += OnReady;
             _discord.MessageReceived += OnMessageReceived;
@@ -47,10 +54,30 @@ namespace IPBot.Services
         private Task OnReady()
         {
             Console.WriteLine($"Logged in as {_discord.CurrentUser.Username}#{_discord.CurrentUser.Discriminator}");
-
-
             Console.WriteLine(Constants.BaseDirectory);
+
+            _timer = new Timer(CheckForUpdatedIP, null, TimeSpan.FromSeconds(1), TimeSpan.FromMinutes(1));
+
             return Task.CompletedTask;
+        }
+
+        private async void CheckForUpdatedIP(object _)
+        {
+            var ipChangedFile = Path.Combine(Constants.BaseDirectory, "../ip_changed");
+
+            if (!File.Exists(ipChangedFile)) return;
+
+            var ip = await Commands.IPCommands.GetIPFromFile();
+
+            foreach (var (guildId, textChannelId) in _discordChannels)
+            {
+                var guild = _discord.GetGuild(guildId);
+                var channel = guild.GetTextChannel(textChannelId);
+
+                await channel.SendMessageAsync($"Beep boop. The server IP has changed to {ip}");
+            }
+
+            File.Delete(ipChangedFile);
         }
     }
 }
