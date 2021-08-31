@@ -729,3 +729,4 @@ bot_python
 # Config file
 config.json
 creds.env
+/IPBot/IPBot/discord_channels.json
