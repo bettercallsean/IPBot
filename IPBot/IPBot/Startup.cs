@@ -17,7 +17,7 @@ namespace IPBot
         {
             var builder = new ConfigurationBuilder()
                 .SetBasePath(AppContext.BaseDirectory)
-                .AddJsonFile("config.json");
+                .AddJsonFile($"{Constants.ConfigDirectory}/config.json");
 
             Configuration = builder.Build();
         }

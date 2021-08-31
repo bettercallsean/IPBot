@@ -15,6 +15,7 @@ namespace IPBot.Commands
     public class ServerCommands : ModuleBase
     {
         private readonly IMinecraftPinger _minecraftPinger;
+        private readonly string ArkServerDataFile = $"{Constants.ConfigDirectory}/ark_server_data.json";
 
         public ServerCommands(IMinecraftPinger minecraftPinger)
         {
@@ -95,16 +96,16 @@ namespace IPBot.Commands
 
         private async Task SaveArkServerData(Dictionary<ushort, string> servers)
         {
-            await using var file = new StreamWriter("ark_server_data.json");
+            await using var file = new StreamWriter(ArkServerDataFile);
             await file.WriteAsync(JsonConvert.SerializeObject(servers));
         }
 
         private async Task<Dictionary<ushort, string>> LoadArkServerData()
         {
-            if (!File.Exists("ark_server_data.json"))
+            if (!File.Exists(ArkServerDataFile))
                 return new Dictionary<ushort, string> { { 27015, "" }, { 27018, "" }, { 27016, "" } };
 
-            using var file = new StreamReader("ark_server_data.json");
+            using var file = new StreamReader(ArkServerDataFile);
             return JsonConvert.DeserializeObject<Dictionary<ushort, string>>(await file.ReadToEndAsync());
         }
     }

@@ -26,7 +26,7 @@ namespace IPBot.Services
             _commands = command;
             _config = config;
 
-            _discordChannels = JsonConvert.DeserializeObject<Dictionary<ulong, ulong>>(File.ReadAllText("discord_channels.json"));
+            _discordChannels = JsonConvert.DeserializeObject<Dictionary<ulong, ulong>>(File.ReadAllText($"{Constants.ConfigDirectory}/discord_channels.json"));
 
             _discord.Ready += OnReady;
             _discord.MessageReceived += OnMessageReceived;
