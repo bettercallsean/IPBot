@@ -30,7 +30,7 @@ namespace IPBot.Services
             await _discord.StartAsync();
 
 
-            await _commands.AddModulesAsync(Assembly.GetCallingAssembly(), _provider);
+            await _commands.AddModulesAsync(Assembly.GetEntryAssembly(), _provider);
         }
     }
 }
