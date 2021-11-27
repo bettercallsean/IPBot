@@ -6,7 +6,6 @@ public class CommandHandler
     public static DiscordSocketClient _discord;
     public static CommandService _commands;
     public static IConfigurationRoot _config;
-    private Timer _timer;
     private readonly Dictionary<ulong, ulong> _discordChannels;
 
     public CommandHandler(IServiceProvider provider, DiscordSocketClient discord, CommandService command, IConfigurationRoot config)
@@ -18,8 +17,13 @@ public class CommandHandler
 
         _discordChannels = JsonConvert.DeserializeObject<Dictionary<ulong, ulong>>(File.ReadAllText($"{Constants.ConfigDirectory}/discord_channels.json"));
 
-        _discord.Ready += OnReady;
         _discord.MessageReceived += OnMessageReceivedAsync;
+        _discord.Ready += () =>
+        {
+            new Timer(CheckForUpdatedIPAsync, null, TimeSpan.FromSeconds(1), TimeSpan.FromMinutes(1));
+
+            return Task.CompletedTask;
+        };
     }
 
     private async Task OnMessageReceivedAsync(SocketMessage arg)
@@ -39,13 +43,6 @@ public class CommandHandler
             if (!result.IsSuccess)
                 Console.WriteLine($"{result.Error}");
         }
-    }
-
-    private Task OnReady()
-    {
-        _timer = new Timer(CheckForUpdatedIPAsync, null, TimeSpan.FromSeconds(1), TimeSpan.FromMinutes(1));
-
-        return Task.CompletedTask;
     }
 
     private async void CheckForUpdatedIPAsync(object _)
