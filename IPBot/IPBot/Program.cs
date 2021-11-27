@@ -1,10 +1,7 @@
-﻿using System.Threading.Tasks;
+﻿namespace IPBot;
 
-namespace IPBot
+class MainClass
 {
-    class MainClass
-    {
-        public static async Task Main(string[] args)
-            => await Startup.RunAsync(args);
-    }
+    public static async Task Main(string[] args)
+        => await Startup.RunAsync(args);
 }

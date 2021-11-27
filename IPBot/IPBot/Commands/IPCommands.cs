@@ -1,27 +1,22 @@
-﻿using System.IO;
-using System.Threading.Tasks;
-using Discord.Commands;
+﻿namespace IPBot.Commands;
 
-namespace IPBot.Commands
+public class IPCommands : ModuleBase
 {
-    public class IPCommands : ModuleBase
+    private static readonly string IPFilePath = Path.Combine(Constants.BaseDirectory, @"../latest_ip.txt");
+
+    [Command("ip")]
+    public async Task GetIPAsync()
     {
-        private static readonly string IPFilePath = Path.Combine(Constants.BaseDirectory, @"../latest_ip.txt");
+        await Context.Channel.SendMessageAsync(await GetIPFromFileAsync());
+    }
 
-        [Command("ip")]
-        public async Task GetIP()
+    public static async Task<string> GetIPFromFileAsync()
+    {
+        if (File.Exists(IPFilePath))
         {
-            await Context.Channel.SendMessageAsync(await GetIPFromFile());
+            return await File.ReadAllTextAsync(IPFilePath);
         }
 
-        public static async Task<string> GetIPFromFile()
-        {
-            if (File.Exists(IPFilePath))
-            {
-                return await File.ReadAllTextAsync(IPFilePath);
-            }
-
-            return string.Empty;
-        }
+        return string.Empty;
     }
 }
