@@ -2,10 +2,10 @@
 
 public class CommandHandler
 {
-    public static IServiceProvider _provider;
-    public static DiscordSocketClient _discord;
-    public static CommandService _commands;
-    public static IConfigurationRoot _config;
+    private readonly IServiceProvider _provider;
+    private readonly DiscordSocketClient _discord;
+    private readonly CommandService _commands;
+    private readonly IConfigurationRoot _config;
     private readonly Dictionary<ulong, ulong> _discordChannels;
 
     public CommandHandler(IServiceProvider provider, DiscordSocketClient discord, CommandService command, IConfigurationRoot config)
