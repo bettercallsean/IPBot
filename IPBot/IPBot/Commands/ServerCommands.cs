@@ -15,7 +15,7 @@ public class ServerCommands : ModuleBase
     }
 
     [Command("mc")]
-    public async Task GetMinecraftServerStatus()
+    public async Task GetMinecraftServerStatusAsync()
     {
         var serverStatusTask = _minecraftPinger.PingAsync();
 
@@ -33,9 +33,9 @@ public class ServerCommands : ModuleBase
     }
 
     [Command("ark")]
-    public async Task GetArkServerStatus()
+    public async Task GetArkServerStatusAsync()
     {
-        var arkServers = await LoadArkServerData();
+        var arkServers = await LoadArkServerDataAsync();
         var serverStatus = new StringBuilder();
 
         foreach (var serverDetails in arkServers)
@@ -63,7 +63,7 @@ public class ServerCommands : ModuleBase
                     $"Map: {serverDetails.Value} - The server is currently offline :( | Port: {serverDetails.Key}");
         }
 
-        await SaveArkServerData(arkServers);
+        await SaveArkServerDataAsync(arkServers);
 
         serverStatus.AppendLine("\nBloody hell, that's a lot of servers 🦖");
         await Context.Channel.SendMessageAsync(serverStatus.ToString());
@@ -86,13 +86,13 @@ public class ServerCommands : ModuleBase
         };
     }
 
-    private async Task SaveArkServerData(Dictionary<ushort, string> servers)
+    private async Task SaveArkServerDataAsync(Dictionary<ushort, string> servers)
     {
         await using var file = new StreamWriter(_arkServerDataFile);
         await file.WriteAsync(JsonConvert.SerializeObject(servers));
     }
 
-    private async Task<Dictionary<ushort, string>> LoadArkServerData()
+    private async Task<Dictionary<ushort, string>> LoadArkServerDataAsync()
     {
         if (!File.Exists(_arkServerDataFile))
             return new Dictionary<ushort, string> { { 27015, "" }, { 27018, "" }, { 27016, "" } };

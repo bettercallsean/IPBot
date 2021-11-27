@@ -19,10 +19,10 @@ public class CommandHandler
         _discordChannels = JsonConvert.DeserializeObject<Dictionary<ulong, ulong>>(File.ReadAllText($"{Constants.ConfigDirectory}/discord_channels.json"));
 
         _discord.Ready += OnReady;
-        _discord.MessageReceived += OnMessageReceived;
+        _discord.MessageReceived += OnMessageReceivedAsync;
     }
 
-    private async Task OnMessageReceived(SocketMessage arg)
+    private async Task OnMessageReceivedAsync(SocketMessage arg)
     {
         var message = arg as SocketUserMessage;
 
@@ -43,18 +43,18 @@ public class CommandHandler
 
     private Task OnReady()
     {
-        _timer = new Timer(CheckForUpdatedIP, null, TimeSpan.FromSeconds(1), TimeSpan.FromMinutes(1));
+        _timer = new Timer(CheckForUpdatedIPAsync, null, TimeSpan.FromSeconds(1), TimeSpan.FromMinutes(1));
 
         return Task.CompletedTask;
     }
 
-    private async void CheckForUpdatedIP(object _)
+    private async void CheckForUpdatedIPAsync(object _)
     {
         var ipChangedFile = Path.Combine(Constants.BaseDirectory, "../ip_changed");
 
         if (!File.Exists(ipChangedFile)) return;
 
-        var ip = await Commands.IPCommands.GetIPFromFile();
+        var ip = await Commands.IPCommands.GetIPFromFileAsync();
 
         foreach (var (guildId, textChannelId) in _discordChannels)
         {

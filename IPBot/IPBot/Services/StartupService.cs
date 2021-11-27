@@ -24,7 +24,6 @@ public class StartupService
         await _discord.LoginAsync(Discord.TokenType.Bot, token);
         await _discord.StartAsync();
 
-
         await _commands.AddModulesAsync(Assembly.GetEntryAssembly(), _provider);
     }
 }
