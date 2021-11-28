@@ -17,19 +17,24 @@ public class ServerCommands : ModuleBase
     [Command("mc")]
     public async Task GetMinecraftServerStatusAsync()
     {
-        var serverStatusTask = _minecraftPinger.PingAsync();
-
-        var responded = Task.WaitAll(new Task[] { serverStatusTask }, 500);
-
-        if (responded)
+        using (Context.Channel.EnterTypingState())
         {
-            var serverStatus = serverStatusTask.Result;
+            var serverStatusTask = _minecraftPinger.PingAsync();
 
-            var playerNames = serverStatus.Players.Sample.Select(x => x.Name);
-            await Context.Channel.SendMessageAsync(PlayerCountStatus(playerNames));
+            var responded = Task.WaitAll(new Task[] { serverStatusTask }, 500);
+
+            if (responded)
+            {
+                var serverStatus = serverStatusTask.Result;
+
+                var playerNames = serverStatus.Players.Sample.Select(x => x.Name);
+                await Context.Channel.SendMessageAsync(PlayerCountStatus(playerNames));
+            }
+            else
+            {
+                await Context.Channel.SendMessageAsync("The server is currently offline :(");
+            }
         }
-        else
-            await Context.Channel.SendMessageAsync("The server is currently offline :(");
     }
 
     [Command("ark")]
@@ -38,35 +43,48 @@ public class ServerCommands : ModuleBase
         var arkServers = await LoadArkServerDataAsync();
         var serverStatus = new StringBuilder();
 
-        foreach (var serverDetails in arkServers)
+        using (Context.Channel.EnterTypingState())
         {
-            using var server = new ServerQuery(Constants.ServerAddress, serverDetails.Key);
-            var serverInfoTask = server.GetServerInfoAsync();
-            var playerListTask = server.GetPlayersAsync();
-
-            var responded = Task.WaitAll(new Task[] { serverInfoTask, playerListTask }, 500);
-
-            if (responded)
+            foreach (var serverDetails in arkServers)
             {
-                var serverInfo = serverInfoTask.Result;
-                var playerList = playerListTask.Result;
+                using var server = new ServerQuery(Constants.ServerAddress, serverDetails.Key);
 
-                var playerCountStatus = PlayerCountStatus(playerList.Select(x => x.Name));
-                serverStatus.AppendLine(
-                    $"Map: {serverInfo.Map} - {playerCountStatus} | Port: {serverDetails.Key}");
+                var serverInfoTask = server.GetServerInfoAsync();
+                var playerListTask = server.GetPlayersAsync();
 
-                if (!string.IsNullOrWhiteSpace(serverInfo.Map))
-                    arkServers[serverDetails.Key] = serverInfo.Map;
+                var responded = Task.WaitAll(new Task[] { serverInfoTask, playerListTask }, 500);
+
+                if (responded)
+                {
+                    var serverInfo = serverInfoTask.Result;
+                    var playerList = playerListTask.Result;
+
+                    var playerCountStatus = PlayerCountStatus(playerList.Select(x => x.Name));
+                    serverStatus.AppendLine(
+                        $"Map: {serverInfo.Map} - {playerCountStatus} | Port: {serverDetails.Key}");
+
+                    if (!string.IsNullOrWhiteSpace(serverInfo.Map))
+                        arkServers[serverDetails.Key] = serverInfo.Map;
+                }
+                else
+                {
+                    if (string.IsNullOrWhiteSpace(serverDetails.Value))
+                    {
+                        serverStatus.AppendLine($"The server is currently offline :( | Port: {serverDetails.Key}");
+                    }
+                    else
+                    {
+                        serverStatus.AppendLine(
+                            $"Map: {serverDetails.Value} - The server is currently offline :( | Port: {serverDetails.Key}");
+                    }
+                }
             }
-            else
-                serverStatus.AppendLine(
-                    $"Map: {serverDetails.Value} - The server is currently offline :( | Port: {serverDetails.Key}");
+
+            serverStatus.AppendLine("\nBloody hell, that's a lot of servers 🦖");
+
+            await SaveArkServerDataAsync(arkServers);
+            await Context.Channel.SendMessageAsync(serverStatus.ToString());
         }
-
-        await SaveArkServerDataAsync(arkServers);
-
-        serverStatus.AppendLine("\nBloody hell, that's a lot of servers 🦖");
-        await Context.Channel.SendMessageAsync(serverStatus.ToString());
     }
 
     private string PlayerCountStatus(IEnumerable<string> players)
