@@ -738,3 +738,4 @@ ark_server_data.json
 # What does this file even do?
 .DS_Store
 
+ip_changed
