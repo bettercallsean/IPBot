@@ -1,4 +1,5 @@
-﻿using MCServerStatus;
+﻿using IPBot.Configs;
+using MCServerStatus;
 using SteamQueryNet;
 
 namespace IPBot.Commands;
@@ -91,16 +92,12 @@ public class ServerCommands : ModuleBase
     {
         var playersList = players.ToList();
 
-        if (playersList.Count == 0)
-            return "The server is online! No one is currently playing :)";
-
-        var playerName = playersList.OrderBy(x => Guid.NewGuid()).Take(1).First();
-
         return playersList.Count switch
         {
-            1 => $"The server is online! {playerName} is the only one playing :)",
-            2 => $"The server is online! {playerName} and one other are playing :)",
-            _ => $"The server is online! {playerName} and {playersList.Count - 1} others are playing :)",
+            0 => "The server is online! No one is currently playing :)",
+            1 => $"The server is online! {playersList.OrderBy(x => Guid.NewGuid()).Take(1).First()} is the only one playing :)",
+            2 => $"The server is online! {playersList.OrderBy(x => Guid.NewGuid()).Take(1).First()} and one other are playing :)",
+            _ => $"The server is online! {playersList.OrderBy(x => Guid.NewGuid()).Take(1).First()} and {playersList.Count - 1} others are playing :)",
         };
     }
 
@@ -113,10 +110,16 @@ public class ServerCommands : ModuleBase
     private async Task<Dictionary<ushort, string>> LoadArkServerDataAsync()
     {
         if (!File.Exists(_arkServerDataFile))
-            return new Dictionary<ushort, string> { { 27015, "" }, { 27018, "" }, { 27016, "" } };
+            await CreateArkDataFileAsync();
 
         using var file = new StreamReader(_arkServerDataFile);
         return JsonConvert.DeserializeObject<Dictionary<ushort, string>>(await file.ReadToEndAsync());
+    }
+
+    private async Task CreateArkDataFileAsync()
+    {
+        var ports = Resources.ServerPorts.Split(Environment.NewLine).ToDictionary(x => ushort.Parse(x), y => string.Empty);
+        await SaveArkServerDataAsync(ports);
     }
 }
 
