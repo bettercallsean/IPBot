@@ -6,7 +6,6 @@ public class CommandHandler
     private readonly DiscordSocketClient _discord;
     private readonly CommandService _commands;
     private readonly IConfigurationRoot _config;
-    private readonly Dictionary<ulong, ulong> _discordChannels;
 
     public CommandHandler(IServiceProvider provider, DiscordSocketClient discord, CommandService command, IConfigurationRoot config)
     {
@@ -15,23 +14,16 @@ public class CommandHandler
         _commands = command;
         _config = config;
 
-        _discordChannels = JsonConvert.DeserializeObject<Dictionary<ulong, ulong>>(File.ReadAllText($"{Constants.ConfigDirectory}/discord_channels.json"));
 
         _discord.MessageReceived += OnMessageReceivedAsync;
-        _discord.Ready += () =>
-        {
-            new Timer(CheckForUpdatedIPAsync, null, TimeSpan.FromSeconds(1), TimeSpan.FromMinutes(1));
-
-            return Task.CompletedTask;
-        };
     }
 
     private async Task OnMessageReceivedAsync(SocketMessage arg)
     {
         var message = arg as SocketUserMessage;
 
-        if (message.Author.IsBot)
-            return;
+        if (message.Author.IsBot) return;
+
 
         var context = new SocketCommandContext(_discord, message);
 
@@ -41,26 +33,9 @@ public class CommandHandler
             var result = await _commands.ExecuteAsync(context, pos, _provider);
 
             if (!result.IsSuccess)
+            {
                 Console.WriteLine($"{result.Error}");
+            }
         }
-    }
-
-    private async void CheckForUpdatedIPAsync(object _)
-    {
-        var ipChangedFile = Path.Combine(Constants.BaseDirectory, "../ip_changed");
-
-        if (!File.Exists(ipChangedFile)) return;
-
-        var ip = await Commands.IPCommands.GetIPFromFileAsync();
-
-        foreach (var (guildId, textChannelId) in _discordChannels)
-        {
-            var guild = _discord.GetGuild(guildId);
-            var channel = guild.GetTextChannel(textChannelId);
-
-            await channel.SendMessageAsync($"Beep boop. The server IP has changed to {ip}");
-        }
-
-        File.Delete(ipChangedFile);
     }
 }

@@ -65,7 +65,9 @@ public class ServerCommands : ModuleBase
                         $"Map: {serverInfo.Map} - {playerCountStatus} | Port: {serverDetails.Key}");
 
                     if (!string.IsNullOrWhiteSpace(serverInfo.Map))
+                    {
                         arkServers[serverDetails.Key] = serverInfo.Map;
+                    }
                 }
                 else
                 {
@@ -110,7 +112,9 @@ public class ServerCommands : ModuleBase
     private async Task<Dictionary<ushort, string>> LoadArkServerDataAsync()
     {
         if (!File.Exists(_arkServerDataFile))
+        {
             await CreateArkDataFileAsync();
+        }
 
         using var file = new StreamReader(_arkServerDataFile);
         return JsonConvert.DeserializeObject<Dictionary<ushort, string>>(await file.ReadToEndAsync());
