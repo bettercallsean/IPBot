@@ -4,7 +4,6 @@ using SteamQueryNet;
 
 namespace IPBot.Commands;
 
-[Group("server")]
 public class ServerCommands : ModuleBase
 {
     private readonly IMinecraftPinger _minecraftPinger;
