@@ -33,7 +33,7 @@ public class ServerCommands : ModuleBase
             }
             else
             {
-                await Context.Channel.SendMessageAsync("The server is currently offline :(");
+                await Context.Channel.SendMessageAsync(Constants.ServerOfflineString);
             }
         }
     }
@@ -48,19 +48,13 @@ public class ServerCommands : ModuleBase
         {
             foreach (var serverDetails in arkServers)
             {
-                using var server = new ServerQuery(Constants.ServerAddress, serverDetails.Key);
+                var serverInfo = GetSteamServerInfo(serverDetails.Key);
+                var playerList = GetSteamServerPlayerList(serverDetails.Key);
 
-                var serverInfoTask = server.GetServerInfoAsync();
-                var playerListTask = server.GetPlayersAsync();
-
-                var responded = Task.WaitAll(new Task[] { serverInfoTask, playerListTask }, 500);
-
-                if (responded)
+                if (serverInfo != null)
                 {
-                    var serverInfo = serverInfoTask.Result;
-                    var playerList = playerListTask.Result;
-
                     var playerCountStatus = PlayerCountStatus(playerList.Select(x => x.Name));
+
                     serverStatus.AppendLine(
                         $"Map: {serverInfo.Map} - {playerCountStatus} | Port: {serverDetails.Key}");
 
@@ -73,12 +67,12 @@ public class ServerCommands : ModuleBase
                 {
                     if (string.IsNullOrWhiteSpace(serverDetails.Value))
                     {
-                        serverStatus.AppendLine($"The server is currently offline :( | Port: {serverDetails.Key}");
+                        serverStatus.AppendLine($"{Constants.ServerOfflineString} | Port: {serverDetails.Key}");
                     }
                     else
                     {
                         serverStatus.AppendLine(
-                            $"Map: {serverDetails.Value} - The server is currently offline :( | Port: {serverDetails.Key}");
+                            $"Map: {serverDetails.Value} - {Constants.ServerOfflineString} | Port: {serverDetails.Key}");
                     }
                 }
             }
@@ -90,6 +84,16 @@ public class ServerCommands : ModuleBase
         }
     }
 
+    [Command("zomboid")]
+    public async Task GetProjectZomboidServerStatusAsync()
+    {
+        var playerList = GetSteamServerPlayerList(Constants.ZomboidServerPort);
+
+        var serverStatus = playerList == null ? Constants.ServerOfflineString : PlayerCountStatus(playerList.Select(x => x.Name));
+
+        await Context.Channel.SendMessageAsync(serverStatus);
+    }
+
     private string PlayerCountStatus(IEnumerable<string> players)
     {
         var playersList = players.ToList();
@@ -99,7 +103,7 @@ public class ServerCommands : ModuleBase
             0 => "The server is online! No one is currently playing :)",
             1 => $"The server is online! {playersList.OrderBy(x => Guid.NewGuid()).Take(1).First()} is the only one playing :)",
             2 => $"The server is online! {playersList.OrderBy(x => Guid.NewGuid()).Take(1).First()} and one other are playing :)",
-            _ => $"The server is online! {playersList.OrderBy(x => Guid.NewGuid()).Take(1).First()} and {playersList.Count - 1} others are playing :)",
+            _ => $"The server is online! {playersList.OrderBy(x => Guid.NewGuid()).Take(1).First()} and {playersList.Count - 1} others are playing :)"
         };
     }
 
@@ -125,5 +129,40 @@ public class ServerCommands : ModuleBase
         var ports = Resources.ServerPorts.Split(Environment.NewLine).ToDictionary(x => ushort.Parse(x), y => string.Empty);
         await SaveArkServerDataAsync(ports);
     }
-}
 
+    private List<SteamQueryNet.Models.Player> GetSteamServerPlayerList(ushort port)
+    {
+        using var server = new ServerQuery(Constants.ServerAddress, port);
+
+        var playerListTask = server.GetPlayersAsync();
+
+        var responded = Task.WaitAll(new Task[] { playerListTask }, 500);
+
+        if (responded)
+        {
+            return playerListTask.Result;
+        }
+        else
+        {
+            return null;
+        }
+    }
+
+    private SteamQueryNet.Models.ServerInfo GetSteamServerInfo(ushort port)
+    {
+        using var server = new ServerQuery(Constants.ServerAddress, port);
+
+        var serverInfoTask = server.GetServerInfoAsync();
+
+        var responded = Task.WaitAll(new Task[] { serverInfoTask }, 500);
+
+        if (responded)
+        {
+            return serverInfoTask.Result;
+        }
+        else
+        {
+            return null;
+        }
+    }
+}

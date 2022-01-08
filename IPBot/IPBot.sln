@@ -1,9 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.31624.102
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31912.275
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IPBot", "IPBot\IPBot.csproj", "{51AD51CF-CC75-47B1-8EBE-AE4B72610323}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IPBot", "IPBot\IPBot.csproj", "{51AD51CF-CC75-47B1-8EBE-AE4B72610323}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
