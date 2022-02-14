@@ -27,7 +27,9 @@ public class ServerCommands : ModuleBase
             {
                 var serverStatus = serverStatusTask.Result;
 
-                var playerNames = serverStatus.Players.Sample.Select(x => x.Name);
+                var playerNames = serverStatus.Players.Online > 0
+                    ? serverStatus.Players.Sample.Select(x => x.Name)
+                    : new List<string>();
                 await Context.Channel.SendMessageAsync(PlayerCountStatus(playerNames));
             }
             else
