@@ -100,13 +100,16 @@ public class ServerCommands : ModuleBase
     {
         const string statusString = "The server is online! ";
         var playersList = players.ToList();
+        var playerName = playersList.Count > 0
+            ? playersList.OrderBy(x => Guid.NewGuid()).Take(1).First()
+            : string.Empty;
 
         return playersList.Count switch
         {
             0 => statusString + "No one is currently playing :)",
-            1 => statusString + $"{playersList.OrderBy(x => Guid.NewGuid()).Take(1).First()} is the only one playing :)",
-            2 => statusString + $"{playersList.OrderBy(x => Guid.NewGuid()).Take(1).First()} and one other are playing :)",
-            _ => statusString + $"{playersList.OrderBy(x => Guid.NewGuid()).Take(1).First()} and {playersList.Count - 1} others are playing :)"
+            1 => statusString + $"{playerName} is the only one playing :)",
+            2 => statusString + $"{playerName} and one other are playing :)",
+            _ => statusString + $"{playerName} and {playersList.Count - 1} others are playing :)"
         };
     }
 
