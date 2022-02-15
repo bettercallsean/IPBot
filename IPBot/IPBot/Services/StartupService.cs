@@ -29,15 +29,10 @@ public class StartupService
 
         await _commands.AddModulesAsync(Assembly.GetEntryAssembly(), _provider);
 
-        _discord.Ready += () =>
-        {
-            new Timer(CheckForUpdatedIPAsync, null, TimeSpan.FromSeconds(1), TimeSpan.FromMinutes(1));
-
-            return Task.CompletedTask;
-        };
+        _discord.Connected += CheckForUpdatedIPAsync;
     }
 
-    private async void CheckForUpdatedIPAsync(object _)
+    private async Task CheckForUpdatedIPAsync()
     {
         var ipChangedFile = Path.Combine(Constants.BaseDirectory, @"../ip_changed");
 
