@@ -38,9 +38,10 @@ public class StartupService
 
         var ipChangedFile = Path.Combine(Constants.BaseDirectory, @"../ip_changed");
 
-        if (!File.Exists(ipChangedFile)) return;
-
         var ip = await Commands.IPCommands.GetIPFromFileAsync();
+        await _discord.SetGameAsync(ip);
+
+        if (!File.Exists(ipChangedFile)) return;
 
         foreach (var (guildId, textChannelId) in _discordChannels)
         {
