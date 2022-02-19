@@ -34,6 +34,8 @@ public class StartupService
 
     private async Task CheckForUpdatedIPAsync()
     {
+        Thread.Sleep(1000);
+
         var ipChangedFile = Path.Combine(Constants.BaseDirectory, @"../ip_changed");
 
         if (!File.Exists(ipChangedFile)) return;
