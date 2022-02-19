@@ -36,10 +36,10 @@ public class StartupService
     {
         Thread.Sleep(1000);
 
-        var ipChangedFile = Path.Combine(Constants.BaseDirectory, @"../ip_changed");
-
         var ip = await Commands.IPCommands.GetIPFromFileAsync();
         await _discord.SetGameAsync(ip);
+
+        var ipChangedFile = Path.Combine(Constants.BaseDirectory, @"../ip_changed");
 
         if (!File.Exists(ipChangedFile)) return;
 
