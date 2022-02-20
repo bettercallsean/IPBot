@@ -34,7 +34,7 @@ public class StartupService
 
     private async Task CheckForUpdatedIPAsync()
     {
-        Thread.Sleep(1000);
+        await Task.Delay(1000);
 
         var ip = await Commands.IPCommands.GetIPFromFileAsync();
         await _discord.SetGameAsync(ip);

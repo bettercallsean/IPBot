@@ -14,7 +14,8 @@ public class IPCommands : ModuleBase
     {
         if (File.Exists(IPFilePath))
         {
-            return await File.ReadAllTextAsync(IPFilePath);
+            var ip = await File.ReadAllTextAsync(IPFilePath);
+            return ip.TrimEnd();
         }
 
         return string.Empty;
