@@ -1,18 +1,14 @@
-﻿using System.Threading;
-
-namespace IPBot.Services;
+﻿namespace IPBot.Services;
 
 public class StartupService
 {
-    private readonly IServiceProvider _provider;
     private readonly IConfigurationRoot _config;
     private readonly DiscordSocketClient _discord;
     private readonly InteractionService _commands;
     private readonly Dictionary<ulong, ulong> _discordChannels;
 
-    public StartupService(IServiceProvider provider, DiscordSocketClient discord, InteractionService commands, IConfigurationRoot config)
+    public StartupService(DiscordSocketClient discord, InteractionService commands, IConfigurationRoot config)
     {
-        _provider = provider;
         _discord = discord;
         _commands = commands;
         _config = config;
@@ -46,7 +42,7 @@ public class StartupService
 
     private async Task CheckForUpdatedIPAsync()
     {
-        Thread.Sleep(1000);
+        await Task.Delay(1000);
 
         var ip = await Commands.IPCommands.GetIPFromFileAsync();
         await _discord.SetGameAsync(ip);

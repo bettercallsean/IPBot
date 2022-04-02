@@ -15,7 +15,8 @@ public class IPCommands : InteractionModuleBase<SocketInteractionContext>
     {
         if (File.Exists(IPFilePath))
         {
-            return await File.ReadAllTextAsync(IPFilePath);
+            var ip = await File.ReadAllTextAsync(IPFilePath);
+            return ip.TrimEnd();
         }
 
         return "Couldn't find IP";
