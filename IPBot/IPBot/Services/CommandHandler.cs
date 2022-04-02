@@ -1,40 +1,41 @@
-﻿namespace IPBot.Services;
+﻿using System.Reflection;
+using Discord;
+
+namespace IPBot.Services;
 
 public class CommandHandler
 {
-    private readonly IServiceProvider _provider;
-    private readonly DiscordSocketClient _discord;
-    private readonly CommandService _commands;
-    private readonly IConfigurationRoot _config;
+    private readonly IServiceProvider _services;
+    private readonly DiscordSocketClient _client;
+    private readonly InteractionService _commands;
 
-    public CommandHandler(IServiceProvider provider, DiscordSocketClient discord, CommandService command, IConfigurationRoot config)
+    public CommandHandler(DiscordSocketClient client, InteractionService commands, IServiceProvider services)
     {
-        _provider = provider;
-        _discord = discord;
-        _commands = command;
-        _config = config;
-
-
-        _discord.MessageReceived += OnMessageReceivedAsync;
+        _client = client;
+        _commands = commands;
+        _services = services;
     }
 
-    private async Task OnMessageReceivedAsync(SocketMessage arg)
+    public async Task InitializeAsync()
     {
-        var message = arg as SocketUserMessage;
+        await _commands.AddModulesAsync(Assembly.GetEntryAssembly(), _services);
 
-        if (message.Author.IsBot) return;
+        _client.InteractionCreated += HandleInteraction;
+    }
 
-
-        var context = new SocketCommandContext(_discord, message);
-
-        int pos = 0;
-        if (message.HasStringPrefix(_config["prefix"], ref pos) || message.HasMentionPrefix(_discord.CurrentUser, ref pos))
+    private async Task HandleInteraction(SocketInteraction arg)
+    {
+        try
         {
-            var result = await _commands.ExecuteAsync(context, pos, _provider);
-
-            if (!result.IsSuccess)
+            var ctx = new SocketInteractionContext(_client, arg);
+            await _commands.ExecuteCommandAsync(ctx, _services);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex);
+            if (arg.Type == InteractionType.ApplicationCommand)
             {
-                Console.WriteLine($"{result.Error}");
+                await arg.GetOriginalResponseAsync().ContinueWith(async (msg) => await msg.Result.DeleteAsync());
             }
         }
     }
