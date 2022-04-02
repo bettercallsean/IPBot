@@ -1,13 +1,14 @@
 ﻿namespace IPBot.Commands;
 
-public class IPCommands : ModuleBase
+public class IPCommands : InteractionModuleBase<SocketInteractionContext>
 {
     private static readonly string IPFilePath = Path.Combine(Constants.BaseDirectory, @"../latest_ip.txt");
 
-    [Command("ip")]
+    [SlashCommand("ip", "get the current IP of the server")]
     public async Task GetIPAsync()
     {
-        await Context.Channel.SendMessageAsync(await GetIPFromFileAsync());
+        var ip = await GetIPFromFileAsync();
+        await RespondAsync(ip);
     }
 
     public static async Task<string> GetIPFromFileAsync()
@@ -18,6 +19,6 @@ public class IPCommands : ModuleBase
             return ip.TrimEnd();
         }
 
-        return string.Empty;
+        return "Couldn't find IP";
     }
 }

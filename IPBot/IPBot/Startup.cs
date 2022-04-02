@@ -1,5 +1,4 @@
 ﻿using IPBot.Services;
-using MCServerStatus;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace IPBot;
@@ -29,11 +28,11 @@ public class Startup
         ConfigureServices(services);
 
         var provider = services.BuildServiceProvider();
-        provider.GetRequiredService<CommandHandler>();
+        await provider.GetRequiredService<CommandHandler>().InitializeAsync();
 
         await provider.GetRequiredService<StartupService>().StartAsync();
 
-        await Task.Delay(-1);
+        await Task.Delay(Timeout.Infinite);
     }
 
     private void ConfigureServices(IServiceCollection services)
@@ -44,15 +43,9 @@ public class Startup
                 LogLevel = Discord.LogSeverity.Verbose,
                 MessageCacheSize = 1000
             }))
-            .AddSingleton(new CommandService(new CommandServiceConfig
-            {
-                LogLevel = Discord.LogSeverity.Verbose,
-                DefaultRunMode = RunMode.Async,
-                CaseSensitiveCommands = false
-            }))
+            .AddSingleton(x => new InteractionService(x.GetRequiredService<DiscordSocketClient>()))
             .AddSingleton<CommandHandler>()
             .AddScoped<StartupService>()
-            .AddSingleton<IMinecraftPinger>(new MinecraftPinger(Constants.ServerAddress, Constants.MinecraftServerPort))
             .AddSingleton(Configuration);
     }
 }

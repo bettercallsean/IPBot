@@ -5,7 +5,7 @@ global using System.Linq;
 global using System.Text;
 global using System.Threading;
 global using System.Threading.Tasks;
-global using Discord.Commands;
+global using Discord.Interactions;
 global using Discord.WebSocket;
 global using Microsoft.Extensions.Configuration;
 global using Newtonsoft.Json;
