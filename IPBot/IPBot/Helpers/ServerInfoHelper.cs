@@ -59,7 +59,7 @@ internal class ServerInfoHelper
         await SaveArkServerDataAsync(ports);
     }
 
-    private static async Task<string> GetServerStatusStringAsync(int portNumber = 0)
+    private static async Task<string> GetServerStatusStringAsync(string gameCode, int portNumber)
     {
         var serverStatusScriptPath = Path.Combine(Constants.BaseDirectory, @"../scripts/get_server_status.py");
 
@@ -71,7 +71,7 @@ internal class ServerInfoHelper
         using var process = Process.Start(new ProcessStartInfo
         {
             FileName = "python",
-            Arguments = $"{serverStatusScriptPath} {(portNumber != 0 ? portNumber : string.Empty)}",
+            Arguments = $"{serverStatusScriptPath} {gameCode} {portNumber}",
             UseShellExecute = false,
             RedirectStandardOutput = true,
         });
