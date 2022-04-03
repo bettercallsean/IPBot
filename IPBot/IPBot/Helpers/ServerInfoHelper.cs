@@ -7,17 +7,12 @@ namespace IPBot.Helpers;
 internal class ServerInfoHelper
 {
     private static readonly string _arkServerDataFile = $"{Constants.ConfigDirectory}/ark_server_data.json";
+    private static readonly string _serverStatusScriptPath = Path.Combine(Constants.BaseDirectory, @"../scripts/get_server_status.py");
 
-    public static async Task<ServerInfo> GetServerInfoAsync()
+    public static async Task<ServerInfo> GetServerInfoAsync(string gameCode, int port)
     {
-        var serverInfo = await GetServerStatusStringAsync();
-        return ParseServerInfoString(serverInfo);
-    }
-
-    public static async Task<ServerInfo> GetServerInfoAsync(int port)
-    {
-        var serverInfo = await GetServerStatusStringAsync(port);
-        return ParseServerInfoString(serverInfo);
+        var serverInfo = await GetServerInfoJsonAsync(gameCode, port);
+        return ParseServerInfoJson(serverInfo);
     }
 
     public static string PlayerCountStatus(IEnumerable<string> players)
@@ -59,11 +54,9 @@ internal class ServerInfoHelper
         await SaveArkServerDataAsync(ports);
     }
 
-    private static async Task<string> GetServerStatusStringAsync(int portNumber = 0)
+    private static async Task<string> GetServerInfoJsonAsync(string gameCode, int portNumber)
     {
-        var serverStatusScriptPath = Path.Combine(Constants.BaseDirectory, @"../scripts/get_server_status.py");
-
-        if (!File.Exists(serverStatusScriptPath))
+        if (!File.Exists(_serverStatusScriptPath))
         {
             return string.Empty;
         }
@@ -71,7 +64,7 @@ internal class ServerInfoHelper
         using var process = Process.Start(new ProcessStartInfo
         {
             FileName = "python",
-            Arguments = $"{serverStatusScriptPath} {(portNumber != 0 ? portNumber : string.Empty)}",
+            Arguments = $"{_serverStatusScriptPath} {gameCode} {portNumber}",
             UseShellExecute = false,
             RedirectStandardOutput = true,
         });
@@ -83,7 +76,7 @@ internal class ServerInfoHelper
         return result;
     }
 
-    private static ServerInfo ParseServerInfoString(string serverInfo)
+    private static ServerInfo ParseServerInfoJson(string serverInfo)
     {
         if (string.IsNullOrWhiteSpace(serverInfo))
         {

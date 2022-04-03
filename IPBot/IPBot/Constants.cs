@@ -8,4 +8,6 @@ public class Constants
     public static readonly string BaseDirectory = AppContext.BaseDirectory;
     public static readonly string ConfigDirectory = BaseDirectory + "Configs";
     public const string ServerOfflineString = "The server is currently offline :(";
+    public const string SteamServerCode = "steam";
+    public const string MinecraftServerCode = "mc";
 }

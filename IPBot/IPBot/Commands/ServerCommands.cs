@@ -13,7 +13,7 @@ public class ServerCommands : InteractionModuleBase<SocketInteractionContext>
     {
         using (Context.Channel.EnterTypingState())
         {
-            var serverStatus = await ServerInfoHelper.GetServerInfoAsync();
+            var serverStatus = await ServerInfoHelper.GetServerInfoAsync(Constants.MinecraftServerCode, Constants.MinecraftServerPort);
 
             if (serverStatus != null)
             {
@@ -36,7 +36,7 @@ public class ServerCommands : InteractionModuleBase<SocketInteractionContext>
 
         foreach (var serverDetails in arkServers)
         {
-            var serverInfo = await ServerInfoHelper.GetServerInfoAsync(serverDetails.Key);
+            var serverInfo = await ServerInfoHelper.GetServerInfoAsync(Constants.SteamServerCode, serverDetails.Key);
 
             if (serverInfo != null)
             {
@@ -74,7 +74,7 @@ public class ServerCommands : InteractionModuleBase<SocketInteractionContext>
     [SlashCommand("zomboid", "get the status of the zomboid server")]
     public async Task GetProjectZomboidServerStatusAsync()
     {
-        var serverInfo = await ServerInfoHelper.GetServerInfoAsync(Constants.ZomboidServerPort);
+        var serverInfo = await ServerInfoHelper.GetServerInfoAsync(Constants.SteamServerCode, Constants.ZomboidServerPort);
 
         var serverStatus = serverInfo == null ? Constants.ServerOfflineString : ServerInfoHelper.PlayerCountStatus(serverInfo.PlayerNames);
 
