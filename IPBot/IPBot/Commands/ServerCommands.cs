@@ -4,25 +4,26 @@ namespace IPBot.Commands;
 
 public class ServerCommands : InteractionModuleBase<SocketInteractionContext>
 {
-    public ServerCommands()
-    {
-    }
-
     [SlashCommand("mc", "get the status of the minecraft server")]
     public async Task GetMinecraftServerStatusAsync()
     {
-        using (Context.Channel.EnterTypingState())
+        var serverInfo =
+            await ServerInfoHelper.GetServerInfoAsync(Constants.MinecraftServerCode, Constants.MinecraftServerPort);
+        
+        if (serverInfo != null)
         {
-            var serverStatus = await ServerInfoHelper.GetServerInfoAsync(Constants.MinecraftServerCode, Constants.MinecraftServerPort);
-
-            if (serverStatus != null)
+            if (serverInfo.PlayerNames == null)
             {
-                await RespondAsync(ServerInfoHelper.PlayerCountStatus(serverStatus.PlayerNames));
+                await RespondAsync(ServerInfoHelper.PlayerCountStatus(serverInfo.PlayerCount));
             }
             else
             {
-                await RespondAsync(Constants.ServerOfflineString);
+                await RespondAsync(ServerInfoHelper.PlayerCountStatus(serverInfo.PlayerNames));
             }
+        }
+        else
+        {
+            await RespondAsync(Constants.ServerOfflineString); 
         }
     }
 
@@ -34,32 +35,32 @@ public class ServerCommands : InteractionModuleBase<SocketInteractionContext>
         var arkServers = await ServerInfoHelper.LoadArkServerDataAsync();
         var serverStatus = new StringBuilder();
 
-        foreach (var serverDetails in arkServers)
+        foreach (var (port, map) in arkServers)
         {
-            var serverInfo = await ServerInfoHelper.GetServerInfoAsync(Constants.SteamServerCode, serverDetails.Key);
+            var serverInfo = await ServerInfoHelper.GetServerInfoAsync(Constants.SteamServerCode, port);
 
             if (serverInfo != null)
             {
                 var playerCountStatus = ServerInfoHelper.PlayerCountStatus(serverInfo.PlayerNames);
 
                 serverStatus.AppendLine(
-                    $"Map: {serverInfo.Map} - {playerCountStatus} | Port: {serverDetails.Key}");
+                    $"Map: {serverInfo.Map} - {playerCountStatus} | Port: {port}");
 
                 if (!string.IsNullOrWhiteSpace(serverInfo.Map))
                 {
-                    arkServers[serverDetails.Key] = serverInfo.Map;
+                    arkServers[port] = serverInfo.Map;
                 }
             }
             else
             {
-                if (string.IsNullOrWhiteSpace(serverDetails.Value))
+                if (string.IsNullOrWhiteSpace(map))
                 {
-                    serverStatus.AppendLine($"{Constants.ServerOfflineString} | Port: {serverDetails.Key}");
+                    serverStatus.AppendLine($"{Constants.ServerOfflineString} | Port: {port}");
                 }
                 else
                 {
                     serverStatus.AppendLine(
-                        $"Map: {serverDetails.Value} - {Constants.ServerOfflineString} | Port: {serverDetails.Key}");
+                        $"Map: {map} - {Constants.ServerOfflineString} | Port: {port}");
                 }
             }
         }
