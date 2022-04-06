@@ -36,7 +36,7 @@ internal static class ServerInfoHelper
         return playerCount switch
         {
             0 => $"{Constants.SeverOnlineString} No one is currently playing :)",
-            1 => $"{Constants.SeverOnlineString} Only one person is playing :)",
+            1 => $"{Constants.SeverOnlineString} One person is playing :)",
             _ => $"{Constants.SeverOnlineString} {playerCount} people are playing :)",
         };
     }
