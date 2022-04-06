@@ -27,7 +27,7 @@ public class ServerCommands : InteractionModuleBase<SocketInteractionContext>
         }
     }
 
-    [SlashCommand("ark", "get the status of the ark server", true, RunMode.Async)]
+    [SlashCommand("ark", "get the status of the ark server")]
     public async Task GetArkServerStatusAsync()
     {
         await DeferAsync();
