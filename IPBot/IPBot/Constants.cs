@@ -1,13 +1,14 @@
 ﻿namespace IPBot;
 
-public class Constants
+public static class Constants
 {
-    public const string ServerAddress = "192.168.1.100";
     public const int MinecraftServerPort = 25565;
     public const int ZomboidServerPort = 16261;
     public static readonly string BaseDirectory = AppContext.BaseDirectory;
     public static readonly string ConfigDirectory = BaseDirectory + "Configs";
+    public static readonly string ScriptsDirectory = BaseDirectory + "scripts";
     public const string ServerOfflineString = "The server is currently offline :(";
+    public const string SeverOnlineString = "The server is online!";
     public const string SteamServerCode = "steam";
     public const string MinecraftServerCode = "mc";
 }

@@ -4,10 +4,10 @@ using IPBot.Models;
 
 namespace IPBot.Helpers;
 
-internal class ServerInfoHelper
+internal static class ServerInfoHelper
 {
-    private static readonly string _arkServerDataFile = $"{Constants.ConfigDirectory}/ark_server_data.json";
-    private static readonly string _serverStatusScriptPath = Path.Combine(Constants.BaseDirectory, @"../scripts/get_server_status.py");
+    private static readonly string _arkServerDataFile = Path.Combine(Constants.ConfigDirectory, "ark_server_data.json");
+    private static readonly string _serverStatusScriptPath = Path.Combine(Constants.ScriptsDirectory, @"get_server_status.py");
 
     public static async Task<ServerInfo> GetServerInfoAsync(string gameCode, int port)
     {
@@ -17,18 +17,27 @@ internal class ServerInfoHelper
 
     public static string PlayerCountStatus(IEnumerable<string> players)
     {
-        const string statusString = "The server is online! ";
         var playersList = players.ToList();
         var playerName = playersList.Count > 0
-            ? playersList.OrderBy(x => Guid.NewGuid()).Take(1).First()
+            ? playersList.OrderBy(_ => Guid.NewGuid()).Take(1).First()
             : string.Empty;
 
         return playersList.Count switch
         {
-            0 => statusString + "No one is currently playing :)",
-            1 => statusString + $"{playerName} is the only one playing :)",
-            2 => statusString + $"{playerName} and one other are playing :)",
-            _ => statusString + $"{playerName} and {playersList.Count - 1} others are playing :)"
+            0 => $"{Constants.SeverOnlineString} No one is currently playing :)",
+            1 => $"{Constants.SeverOnlineString} {playerName} is the only one playing :)",
+            2 => $"{Constants.SeverOnlineString} {playerName} and one other are playing :)",
+            _ => $"{Constants.SeverOnlineString} {playerName} and {playersList.Count - 1} others are playing :)"
+        };
+    }
+    
+    public static string PlayerCountStatus(int playerCount)
+    {
+        return playerCount switch
+        {
+            0 => $"{Constants.SeverOnlineString} No one is currently playing :)",
+            1 => $"{Constants.SeverOnlineString} Only one person is playing :)",
+            _ => $"{Constants.SeverOnlineString} {playerCount} people are playing :)",
         };
     }
     public static async Task<Dictionary<ushort, string>> LoadArkServerDataAsync()
@@ -50,17 +59,12 @@ internal class ServerInfoHelper
 
     private static async Task CreateArkDataFileAsync()
     {
-        var ports = Resources.ServerPorts.Split(Environment.NewLine).ToDictionary(x => ushort.Parse(x), y => string.Empty);
+        var ports = Resources.ServerPorts.Split(Environment.NewLine).ToDictionary(ushort.Parse, _ => string.Empty);
         await SaveArkServerDataAsync(ports);
     }
 
     private static async Task<string> GetServerInfoJsonAsync(string gameCode, int portNumber)
     {
-        if (!File.Exists(_serverStatusScriptPath))
-        {
-            return string.Empty;
-        }
-
         using var process = Process.Start(new ProcessStartInfo
         {
             FileName = "python",
@@ -69,20 +73,17 @@ internal class ServerInfoHelper
             RedirectStandardOutput = true,
         });
 
-        using StreamReader reader = process.StandardOutput;
-
-        var result = await reader.ReadToEndAsync();
-
+        if (process == null)
+        {
+            return string.Empty;
+        }
+        
+        var result = await process.StandardOutput.ReadToEndAsync();
         return result;
     }
 
     private static ServerInfo ParseServerInfoJson(string serverInfo)
     {
-        if (string.IsNullOrWhiteSpace(serverInfo))
-        {
-            return null;
-        }
-
-        return JsonConvert.DeserializeObject<ServerInfo>(serverInfo);
+        return string.IsNullOrWhiteSpace(serverInfo) ? null : JsonConvert.DeserializeObject<ServerInfo>(serverInfo);
     }
 }

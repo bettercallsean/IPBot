@@ -46,4 +46,23 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
+  <ItemGroup>
+    <Content Include="..\..\scripts\get_server_status.py">
+      <Link>scripts/get_server_status.py</Link>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\scripts\settings.py">
+      <Link>scripts\settings.py</Link>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\scripts\__pycache__\settings.cpython-310.pyc">
+      <Link>scripts\__pycache__\settings.cpython-310.pyc</Link>
+    </Content>
+    <Content Include="..\..\scripts\__pycache__\settings.cpython-39.pyc">
+      <Link>scripts\__pycache__\settings.cpython-39.pyc</Link>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Update="..\..\scripts" />
+  </ItemGroup>
 </Project>
