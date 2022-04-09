@@ -739,3 +739,4 @@ ark_server_data.json
 .DS_Store
 
 ip_changed
+*.stats

@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics;
 using IPBot.Configs;
 using IPBot.Models;
+using Newtonsoft.Json.Serialization;
 
 namespace IPBot.Helpers;
 
@@ -84,6 +85,13 @@ internal static class ServerInfoHelper
 
     private static ServerInfo ParseServerInfoJson(string serverInfo)
     {
-        return string.IsNullOrWhiteSpace(serverInfo) ? null : JsonConvert.DeserializeObject<ServerInfo>(serverInfo);
+        return string.IsNullOrWhiteSpace(serverInfo) ? null : JsonConvert.DeserializeObject<ServerInfo>(serverInfo, new JsonSerializerSettings
+        {
+            ContractResolver = new DefaultContractResolver
+            {
+                NamingStrategy = new SnakeCaseNamingStrategy()
+            },
+            Formatting = Formatting.Indented
+        });
     }
 }
