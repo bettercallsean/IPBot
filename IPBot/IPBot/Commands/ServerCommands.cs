@@ -10,7 +10,7 @@ public class ServerCommands : InteractionModuleBase<SocketInteractionContext>
         var serverInfo =
             await ServerInfoHelper.GetServerInfoAsync(Constants.MinecraftServerCode, Constants.MinecraftServerPort);
         
-        if (serverInfo != null)
+        if (serverInfo.Online)
         {
             if (serverInfo.PlayerNames == null)
             {
@@ -39,7 +39,7 @@ public class ServerCommands : InteractionModuleBase<SocketInteractionContext>
         {
             var serverInfo = await ServerInfoHelper.GetServerInfoAsync(Constants.SteamServerCode, port);
 
-            if (serverInfo != null)
+            if (serverInfo.Online)
             {
                 var playerCountStatus = ServerInfoHelper.PlayerCountStatus(serverInfo.PlayerNames);
 
@@ -53,15 +53,9 @@ public class ServerCommands : InteractionModuleBase<SocketInteractionContext>
             }
             else
             {
-                if (string.IsNullOrWhiteSpace(map))
-                {
-                    serverStatus.AppendLine($"{Constants.ServerOfflineString} | Port: {port}");
-                }
-                else
-                {
-                    serverStatus.AppendLine(
-                        $"Map: {map} - {Constants.ServerOfflineString} | Port: {port}");
-                }
+                serverStatus.AppendLine(string.IsNullOrWhiteSpace(map)
+                    ? $"{Constants.ServerOfflineString} | Port: {port}"
+                    : $"Map: {map} - {Constants.ServerOfflineString} | Port: {port}");
             }
         }
 

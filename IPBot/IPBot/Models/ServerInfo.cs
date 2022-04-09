@@ -1,9 +1,10 @@
 ﻿namespace IPBot.Models
 {
-    internal class ServerInfo
+    internal record ServerInfo
     {
-        public string Map { get; set; }
-        public int PlayerCount { get; set; }
-        public List<string> PlayerNames { get; set; }
+        public bool Online { get; } = false;
+        public string Map { get; }
+        public int PlayerCount { get; }
+        public List<string> PlayerNames { get; }
     }
 }

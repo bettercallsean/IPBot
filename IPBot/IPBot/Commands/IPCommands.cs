@@ -13,12 +13,9 @@ public class IPCommands : InteractionModuleBase<SocketInteractionContext>
 
     public static async Task<string> GetIPFromFileAsync()
     {
-        if (File.Exists(IPFilePath))
-        {
-            var ip = await File.ReadAllTextAsync(IPFilePath);
-            return ip.TrimEnd();
-        }
-
-        return "Couldn't find IP";
+        if (!File.Exists(IPFilePath)) return "Couldn't find IP";
+        
+        var ip = await File.ReadAllTextAsync(IPFilePath);
+        return ip.TrimEnd();
     }
 }
