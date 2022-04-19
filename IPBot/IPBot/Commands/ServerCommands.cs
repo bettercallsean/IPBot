@@ -11,7 +11,7 @@ public class ServerCommands : InteractionModuleBase<SocketInteractionContext>
         var serverInfo =
             await ServerInfoHelper.GetServerInfoAsync(Constants.MinecraftServerCode, Constants.MinecraftServerPort);
 
-        await PostServerStatus(serverInfo);
+        await PostServerStatusAsync(serverInfo);
     }
 
     [SlashCommand("ark", "get the status of the ark server")]
@@ -58,10 +58,10 @@ public class ServerCommands : InteractionModuleBase<SocketInteractionContext>
     {
         var serverInfo = await ServerInfoHelper.GetServerInfoAsync(Constants.SteamServerCode, Constants.ZomboidServerPort);
 
-        await PostServerStatus(serverInfo);
+        await PostServerStatusAsync(serverInfo);
     }
 
-    private async Task PostServerStatus(ServerInfo serverInfo)
+    private async Task PostServerStatusAsync(ServerInfo serverInfo)
     {
         if (serverInfo.Online)
         {
