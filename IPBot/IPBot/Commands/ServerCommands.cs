@@ -63,20 +63,27 @@ public class ServerCommands : InteractionModuleBase<SocketInteractionContext>
 
     private async Task PostServerStatusAsync(ServerInfo serverInfo)
     {
-        if (serverInfo.Online)
+        if (serverInfo is not null)
         {
-            if (serverInfo.PlayerNames == null)
+            if (serverInfo.Online)
             {
-                await RespondAsync(ServerInfoHelper.PlayerCountStatus(serverInfo.PlayerCount));
+                if (serverInfo.PlayerNames == null)
+                {
+                    await RespondAsync(ServerInfoHelper.PlayerCountStatus(serverInfo.PlayerCount));
+                }
+                else
+                {
+                    await RespondAsync(ServerInfoHelper.PlayerCountStatus(serverInfo.PlayerNames));
+                }
             }
             else
             {
-                await RespondAsync(ServerInfoHelper.PlayerCountStatus(serverInfo.PlayerNames));
+                await RespondAsync(Constants.ServerOfflineString);
             }
         }
         else
         {
-            await RespondAsync(Constants.ServerOfflineString); 
+            await RespondAsync(Constants.ServerOfflineString);
         }
     }
 }
