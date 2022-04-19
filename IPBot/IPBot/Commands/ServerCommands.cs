@@ -1,4 +1,5 @@
 ﻿using IPBot.Helpers;
+using IPBot.Models;
 
 namespace IPBot.Commands;
 
@@ -9,22 +10,8 @@ public class ServerCommands : InteractionModuleBase<SocketInteractionContext>
     {
         var serverInfo =
             await ServerInfoHelper.GetServerInfoAsync(Constants.MinecraftServerCode, Constants.MinecraftServerPort);
-        
-        if (serverInfo.Online)
-        {
-            if (serverInfo.PlayerNames == null)
-            {
-                await RespondAsync(ServerInfoHelper.PlayerCountStatus(serverInfo.PlayerCount));
-            }
-            else
-            {
-                await RespondAsync(ServerInfoHelper.PlayerCountStatus(serverInfo.PlayerNames));
-            }
-        }
-        else
-        {
-            await RespondAsync(Constants.ServerOfflineString); 
-        }
+
+        await PostServerStatus(serverInfo);
     }
 
     [SlashCommand("ark", "get the status of the ark server")]
@@ -71,8 +58,25 @@ public class ServerCommands : InteractionModuleBase<SocketInteractionContext>
     {
         var serverInfo = await ServerInfoHelper.GetServerInfoAsync(Constants.SteamServerCode, Constants.ZomboidServerPort);
 
-        var serverStatus = serverInfo == null ? Constants.ServerOfflineString : ServerInfoHelper.PlayerCountStatus(serverInfo.PlayerNames);
+        await PostServerStatus(serverInfo);
+    }
 
-        await RespondAsync(serverStatus);
+    private async Task PostServerStatus(ServerInfo serverInfo)
+    {
+        if (serverInfo.Online)
+        {
+            if (serverInfo.PlayerNames == null)
+            {
+                await RespondAsync(ServerInfoHelper.PlayerCountStatus(serverInfo.PlayerCount));
+            }
+            else
+            {
+                await RespondAsync(ServerInfoHelper.PlayerCountStatus(serverInfo.PlayerNames));
+            }
+        }
+        else
+        {
+            await RespondAsync(Constants.ServerOfflineString); 
+        }
     }
 }
