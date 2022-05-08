@@ -9,21 +9,18 @@ public class ServerCommands : InteractionModuleBase<SocketInteractionContext>
     {
         var serverInfo =
             await ServerInfoHelper.GetServerInfoAsync(Constants.MinecraftServerCode, Constants.MinecraftServerPort);
-        
+
         if (serverInfo.Online)
         {
-            if (serverInfo.PlayerNames == null)
-            {
-                await RespondAsync(ServerInfoHelper.PlayerCountStatus(serverInfo.PlayerCount));
-            }
-            else
-            {
-                await RespondAsync(ServerInfoHelper.PlayerCountStatus(serverInfo.PlayerNames));
-            }
+            var serverStatus = serverInfo.PlayerNames == null
+                ? ServerInfoHelper.PlayerCountStatus(serverInfo.PlayerCount)
+                : ServerInfoHelper.PlayerCountStatus(serverInfo.PlayerNames);
+
+            await RespondAsync(serverStatus);
         }
         else
         {
-            await RespondAsync(Constants.ServerOfflineString); 
+            await RespondAsync(Constants.ServerOfflineString);
         }
     }
 
@@ -71,7 +68,9 @@ public class ServerCommands : InteractionModuleBase<SocketInteractionContext>
     {
         var serverInfo = await ServerInfoHelper.GetServerInfoAsync(Constants.SteamServerCode, Constants.ZomboidServerPort);
 
-        var serverStatus = serverInfo == null ? Constants.ServerOfflineString : ServerInfoHelper.PlayerCountStatus(serverInfo.PlayerNames);
+        var serverStatus = serverInfo == null
+            ? Constants.ServerOfflineString
+            : ServerInfoHelper.PlayerCountStatus(serverInfo.PlayerNames);
 
         await RespondAsync(serverStatus);
     }
