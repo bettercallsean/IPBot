@@ -67,14 +67,11 @@ public class ServerCommands : InteractionModuleBase<SocketInteractionContext>
         {
             if (serverInfo.Online)
             {
-                if (serverInfo.PlayerNames == null)
-                {
-                    await RespondAsync(ServerInfoHelper.PlayerCountStatus(serverInfo.PlayerCount));
-                }
-                else
-                {
-                    await RespondAsync(ServerInfoHelper.PlayerCountStatus(serverInfo.PlayerNames));
-                }
+                var serverStatus = serverInfo.PlayerNames == null
+                    ? ServerInfoHelper.PlayerCountStatus(serverInfo.PlayerCount)
+                    : ServerInfoHelper.PlayerCountStatus(serverInfo.PlayerNames);
+
+                await RespondAsync(serverStatus);
             }
             else
             {
