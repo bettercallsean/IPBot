@@ -1,7 +1,6 @@
 ﻿using System.Diagnostics;
 using IPBot.Configs;
 using IPBot.Models;
-using Newtonsoft.Json.Serialization;
 
 namespace IPBot.Helpers;
 
@@ -31,7 +30,7 @@ internal static class ServerInfoHelper
             _ => $"{Constants.SeverOnlineString} {playerName} and {playersList.Count - 1} others are playing :)"
         };
     }
-    
+
     public static string PlayerCountStatus(int playerCount)
     {
         return playerCount switch
@@ -78,20 +77,15 @@ internal static class ServerInfoHelper
         {
             return string.Empty;
         }
-        
+
         var result = await process.StandardOutput.ReadToEndAsync();
         return result;
     }
 
     private static ServerInfo ParseServerInfoJson(string serverInfo)
     {
-        return string.IsNullOrWhiteSpace(serverInfo) ? null : JsonConvert.DeserializeObject<ServerInfo>(serverInfo, new JsonSerializerSettings
-        {
-            ContractResolver = new DefaultContractResolver
-            {
-                NamingStrategy = new SnakeCaseNamingStrategy()
-            },
-            Formatting = Formatting.Indented
-        });
+        return string.IsNullOrWhiteSpace(serverInfo)
+            ? null
+            : System.Text.Json.JsonSerializer.Deserialize<ServerInfo>(serverInfo);
     }
 }
