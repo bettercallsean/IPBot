@@ -7,7 +7,7 @@ namespace IPBot.Helpers;
 internal static class ServerInfoHelper
 {
     private static readonly string _arkServerDataFile = Path.Combine(Constants.ConfigDirectory, "ark_server_data.json");
-    private static readonly string _serverStatusScriptPath = Path.Combine(Constants.ScriptsDirectory, @"get_server_status.py");
+    private static readonly string _serverStatusScriptPath = Path.Combine(Constants.ScriptsDirectory, "get_server_status.py");
 
     public static async Task<ServerInfo> GetServerInfoAsync(string gameCode, int port)
     {
@@ -86,6 +86,6 @@ internal static class ServerInfoHelper
     {
         return string.IsNullOrWhiteSpace(serverInfo)
             ? null
-            : System.Text.Json.JsonSerializer.Deserialize<ServerInfo>(serverInfo);
+            : JsonConvert.DeserializeObject<ServerInfo>(serverInfo);
     }
 }
