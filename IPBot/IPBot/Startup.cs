@@ -5,24 +5,24 @@ namespace IPBot;
 
 public class Startup
 {
-    public IConfigurationRoot Configuration { get; }
+    private readonly IConfigurationRoot _configuration;
 
-    public Startup(string[] args)
+    public Startup()
     {
         var builder = new ConfigurationBuilder()
             .SetBasePath(AppContext.BaseDirectory)
             .AddJsonFile($"{Constants.ConfigDirectory}/config.json");
 
-        Configuration = builder.Build();
+        _configuration = builder.Build();
     }
 
-    public static async Task RunAsync(string[] args)
+    public static async Task RunAsync()
     {
-        var startup = new Startup(args);
-        await startup.RunAsync();
+        var startup = new Startup();
+        await startup.ConfigureBotAsync();
     }
 
-    private async Task RunAsync()
+    private async Task ConfigureBotAsync()
     {
         var services = new ServiceCollection();
         ConfigureServices(services);
@@ -46,6 +46,6 @@ public class Startup
             .AddSingleton(x => new InteractionService(x.GetRequiredService<DiscordSocketClient>()))
             .AddSingleton<CommandHandler>()
             .AddScoped<StartupService>()
-            .AddSingleton(Configuration);
+            .AddSingleton(_configuration);
     }
 }

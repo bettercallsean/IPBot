@@ -1,7 +1,7 @@
 ﻿namespace IPBot;
 
-class MainClass
+public static class Program
 {
-    public static async Task Main(string[] args)
-        => await Startup.RunAsync(args);
+    public static async Task Main()
+        => await Startup.RunAsync();
 }
