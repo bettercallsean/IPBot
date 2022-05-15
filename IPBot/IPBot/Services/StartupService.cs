@@ -36,7 +36,7 @@ public class StartupService
         }
         else
         {
-            await _commands.RegisterCommandsGloballyAsync(true);
+            await _commands.RegisterCommandsGloballyAsync();
         }
     }
 
@@ -51,15 +51,28 @@ public class StartupService
 
         if (!File.Exists(ipChangedFile)) return;
 
-        foreach (var (guildId, textChannelId) in _discordChannels)
+        if (IsDebug())
         {
-            var guild = _discord.GetGuild(guildId);
-            var channel = guild.GetTextChannel(textChannelId);
-
-            await channel.SendMessageAsync($"Beep boop. The server IP has changed to {ip}");
+            var testGuildId = ulong.Parse(_config["testGuild"]);
+            var testChannelId = ulong.Parse(_config["testGuildTextChannel"]);
+            
+            var guild = _discord.GetGuild(testGuildId);
+            var channel = guild.GetTextChannel(testChannelId);
+            
+            await channel.SendMessageAsync($"⚠ Beep boop. The server IP has changed to {ip} ⚠");
         }
+        else
+        {
+            foreach (var (guildId, textChannelId) in _discordChannels)
+            {
+                var guild = _discord.GetGuild(guildId);
+                var channel = guild.GetTextChannel(textChannelId);
 
-        File.Delete(ipChangedFile);
+                await channel.SendMessageAsync($"⚠ Beep boop. The server IP has changed to {ip} ⚠");
+            }
+            
+            File.Delete(ipChangedFile);
+        }
     }
 
     private static bool IsDebug()
