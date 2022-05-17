@@ -7,7 +7,7 @@ internal class MessageAnalyserService
 {
     private static readonly AnimeAnalyser.AnimeAnalyser AnimeAnalyser = new();
     
-    private static readonly List<string> _responseList = new()
+    private static readonly List<string> ResponseList = new()
     {
         "https://c.tenor.com/xwvZutw8Z7AAAAAC/tenor.gif",
         "https://64.media.tumblr.com/c045b0be831f9a3eaff6ef009d182f03/tumblr_mh958xh2jX1qa8a12o1_500.gif",
@@ -24,7 +24,7 @@ internal class MessageAnalyserService
             if (await MessageContainsAnimeAsync(message))
             {
                 await message.DeleteAsync();
-                await message.Channel.SendMessageAsync(_responseList.OrderBy(_ => Guid.NewGuid()).Take(1).First());
+                await message.Channel.SendMessageAsync(ResponseList.OrderBy(_ => Guid.NewGuid()).Take(1).First());
             }
         }
     }
