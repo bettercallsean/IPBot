@@ -12,9 +12,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <None Update="Config\azure.json">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </None>
       <None Update="AzureConfig\azure_credentials.json">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </None>
