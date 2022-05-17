@@ -46,6 +46,7 @@ public class Startup
             .AddSingleton(x => new InteractionService(x.GetRequiredService<DiscordSocketClient>()))
             .AddSingleton<CommandHandler>()
             .AddScoped<StartupService>()
+            .AddScoped<MessageAnalyserService>()
             .AddSingleton(_configuration);
     }
 }

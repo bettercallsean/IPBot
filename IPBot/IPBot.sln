@@ -5,6 +5,8 @@ VisualStudioVersion = 17.0.31912.275
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IPBot", "IPBot\IPBot.csproj", "{51AD51CF-CC75-47B1-8EBE-AE4B72610323}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IPBot.AnimeAnalyser", "IPBot.AnimeAnalyser\IPBot.AnimeAnalyser.csproj", "{3EBAD48B-CDF9-4756-B7D8-4B4C4DE0E901}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{51AD51CF-CC75-47B1-8EBE-AE4B72610323}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{51AD51CF-CC75-47B1-8EBE-AE4B72610323}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{51AD51CF-CC75-47B1-8EBE-AE4B72610323}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3EBAD48B-CDF9-4756-B7D8-4B4C4DE0E901}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3EBAD48B-CDF9-4756-B7D8-4B4C4DE0E901}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3EBAD48B-CDF9-4756-B7D8-4B4C4DE0E901}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3EBAD48B-CDF9-4756-B7D8-4B4C4DE0E901}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
