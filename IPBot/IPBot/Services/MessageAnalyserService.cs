@@ -31,7 +31,7 @@ internal class MessageAnalyserService
     
     private static async Task<bool> MessageContainsAnimeAsync(SocketMessage message)
     {
-        if (message.Content != null)
+        if (!string.IsNullOrEmpty(message.Content))
         {
             double animeScore;
 
