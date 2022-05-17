@@ -25,6 +25,29 @@ public class StartupService
 
         _discord.Connected += CheckForUpdatedIPAsync;
         _discord.Ready += ReadyAsync;
+        _discord.MessageReceived += DiscordOnMessageReceived;
+    }
+
+    private async Task DiscordOnMessageReceived(SocketMessage message)
+    {
+        var responseList = new List<string>
+        {
+           "https://c.tenor.com/xwvZutw8Z7AAAAAC/tenor.gif",
+           "https://64.media.tumblr.com/c045b0be831f9a3eaff6ef009d182f03/tumblr_mh958xh2jX1qa8a12o1_500.gif",
+           "https://i2.wp.com/www.nerdsandbeyond.com/wp-content/uploads/2020/08/SmoggyHilariousBaiji-size_restricted.gif?resize=540%2C304",
+           "https://c.tenor.com/NDe_7Jj8RaEAAAAd/tenor.gif"
+        };
+
+        var channelName = IsDebug() ? "anti-anime-test" : "the-gospel";
+
+        if (message.Channel.Name == channelName && !message.Author.IsBot)
+        {
+            if (await MessageAnalyserService.MessageContainsAnimeAsync(message))
+            {
+                await message.DeleteAsync();
+                await message.Channel.SendMessageAsync(responseList.OrderBy(_ => Guid.NewGuid()).Take(1).First());
+            }
+        }
     }
 
     private async Task ReadyAsync()

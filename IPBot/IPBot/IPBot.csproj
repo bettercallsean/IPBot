@@ -59,4 +59,7 @@
   <ItemGroup>
     <Folder Update="..\..\scripts" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\IPBot.AnimeAnalyser\IPBot.AnimeAnalyser.csproj" />
+  </ItemGroup>
 </Project>
