@@ -26,7 +26,21 @@ internal class MessageAnalyserService
             }
             else
             {
-                animeScore = await GetAnimeScoreAsync(message.Content + ".gif");
+                var imageFormats = new List<string>
+                {
+                    ".png",
+                    ".jpeg",
+                    ".jpg",
+                    ".tiff"
+                };
+                
+                var url = message.Content;
+                if(!imageFormats.Contains(message.Content[new Range(message.Content.Length - 4, message.Content.Length)]) )
+                {
+                    url = message.Content + ".gif";
+                }
+                
+                animeScore = await GetAnimeScoreAsync(url);
             }
 
             if (animeScore > 0)
