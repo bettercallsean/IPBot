@@ -5,7 +5,7 @@ namespace IPBot.Services;
 
 public class MessageAnalyserService
 {
-    private static readonly List<string> ResponseList = Resources.Resources.ResponseGifs.Split(Environment.NewLine).ToList();
+    private readonly List<string> _responseList = Resources.Resources.ResponseGifs.Split(Environment.NewLine).ToList();
     private readonly AnimeAnalyser.AnimeAnalyser _animeAnalyser;
     private readonly TenorApiHelper _tenorApiHelper;
 
@@ -26,7 +26,7 @@ public class MessageAnalyserService
             if (await MessageContainsAnimeAsync(message))
             {
                 await message.DeleteAsync();
-                await message.Channel.SendMessageAsync(ResponseList.OrderBy(_ => Guid.NewGuid()).Take(1).First());
+                await message.Channel.SendMessageAsync(_responseList.OrderBy(_ => Guid.NewGuid()).Take(1).First());
             }
         }
     }

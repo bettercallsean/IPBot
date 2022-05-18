@@ -9,39 +9,39 @@ public class TenorApiHelper
 {
     private const string TenorGifEndpoint = "https://g.tenor.com/v1/gifs?";
     private readonly IConfigurationRoot _config;
-    
+
     public TenorApiHelper(IConfigurationRoot config)
     {
         _config = config;
     }
-    
+
     public async Task<string> GetDirectTenorGifUrlAsync(string tenorUrl)
     {
         var tenorGifId = GetTenorGifIdFromUrl(tenorUrl);
-        var apiUrl = CreateAPIUrl(new Dictionary<string, string>
+        var apiUrl = CreateApiUrl(new Dictionary<string, string>
         {
-            {"key", _config["tenorAPIKey"]},
-            {"media_filter", "minimal"},
-            {"ids", tenorGifId}
+            { "key", _config["tenorAPIKey"] },
+            { "media_filter", "minimal" },
+            { "ids", tenorGifId }
         });
+
         using var httpClient = new HttpClient();
-        
+
         var content = new StringContent(apiUrl);
         content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
-        
-        var response = await httpClient.GetAsync(apiUrl);
-        var contentString = await response.Content.ReadAsStringAsync();
 
-        return ParseTenorAPIJson(contentString);
+        var gifJson = await httpClient.GetStringAsync(apiUrl);
+
+        return ParseTenorApiJson(gifJson);
     }
 
-    private string GetTenorGifIdFromUrl(string tenorUrl)
+    private static string GetTenorGifIdFromUrl(string tenorUrl)
     {
         var urlParts = tenorUrl.Split("-");
         return urlParts.Last();
     }
 
-    private string CreateAPIUrl(IDictionary<string, string> parameters)
+    private static string CreateApiUrl(IDictionary<string, string> parameters)
     {
         var uriBuilder = new UriBuilder(TenorGifEndpoint);
         var paramValues = HttpUtility.ParseQueryString(uriBuilder.Query);
@@ -50,13 +50,13 @@ public class TenorApiHelper
         {
             paramValues.Add(parameter.Key, parameter.Value);
         }
-        
+
         uriBuilder.Query = paramValues.ToString() ?? string.Empty;
 
         return uriBuilder.Uri.AbsoluteUri;
     }
 
-    private string ParseTenorAPIJson(string jsonString)
+    private static string ParseTenorApiJson(string jsonString)
     {
         var jsonRoot = JsonConvert.DeserializeObject<Root>(jsonString);
 
