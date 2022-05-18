@@ -43,7 +43,7 @@ public class MessageAnalyserService
                 var youtubeUrlModel = MessageContainsYouTubeLink(message.Content);
                 if (youtubeUrlModel.Success)
                 {
-                    var url = $"https://i.ytimg.com/vi/{youtubeUrlModel.Url}/sddefault.jpg";
+                    var url = $"https://i3.ytimg.com/vi/{youtubeUrlModel.Url}/maxresdefault.jpg";
 
                     animeScore = await GetAnimeScoreAsync(url);
                 }
