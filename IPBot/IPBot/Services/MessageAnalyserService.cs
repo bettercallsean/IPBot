@@ -5,32 +5,21 @@ namespace IPBot.Services;
 
 public class MessageAnalyserService
 {
+    private static readonly List<string> ResponseList = Resources.Resources.ResponseGifs.Split(Environment.NewLine).ToList();
     private readonly AnimeAnalyser.AnimeAnalyser _animeAnalyser;
     private readonly TenorApiHelper _tenorApiHelper;
-    private static readonly List<string> ResponseList = new()
-    {
-        "https://c.tenor.com/xwvZutw8Z7AAAAAC/tenor.gif",
-        "https://64.media.tumblr.com/c045b0be831f9a3eaff6ef009d182f03/tumblr_mh958xh2jX1qa8a12o1_500.gif",
-        "https://i2.wp.com/www.nerdsandbeyond.com/wp-content/uploads/2020/08/SmoggyHilariousBaiji-size_restricted.gif?resize=540%2C304",
-        "https://c.tenor.com/NDe_7Jj8RaEAAAAd/tenor.gif",
-        "https://tenor.com/view/unfunny-meme-citation-moa-a-citation-warning-issued-no-penalty-gif-16450177",
-        "https://64.media.tumblr.com/2714da2b6d92e94bc21654b2d6e2a239/tumblr_mq3rkbHSDG1szkv9io1_500.gif",
-        "https://gfycat.com/unhappyfatherlygoa",
-        "https://c.tenor.com/JsV3NsOZPF4AAAAd/tenor.gif",
-        "https://media.discordapp.net/attachments/140558319340355584/976269413047226378/Untitled.gif",
-        "https://i.imgur.com/R6qrD.gif",
-        "https://64.media.tumblr.com/tumblr_lv2kv1n4OU1r4zr2vo2_r4_500.gif"
-    };
 
     public MessageAnalyserService(AnimeAnalyser.AnimeAnalyser animeAnalyser, TenorApiHelper tenorApiHelper)
     {
         _animeAnalyser = animeAnalyser;
         _tenorApiHelper = tenorApiHelper;
     }
-    
+
     public async Task CheckMessageForAnimeAsync(SocketMessage message)
     {
-        var channelNames = DebugHelper.IsDebug() ? new List<string> { "anti-anime-test" } : new List<string> { "anti-anime-test", "the-gospel" };
+        var channelNames = DebugHelper.IsDebug()
+            ? new List<string> { "anti-anime-test" }
+            : new List<string> { "anti-anime-test", "the-gospel" };
 
         if (channelNames.Contains(message.Channel.Name) && !message.Author.IsBot)
         {

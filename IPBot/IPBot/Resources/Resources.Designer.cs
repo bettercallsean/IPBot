@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace IPBot.Configs {
+namespace IPBot.Resources {
     using System;
     
     
@@ -39,7 +39,7 @@ namespace IPBot.Configs {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("IPBot.Configs.Resources", typeof(Resources).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("IPBot.Resources.Resources", typeof(Resources).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -57,6 +57,20 @@ namespace IPBot.Configs {
             }
             set {
                 resourceCulture = value;
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to https://c.tenor.com/xwvZutw8Z7AAAAAC/tenor.gif
+        ///https://64.media.tumblr.com/c045b0be831f9a3eaff6ef009d182f03/tumblr_mh958xh2jX1qa8a12o1_500.gif
+        ///https://i2.wp.com/www.nerdsandbeyond.com/wp-content/uploads/2020/08/SmoggyHilariousBaiji-size_restricted.gif?resize=540%2C304
+        ///https://c.tenor.com/NDe_7Jj8RaEAAAAd/tenor.gif
+        ///https://tenor.com/view/unfunny-meme-citation-moa-a-citation-warning-issued-no-penalty-gif-16450177
+        ///https://64.media.tumblr.com/2714da2b6d92e94bc21654b2d6e2a239/tumblr_mq3rkbHSDG1szkv9io1_500. [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string ResponseGifs {
+            get {
+                return ResourceManager.GetString("ResponseGifs", resourceCulture);
             }
         }
         

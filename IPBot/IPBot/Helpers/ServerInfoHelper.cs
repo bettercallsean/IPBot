@@ -1,12 +1,11 @@
 ﻿using System.Diagnostics;
-using IPBot.Configs;
 
 namespace IPBot.Helpers;
 
 internal static class ServerInfoHelper
 {
-    private static readonly string _arkServerDataFile = Path.Combine(Constants.ConfigDirectory, "ark_server_data.json");
-    private static readonly string _serverStatusScriptPath = Path.Combine(Constants.ScriptsDirectory, "get_server_status.py");
+    private static readonly string ArkServerDataFile = Path.Combine(Constants.ConfigDirectory, "ark_server_data.json");
+    private static readonly string ServerStatusScriptPath = Path.Combine(Constants.ScriptsDirectory, "get_server_status.py");
 
     public static async Task<ServerInfo> GetServerInfoAsync(string gameCode, int port)
     {
@@ -41,24 +40,24 @@ internal static class ServerInfoHelper
     }
     public static async Task<Dictionary<ushort, string>> LoadArkServerDataAsync()
     {
-        if (!File.Exists(_arkServerDataFile))
+        if (!File.Exists(ArkServerDataFile))
         {
             await CreateArkDataFileAsync();
         }
 
-        using var file = new StreamReader(_arkServerDataFile);
+        using var file = new StreamReader(ArkServerDataFile);
         return JsonConvert.DeserializeObject<Dictionary<ushort, string>>(await file.ReadToEndAsync());
     }
 
     public static async Task SaveArkServerDataAsync(Dictionary<ushort, string> servers)
     {
-        await using var file = new StreamWriter(_arkServerDataFile);
+        await using var file = new StreamWriter(ArkServerDataFile);
         await file.WriteAsync(JsonConvert.SerializeObject(servers));
     }
 
     private static async Task CreateArkDataFileAsync()
     {
-        var ports = Resources.ServerPorts.Split(Environment.NewLine).ToDictionary(ushort.Parse, _ => string.Empty);
+        var ports = Resources.Resources.ServerPorts.Split(Environment.NewLine).ToDictionary(ushort.Parse, _ => string.Empty);
         await SaveArkServerDataAsync(ports);
     }
 
@@ -67,7 +66,7 @@ internal static class ServerInfoHelper
         using var process = Process.Start(new ProcessStartInfo
         {
             FileName = "python",
-            Arguments = $"{_serverStatusScriptPath} {gameCode} {portNumber}",
+            Arguments = $"{ServerStatusScriptPath} {gameCode} {portNumber}",
             UseShellExecute = false,
             RedirectStandardOutput = true,
         });
