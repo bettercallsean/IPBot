@@ -1,12 +1,12 @@
 ﻿using System.Text.RegularExpressions;
 using IPBot.Helpers;
-using IPBot.Models;
 
 namespace IPBot.Services;
 
-internal class MessageAnalyserService
+public class MessageAnalyserService
 {
-    private static readonly AnimeAnalyser.AnimeAnalyser AnimeAnalyser = new();
+    private readonly AnimeAnalyser.AnimeAnalyser _animeAnalyser;
+    private readonly TenorApiHelper _tenorApiHelper;
     private static readonly List<string> ResponseList = new()
     {
         "https://c.tenor.com/xwvZutw8Z7AAAAAC/tenor.gif",
@@ -21,8 +21,14 @@ internal class MessageAnalyserService
         "https://i.imgur.com/R6qrD.gif",
         "https://64.media.tumblr.com/tumblr_lv2kv1n4OU1r4zr2vo2_r4_500.gif"
     };
+
+    public MessageAnalyserService(AnimeAnalyser.AnimeAnalyser animeAnalyser, TenorApiHelper tenorApiHelper)
+    {
+        _animeAnalyser = animeAnalyser;
+        _tenorApiHelper = tenorApiHelper;
+    }
     
-    public static async Task CheckMessageForAnimeAsync(SocketMessage message)
+    public async Task CheckMessageForAnimeAsync(SocketMessage message)
     {
         var channelNames = DebugHelper.IsDebug() ? new List<string> { "anti-anime-test" } : new List<string> { "anti-anime-test", "the-gospel" };
 
@@ -36,7 +42,7 @@ internal class MessageAnalyserService
         }
     }
 
-    private static async Task<bool> MessageContainsAnimeAsync(SocketMessage message)
+    private async Task<bool> MessageContainsAnimeAsync(SocketMessage message)
     {
         if (!string.IsNullOrEmpty(message.Content))
         {
@@ -66,7 +72,7 @@ internal class MessageAnalyserService
                     var url = messageUrlModel.Url;
                     if (!imageFormats.Any(x => message.Content.Contains(x)))
                     {
-                        url = message.Content + ".gif";
+                        url = await _tenorApiHelper.GetDirectTenorGifUrlAsync(messageUrlModel.Url);
                     }
 
                     animeScore = await GetAnimeScoreAsync(url);
@@ -94,9 +100,9 @@ internal class MessageAnalyserService
         return false;
     }
 
-    private static async Task<double> GetAnimeScoreAsync(string url)
+    private async Task<double> GetAnimeScoreAsync(string url)
     {
-        return await AnimeAnalyser.GetAnimeScoreAsync(url);
+        return await _animeAnalyser.GetAnimeScoreAsync(url);
     }
 
     private static MessageUrlModel MessageContainsUrl(string messageContent)
