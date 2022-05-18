@@ -1,5 +1,4 @@
 ﻿using System.Diagnostics;
-using IPBot.Configs;
 using IPBot.Models;
 
 namespace IPBot.Helpers;
@@ -59,7 +58,7 @@ internal static class ServerInfoHelper
 
     private static async Task CreateArkDataFileAsync()
     {
-        var ports = Resources.ServerPorts.Split(Environment.NewLine).ToDictionary(ushort.Parse, _ => string.Empty);
+        var ports = Resources.Resources.ServerPorts.Split(Environment.NewLine).ToDictionary(ushort.Parse, _ => string.Empty);
         await SaveArkServerDataAsync(ports);
     }
 
