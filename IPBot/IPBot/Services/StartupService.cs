@@ -7,13 +7,15 @@ public class StartupService
     private readonly IConfigurationRoot _config;
     private readonly DiscordSocketClient _discord;
     private readonly InteractionService _commands;
+    private readonly MessageAnalyserService _messageAnalyserService;
     private readonly Dictionary<ulong, ulong> _discordChannels;
 
-    public StartupService(DiscordSocketClient discord, InteractionService commands, IConfigurationRoot config)
+    public StartupService(DiscordSocketClient discord, InteractionService commands, IConfigurationRoot config, MessageAnalyserService messageAnalyserService)
     {
         _discord = discord;
         _commands = commands;
         _config = config;
+        _messageAnalyserService = messageAnalyserService;
 
         _discordChannels = JsonConvert.DeserializeObject<Dictionary<ulong, ulong>>(File.ReadAllText($"{Constants.ConfigDirectory}/discord_channels.json"));
     }
@@ -32,7 +34,7 @@ public class StartupService
 
     private async Task DiscordOnMessageReceived(SocketMessage message)
     {
-        await MessageAnalyserService.CheckMessageForAnimeAsync(message);
+        await _messageAnalyserService.CheckMessageForAnimeAsync(message);
     }
 
     private async Task ReadyAsync()

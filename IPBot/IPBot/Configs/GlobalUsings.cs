@@ -9,3 +9,4 @@ global using Discord.Interactions;
 global using Discord.WebSocket;
 global using Microsoft.Extensions.Configuration;
 global using Newtonsoft.Json;
+global using IPBot.Models;

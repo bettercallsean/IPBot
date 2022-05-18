@@ -1,4 +1,5 @@
-﻿using IPBot.Services;
+﻿using IPBot.Helpers;
+using IPBot.Services;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace IPBot;
@@ -47,6 +48,8 @@ public class Startup
             .AddSingleton<CommandHandler>()
             .AddScoped<StartupService>()
             .AddScoped<MessageAnalyserService>()
+            .AddScoped<TenorApiHelper>()
+            .AddSingleton<AnimeAnalyser.AnimeAnalyser>()
             .AddSingleton(_configuration);
     }
 }
