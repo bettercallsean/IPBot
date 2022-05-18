@@ -1,5 +1,4 @@
 ﻿using IPBot.Helpers;
-using IPBot.Models;
 
 namespace IPBot.Commands;
 

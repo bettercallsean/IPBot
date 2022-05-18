@@ -1,5 +1,5 @@
 ﻿using System.Diagnostics;
-using IPBot.Models;
+using IPBot.Configs;
 
 namespace IPBot.Helpers;
 

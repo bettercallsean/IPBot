@@ -1,15 +1,21 @@
 ﻿using System.Text.RegularExpressions;
 using IPBot.Helpers;
-using IPBot.Models;
 
 namespace IPBot.Services;
 
-internal class MessageAnalyserService
+public class MessageAnalyserService
 {
-    private static readonly AnimeAnalyser.AnimeAnalyser AnimeAnalyser = new();
     private static readonly List<string> ResponseList = Resources.Resources.ResponseGifs.Split(Environment.NewLine).ToList();
+    private readonly AnimeAnalyser.AnimeAnalyser _animeAnalyser;
+    private readonly TenorApiHelper _tenorApiHelper;
 
-    public static async Task CheckMessageForAnimeAsync(SocketMessage message)
+    public MessageAnalyserService(AnimeAnalyser.AnimeAnalyser animeAnalyser, TenorApiHelper tenorApiHelper)
+    {
+        _animeAnalyser = animeAnalyser;
+        _tenorApiHelper = tenorApiHelper;
+    }
+
+    public async Task CheckMessageForAnimeAsync(SocketMessage message)
     {
         var channelNames = DebugHelper.IsDebug()
             ? new List<string> { "anti-anime-test" }
@@ -25,7 +31,7 @@ internal class MessageAnalyserService
         }
     }
 
-    private static async Task<bool> MessageContainsAnimeAsync(SocketMessage message)
+    private async Task<bool> MessageContainsAnimeAsync(SocketMessage message)
     {
         if (!string.IsNullOrEmpty(message.Content))
         {
@@ -55,7 +61,7 @@ internal class MessageAnalyserService
                     var url = messageUrlModel.Url;
                     if (!imageFormats.Any(x => message.Content.Contains(x)))
                     {
-                        url = message.Content + ".gif";
+                        url = await _tenorApiHelper.GetDirectTenorGifUrlAsync(messageUrlModel.Url);
                     }
 
                     animeScore = await GetAnimeScoreAsync(url);
@@ -83,9 +89,9 @@ internal class MessageAnalyserService
         return false;
     }
 
-    private static async Task<double> GetAnimeScoreAsync(string url)
+    private async Task<double> GetAnimeScoreAsync(string url)
     {
-        return await AnimeAnalyser.GetAnimeScoreAsync(url);
+        return await _animeAnalyser.GetAnimeScoreAsync(url);
     }
 
     private static MessageUrlModel MessageContainsUrl(string messageContent)
