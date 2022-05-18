@@ -1,5 +1,7 @@
-﻿using IPBot.AnimeAnalyser.Models;
+﻿using IPBot.AnimeAnalyser.Helpers;
+using IPBot.AnimeAnalyser.Models;
 using Microsoft.Azure.CognitiveServices.Vision.ComputerVision;
+using Microsoft.Azure.CognitiveServices.Vision.ComputerVision.Models;
 using Newtonsoft.Json;
 
 namespace IPBot.AnimeAnalyser;
@@ -18,8 +20,19 @@ public class AnimeAnalyser
 
     public async Task<double> GetAnimeScoreAsync(string url)
     {
-        var imageTags = await _computerVisionClient.TagImageAsync(url);
+        TagResult imageTags;
+        
+        try
+        {
+            imageTags = await _computerVisionClient.TagImageAsync(url);
+        }
+        catch (ComputerVisionErrorResponseException)
+        {
+            var compressedImage = await ImageCompressorHelper.CompressImageFromUrlAsync(url);
 
+            imageTags = await _computerVisionClient.TagImageInStreamAsync(compressedImage);
+        }
+        
         return imageTags.Tags.Where(x => x.Name == "anime").Select(x => x.Confidence).FirstOrDefault();
     }
     
