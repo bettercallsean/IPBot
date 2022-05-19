@@ -4,8 +4,8 @@ namespace IPBot.Helpers;
 
 internal static class ServerInfoHelper
 {
+    private const string ServerStatusScriptName = "get_server_status.py";
     private static readonly string ArkServerDataFile = Path.Combine(Constants.ConfigDirectory, "ark_server_data.json");
-    private static readonly string ServerStatusScriptPath = Path.Combine(Constants.ScriptsDirectory, "get_server_status.py");
 
     public static async Task<ServerInfo> GetServerInfoAsync(string gameCode, int port)
     {
@@ -63,21 +63,10 @@ internal static class ServerInfoHelper
 
     private static async Task<string> GetServerInfoJsonAsync(string gameCode, int portNumber)
     {
-        using var process = Process.Start(new ProcessStartInfo
-        {
-            FileName = "python",
-            Arguments = $"{ServerStatusScriptPath} {gameCode} {portNumber}",
-            UseShellExecute = false,
-            RedirectStandardOutput = true,
-        });
+        var serverResults =
+            await PythonScriptHelper.RunPythonScriptAsync(ServerStatusScriptName, $"{gameCode} {portNumber}");
 
-        if (process == null)
-        {
-            return string.Empty;
-        }
-
-        var result = await process.StandardOutput.ReadToEndAsync();
-        return result;
+        return serverResults;
     }
 
     private static ServerInfo ParseServerInfoJson(string serverInfo)
