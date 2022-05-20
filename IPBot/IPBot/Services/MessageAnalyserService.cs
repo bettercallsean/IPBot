@@ -110,15 +110,15 @@ public class MessageAnalyserService
         foreach (var word in messageContent.Split())
         {
             var urlMatch = Regex.Match(word, urlRegex);
-            var emojiRegex = Regex.Match(word, discordEmojiRegex);
+            var emojiMatch = Regex.Match(word, discordEmojiRegex);
             
-            if (!urlMatch.Success && !emojiRegex.Success) continue;
+            if (!urlMatch.Success && !emojiMatch.Success) continue;
 
             return new MessageMediaModel
             {
                 ContainsMedia = true,
                 Url = urlMatch.Success ? urlMatch.Value : string.Empty,
-                EmojiId = emojiRegex.Success ? emojiRegex.Groups.Values.ToArray()[1].ToString() : string.Empty
+                EmojiId = emojiMatch.Success ? emojiMatch.Groups.Values.ToArray()[1].ToString() : string.Empty
             };
         }
 
