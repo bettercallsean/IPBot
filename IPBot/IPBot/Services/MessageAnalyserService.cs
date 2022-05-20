@@ -35,38 +35,45 @@ public class MessageAnalyserService
     {
         if (!string.IsNullOrEmpty(message.Content))
         {
-            var messageUrlModel = MessageContainsUrl(message.Content);
-            if (messageUrlModel.Success)
+            var messageMediaModel = MessageContainsMedia(message.Content);
+            if (messageMediaModel.ContainsMedia)
             {
                 double animeScore;
-
-                var youtubeUrlModel = MessageContainsYouTubeLink(message.Content);
-                if (youtubeUrlModel.Success)
+                if (!string.IsNullOrEmpty(messageMediaModel.EmojiId))
                 {
-                    var url = $"https://i3.ytimg.com/vi/{youtubeUrlModel.Url}/maxresdefault.jpg";
-
-                    animeScore = await GetAnimeScoreAsync(url);
+                    var emojiUrl = $"https://cdn.discordapp.com/emojis/{messageMediaModel.EmojiId}.png";
+                    animeScore = await GetAnimeScoreAsync(emojiUrl);
                 }
                 else
                 {
-                    var imageFormats = new List<string>
+                    var youtubeUrlModel = MessageContainsYouTubeLink(message.Content);
+                    if (youtubeUrlModel.ContainsMedia)
                     {
-                        ".png",
-                        ".jpeg",
-                        ".jpg",
-                        ".tiff",
-                        ".mp4"
-                    };
+                        var url = $"https://i3.ytimg.com/vi/{youtubeUrlModel.Url}/maxresdefault.jpg";
 
-                    var url = messageUrlModel.Url;
-                    if (!imageFormats.Any(x => message.Content.Contains(x)))
-                    {
-                        url = await _tenorApiHelper.GetDirectTenorGifUrlAsync(messageUrlModel.Url);
+                        animeScore = await GetAnimeScoreAsync(url);
                     }
+                    else
+                    {
+                        var imageFormats = new List<string>
+                        {
+                            ".png",
+                            ".jpeg",
+                            ".jpg",
+                            ".tiff",
+                            ".mp4"
+                        };
 
-                    animeScore = await GetAnimeScoreAsync(url);
+                        var url = messageMediaModel.Url;
+                        if (!imageFormats.Any(x => message.Content.Contains(x)))
+                        {
+                            url = await _tenorApiHelper.GetDirectTenorGifUrlAsync(messageMediaModel.Url);
+                        }
+
+                        animeScore = await GetAnimeScoreAsync(url);
+                    }
                 }
-
+                
                 if (animeScore > 0)
                 {
                     return true;
@@ -94,34 +101,40 @@ public class MessageAnalyserService
         return await _animeAnalyser.GetAnimeScoreAsync(url);
     }
 
-    private static MessageUrlModel MessageContainsUrl(string messageContent)
+    private static MessageMediaModel MessageContainsMedia(string messageContent)
     {
+        const string discordEmojiRegex = "<:[a-zA-Z0-9]+:([0-9]+)>";
+        const string urlRegex =
+            @"^https?:\/\/(?:www\\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b(?:[-a-zA-Z0-9()@:%_\+.~#?&\/=]*)$";
+        
         foreach (var word in messageContent.Split())
         {
-            var urlMatch = Regex.Match(word, @"^https?:\/\/(?:www\\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b(?:[-a-zA-Z0-9()@:%_\+.~#?&\/=]*)$");
+            var urlMatch = Regex.Match(word, urlRegex);
+            var emojiRegex = Regex.Match(word, discordEmojiRegex);
+            
+            if (!urlMatch.Success && !emojiRegex.Success) continue;
 
-            if (!urlMatch.Success) continue;
-
-            return new MessageUrlModel
+            return new MessageMediaModel
             {
-                Success = true,
-                Url = urlMatch.Success ? urlMatch.Value : string.Empty
+                ContainsMedia = true,
+                Url = urlMatch.Success ? urlMatch.Value : string.Empty,
+                EmojiId = emojiRegex.Success ? emojiRegex.Groups.Values.ToArray()[1].ToString() : string.Empty
             };
         }
 
-        return new MessageUrlModel
+        return new MessageMediaModel
         {
-            Success = false
+            ContainsMedia = false
         };
     }
 
-    private static MessageUrlModel MessageContainsYouTubeLink(string messageContent)
+    private static MessageMediaModel MessageContainsYouTubeLink(string messageContent)
     {
         var youtubeUrlMatch = Regex.Match(messageContent, @"^((?:https?:)?\/\/)?((?:www|m)\.)?((?:youtube(-nocookie)?\.com|youtu.be))(\/(?:[\w\-]+\?v=|embed\/|v\/)?)([\w\-]+)(\S+)?$");
 
-        return new MessageUrlModel
+        return new MessageMediaModel
         {
-            Success = youtubeUrlMatch.Success,
+            ContainsMedia = youtubeUrlMatch.Success,
             Url = youtubeUrlMatch.Success ? youtubeUrlMatch.Groups.Values.ToList()[6].ToString() : string.Empty
         };
     }
