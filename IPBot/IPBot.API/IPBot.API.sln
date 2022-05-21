@@ -1,0 +1,22 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IPBot.API", "IPBot.API\IPBot.API.csproj", "{DE36CD7C-21EB-4CAE-AA02-397B194960D2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IPBot.Infrastructure", "..\IPBot.Infrastructure\IPBot.Infrastructure\IPBot.Infrastructure.csproj", "{9446E447-8066-4E99-BC44-16355B86B69C}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{DE36CD7C-21EB-4CAE-AA02-397B194960D2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DE36CD7C-21EB-4CAE-AA02-397B194960D2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DE36CD7C-21EB-4CAE-AA02-397B194960D2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DE36CD7C-21EB-4CAE-AA02-397B194960D2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9446E447-8066-4E99-BC44-16355B86B69C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9446E447-8066-4E99-BC44-16355B86B69C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9446E447-8066-4E99-BC44-16355B86B69C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9446E447-8066-4E99-BC44-16355B86B69C}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
