@@ -1,4 +1,5 @@
 ﻿using IPBot.Helpers;
+using IPBot.Infrastructure.Interfaces;
 
 namespace IPBot.Services;
 
@@ -8,15 +9,18 @@ public class StartupService
     private readonly DiscordSocketClient _discord;
     private readonly InteractionService _commands;
     private readonly MessageAnalyserService _messageAnalyserService;
+    private readonly IIPService _ipService;
     private readonly Dictionary<ulong, ulong> _discordChannels;
 
-    public StartupService(DiscordSocketClient discord, InteractionService commands, IConfigurationRoot config, MessageAnalyserService messageAnalyserService)
+    public StartupService(DiscordSocketClient discord, InteractionService commands, IConfigurationRoot config, MessageAnalyserService messageAnalyserService,
+        IIPService ipService)
     {
         _discord = discord;
         _commands = commands;
         _config = config;
         _messageAnalyserService = messageAnalyserService;
-
+        _ipService = ipService;
+        
         _discordChannels = JsonConvert.DeserializeObject<Dictionary<ulong, ulong>>(File.ReadAllText($"{Constants.ConfigDirectory}/discord_channels.json"));
     }
 
@@ -54,7 +58,7 @@ public class StartupService
     {
         await Task.Delay(1000);
 
-        var ip = await Commands.IPCommands.GetIPFromFileAsync();
+        var ip = await _ipService.GetCurrentIPAsync();
         await _discord.SetGameAsync(ip);
 
         var ipChangedFile = Path.Combine(Constants.BaseDirectory, @"../ip_changed");

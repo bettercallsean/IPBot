@@ -9,6 +9,4 @@ public static class Constants
     public static readonly string ScriptsDirectory = BaseDirectory + "Scripts";
     public const string ServerOfflineString = "The server is currently offline :(";
     public const string SeverOnlineString = "The server is online!";
-    public const string SteamServerCode = "steam";
-    public const string MinecraftServerCode = "mc";
 }
