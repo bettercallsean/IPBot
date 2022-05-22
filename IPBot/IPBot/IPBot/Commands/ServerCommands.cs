@@ -1,14 +1,23 @@
 ﻿using IPBot.Helpers;
+using IPBot.Infrastructure.Interfaces;
+using IPBot.Infrastructure.Models;
 
 namespace IPBot.Commands;
 
 public class ServerCommands : InteractionModuleBase<SocketInteractionContext>
 {
+    private readonly IGameServerService _gameServerService;
+
+    public ServerCommands(IGameServerService gameServerService)
+    {
+        _gameServerService = gameServerService;
+    }
+    
     [SlashCommand("mc", "get the status of the minecraft server")]
     public async Task GetMinecraftServerStatusAsync()
     {
         var serverInfo =
-            await ServerInfoHelper.GetServerInfoAsync(Constants.MinecraftServerCode, Constants.MinecraftServerPort);
+            await _gameServerService.GetMinecraftServerStatusAsync(Constants.MinecraftServerPort);
 
         await PostServerStatusAsync(serverInfo);
     }
@@ -23,7 +32,7 @@ public class ServerCommands : InteractionModuleBase<SocketInteractionContext>
 
         foreach (var (port, map) in arkServers)
         {
-            var serverInfo = await ServerInfoHelper.GetServerInfoAsync(Constants.SteamServerCode, port);
+            var serverInfo = await _gameServerService.GetSteamServerStatusAsync(port);
 
             if (serverInfo.Online)
             {
@@ -55,7 +64,7 @@ public class ServerCommands : InteractionModuleBase<SocketInteractionContext>
     [SlashCommand("zomboid", "get the status of the zomboid server")]
     public async Task GetProjectZomboidServerStatusAsync()
     {
-        var serverInfo = await ServerInfoHelper.GetServerInfoAsync(Constants.SteamServerCode, Constants.ZomboidServerPort);
+        var serverInfo = await _gameServerService.GetSteamServerStatusAsync(Constants.ZomboidServerPort);
 
         await PostServerStatusAsync(serverInfo);
     }
@@ -66,7 +75,7 @@ public class ServerCommands : InteractionModuleBase<SocketInteractionContext>
         {
             if (serverInfo.Online)
             {
-                var serverStatus = serverInfo.PlayerNames == null
+                var serverStatus = serverInfo.PlayerNames.Count == 0
                     ? ServerInfoHelper.PlayerCountStatus(serverInfo.PlayerCount)
                     : ServerInfoHelper.PlayerCountStatus(serverInfo.PlayerNames);
 

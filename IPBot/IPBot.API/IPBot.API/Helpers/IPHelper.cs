@@ -3,22 +3,28 @@
 public static class IPHelper
 {
     private static readonly string IPFilePath = Path.Combine(Constants.BaseDirectory, @"../latest_ip.txt");
+    private static readonly string IPChangedFilePath = Path.Combine(Constants.BaseDirectory, @"../ip_changed");
     private static string _ip = string.Empty;
     
     public static async Task<string> GetIPFromFileAsync()
     {
-        if (!string.IsNullOrWhiteSpace(_ip)) return _ip;
-        
-        if (!File.Exists(IPFilePath))
+        string ip;
+        if (File.Exists(IPChangedFilePath))
         {
-            _ip = await PythonScriptHelper.RunPythonScriptAsync("get_ip.py");
+            ip = await File.ReadAllTextAsync(IPFilePath);
+        }
+        else if (!string.IsNullOrWhiteSpace(_ip))
+        {
+            return _ip;
         }
         else
         {
-            _ip = await File.ReadAllTextAsync(IPFilePath);
+            ip = !File.Exists(IPFilePath)
+                ? await PythonScriptHelper.RunPythonScriptAsync("get_ip.py")
+                : await File.ReadAllTextAsync(IPFilePath);
         }
 
-        _ip = _ip.TrimEnd();
+        _ip = ip.TrimEnd();
 
         return _ip;
     }

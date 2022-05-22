@@ -1,26 +1,21 @@
 ﻿using IPBot.Helpers;
+using IPBot.Infrastructure.Interfaces;
 
 namespace IPBot.Commands;
 
 public class IPCommands : InteractionModuleBase<SocketInteractionContext>
 {
-    private static readonly string IPFilePath = Path.Combine(Constants.BaseDirectory, @"../latest_ip.txt");
+    private readonly IIPService _ipService;
+
+    public IPCommands(IIPService ipService)
+    {
+        _ipService = ipService;
+    }
     
     [SlashCommand("ip", "get the current IP of the server")]
     public async Task GetIPAsync()
     {
-        var ip = await GetIPFromFileAsync();
+        var ip = await _ipService.GetCurrentIPAsync();
         await RespondAsync(ip);
-    }
-
-    public static async Task<string> GetIPFromFileAsync()
-    {
-        if (!File.Exists(IPFilePath))
-        {
-            return await PythonScriptHelper.RunPythonScriptAsync("get_ip.py");
-        }
-        
-        var ip = await File.ReadAllTextAsync(IPFilePath);
-        return ip.TrimEnd();
     }
 }

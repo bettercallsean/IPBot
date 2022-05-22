@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using IPBot.Infrastructure.Models;
 
 namespace IPBot.Helpers;
 
@@ -6,13 +7,7 @@ internal static class ServerInfoHelper
 {
     private const string ServerStatusScriptName = "get_server_status.py";
     private static readonly string ArkServerDataFile = Path.Combine(Constants.ConfigDirectory, "ark_server_data.json");
-
-    public static async Task<ServerInfo> GetServerInfoAsync(string gameCode, int port)
-    {
-        var serverInfo = await GetServerInfoJsonAsync(gameCode, port);
-        return ParseServerInfoJson(serverInfo);
-    }
-
+    
     public static string PlayerCountStatus(IEnumerable<string> players)
     {
         var playersList = players.ToList();
@@ -59,20 +54,5 @@ internal static class ServerInfoHelper
     {
         var ports = Resources.Resources.ServerPorts.Split(Environment.NewLine).ToDictionary(ushort.Parse, _ => string.Empty);
         await SaveArkServerDataAsync(ports);
-    }
-
-    private static async Task<string> GetServerInfoJsonAsync(string gameCode, int portNumber)
-    {
-        var serverResults =
-            await PythonScriptHelper.RunPythonScriptAsync(ServerStatusScriptName, $"{gameCode} {portNumber}");
-
-        return serverResults;
-    }
-
-    private static ServerInfo ParseServerInfoJson(string serverInfo)
-    {
-        return string.IsNullOrWhiteSpace(serverInfo)
-            ? null
-            : JsonConvert.DeserializeObject<ServerInfo>(serverInfo);
     }
 }

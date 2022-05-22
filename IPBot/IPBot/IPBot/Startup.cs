@@ -1,4 +1,6 @@
-﻿using IPBot.Helpers;
+﻿using IPBot.DataServices;
+using IPBot.Helpers;
+using IPBot.Infrastructure.Interfaces;
 using IPBot.Services;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -6,15 +8,18 @@ namespace IPBot;
 
 public class Startup
 {
-    private readonly IConfigurationRoot _configuration;
+    private readonly IConfigurationRoot _config;
 
     public Startup()
     {
         var builder = new ConfigurationBuilder()
-            .SetBasePath(AppContext.BaseDirectory)
-            .AddJsonFile($"{Constants.ConfigDirectory}/config.json");
+            .SetBasePath(AppContext.BaseDirectory);
+        
+        builder.AddJsonFile(DebugHelper.IsDebug()
+            ? $"{Constants.ConfigDirectory}/appsettings.Dev.json"
+            : $"{Constants.ConfigDirectory}/appsettings.json");
 
-        _configuration = builder.Build();
+        _config = builder.Build();
     }
 
     public static async Task RunAsync()
@@ -50,6 +55,12 @@ public class Startup
             .AddScoped<MessageAnalyserService>()
             .AddScoped<TenorApiHelper>()
             .AddSingleton<AnimeAnalyser.AnimeAnalyser>()
-            .AddSingleton(_configuration);
+            .AddSingleton<IGameServerService, GameServerDataService>()
+            .AddSingleton<IIPService, IPDataService>()
+            .AddSingleton(_config)
+            .AddHttpClient(string.Empty, x =>
+            {
+                x.BaseAddress = new Uri(_config["apiEndpoint"]);
+            });
     }
 }

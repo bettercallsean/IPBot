@@ -8,12 +8,11 @@ public static class PythonScriptHelper
     public static async Task<string> RunPythonScriptAsync(string fileName, string arguments = "")
     {
         var fullFilePath = Path.Combine(Constants.ScriptsDirectory, fileName);
-        var osIsWindows = RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
 
         using var process = Process.Start(new ProcessStartInfo
         {
-            FileName = osIsWindows ? "python" : fileName,
-            Arguments = osIsWindows ? $"{fullFilePath} {arguments}" : arguments,
+            FileName = RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? "python" : "python3",
+            Arguments = string.IsNullOrWhiteSpace(arguments) ? fullFilePath : $"{fullFilePath} {arguments}",
             UseShellExecute = false,
             RedirectStandardOutput = true,
         });

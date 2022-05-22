@@ -728,8 +728,10 @@ bot_python
 
 # Compiled .NET Bot files
 bot 
+bot.api
 
 # Config files
+Configs/
 config.json
 creds.env
 discord_channels.json
