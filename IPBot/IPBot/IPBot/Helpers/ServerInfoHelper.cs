@@ -1,11 +1,7 @@
-﻿using System.Diagnostics;
-using IPBot.Infrastructure.Models;
-
-namespace IPBot.Helpers;
+﻿namespace IPBot.Helpers;
 
 internal static class ServerInfoHelper
 {
-    private const string ServerStatusScriptName = "get_server_status.py";
     private static readonly string ArkServerDataFile = Path.Combine(Constants.ConfigDirectory, "ark_server_data.json");
     
     public static string PlayerCountStatus(IEnumerable<string> players)
