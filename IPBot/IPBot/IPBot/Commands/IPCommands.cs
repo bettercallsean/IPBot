@@ -12,9 +12,10 @@ public class IPCommands : InteractionModuleBase<SocketInteractionContext>
     }
     
     [SlashCommand("ip", "get the current IP of the server")]
-    public async Task GetIPAsync()
+    public async Task GetSeverDomainNameAsync()
     {
-        var ip = await _ipService.GetCurrentDomainAsync();
-        await RespondAsync(ip);
+        var serverDomain = await _ipService.GetCurrentDomainAsync();
+        await RespondAsync($"`{serverDomain}` \n \n" + 
+            $"New feature! You can now connect to Minecraft, Ark etc. etc. using `{serverDomain}` instead of using the IP 😄 This shouldn't change so there shouldn't be any worry about having to change it!");
     }
 }
