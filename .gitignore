@@ -718,6 +718,7 @@ cython_debug/
 
 # IP File
 latest_ip.txt
+current_domain.txt
 
 # Text file containing channel ID's
 bot_channels.txt
