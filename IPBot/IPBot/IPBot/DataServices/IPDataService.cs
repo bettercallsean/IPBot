@@ -13,8 +13,8 @@ public class IPDataService : IIPService
         _httpClient = httpClient;
     }
     
-    public async Task<string> GetCurrentIPAsync()
+    public async Task<string> GetCurrentDomainAsync()
     {
-        return await _httpClient.GetStringAsync($"{BaseUri}/GetCurrentIP");
+        return await _httpClient.GetStringAsync($"{BaseUri}/GetCurrentServerDomain");
     }
 }
