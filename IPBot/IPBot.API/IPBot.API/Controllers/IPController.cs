@@ -13,6 +13,7 @@ public class IPController : ControllerBase, IIPService
     public async Task<string> GetCurrentDomainAsync()
     {
         var serverDomain = await System.IO.File.ReadAllTextAsync(IPFilePath);
+        serverDomain = serverDomain.Trim();
         
         return $"{serverDomain} \n \n" + 
                $"New feature! You can now connect to Minecraft, Ark etc. etc. using {serverDomain} instead of using the IP 😄.";
