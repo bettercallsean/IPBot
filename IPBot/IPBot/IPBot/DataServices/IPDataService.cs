@@ -17,4 +17,9 @@ public class IPDataService : IIPService
     {
         return await _httpClient.GetStringAsync($"{BaseUri}/GetCurrentServerDomain");
     }
+
+    public async Task<string> GetCurrentIPAsync()
+    {
+        return await _httpClient.GetStringAsync($"{BaseUri}/GetCurrentIP");
+    }
 }
