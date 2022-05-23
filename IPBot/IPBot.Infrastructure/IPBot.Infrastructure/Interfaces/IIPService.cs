@@ -3,4 +3,5 @@
 public interface IIPService
 {
     Task<string> GetCurrentDomainAsync();
+    Task<string> GetCurrentIPAsync();
 }
