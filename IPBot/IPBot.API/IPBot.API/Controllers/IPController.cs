@@ -14,7 +14,7 @@ public class IPController : ControllerBase, IIPService
     {
         var serverDomain = await ServerDomainHelper.GetCurrentServerDomainAsync();
         
-        return $"{serverDomain} \n \n" + 
-               $"New feature! You can now connect to Minecraft, Ark etc. etc. using {serverDomain} instead of using the IP 😄.";
+        return $"`{serverDomain}` \n \n" + 
+               $"New feature! You can now connect to Minecraft, Ark etc. etc. using `{serverDomain}` instead of using the IP 😄";
     }
 }
