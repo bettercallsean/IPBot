@@ -1,6 +1,4 @@
-﻿using IPBot.Infrastructure;
-
-namespace IPBot;
+﻿namespace IPBot;
 
 public static class Constants
 {
