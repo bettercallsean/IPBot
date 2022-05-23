@@ -14,7 +14,7 @@ public class IPCommands : InteractionModuleBase<SocketInteractionContext>
     [SlashCommand("ip", "get the current IP of the server")]
     public async Task GetIPAsync()
     {
-        var ip = await _ipService.GetCurrentIPAsync();
+        var ip = await _ipService.GetCurrentDomainAsync();
         await RespondAsync(ip);
     }
 }

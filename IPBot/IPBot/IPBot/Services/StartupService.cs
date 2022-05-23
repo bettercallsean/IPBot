@@ -31,7 +31,6 @@ public class StartupService
         await _discord.LoginAsync(Discord.TokenType.Bot, token);
         await _discord.StartAsync();
 
-        _discord.Connected += CheckForUpdatedIPAsync;
         _discord.Ready += ReadyAsync;
         _discord.MessageReceived += DiscordOnMessageReceived;
     }
@@ -51,41 +50,6 @@ public class StartupService
         else
         {
             await _commands.RegisterCommandsGloballyAsync();
-        }
-    }
-
-    private async Task CheckForUpdatedIPAsync()
-    {
-        await Task.Delay(1000);
-
-        var ip = await _ipService.GetCurrentIPAsync();
-        await _discord.SetGameAsync(ip);
-
-        var ipChangedFile = Path.Combine(Constants.BaseDirectory, @"../ip_changed");
-
-        if (!File.Exists(ipChangedFile)) return;
-
-        if (DebugHelper.IsDebug())
-        {
-            var testGuildId = ulong.Parse(_config["testGuild"]);
-            var testChannelId = ulong.Parse(_config["testGuildTextChannel"]);
-            
-            var guild = _discord.GetGuild(testGuildId);
-            var channel = guild.GetTextChannel(testChannelId);
-            
-            await channel.SendMessageAsync($"⚠ Beep boop. The server IP has changed to {ip} ⚠");
-        }
-        else
-        {
-            foreach (var (guildId, textChannelId) in _discordChannels)
-            {
-                var guild = _discord.GetGuild(guildId);
-                var channel = guild.GetTextChannel(textChannelId);
-
-                await channel.SendMessageAsync($"⚠ Beep boop. The server IP has changed to {ip} ⚠");
-            }
-            
-            File.Delete(ipChangedFile);
         }
     }
 }
