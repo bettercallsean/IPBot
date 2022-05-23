@@ -8,7 +8,7 @@ internal static class ServerInfoHelper
     {
         var playersList = players.ToList();
         var playerName = playersList.Count > 0
-            ? playersList.OrderBy(_ => Guid.NewGuid()).Take(1).First()
+            ? playersList[Random.Shared.Next(playersList.Count)]
             : string.Empty;
 
         return playersList.Count switch

@@ -26,7 +26,7 @@ public class MessageAnalyserService
             if (await MessageContainsAnimeAsync(message))
             {
                 await message.DeleteAsync();
-                await message.Channel.SendMessageAsync(_responseList.OrderBy(_ => Guid.NewGuid()).Take(1).First());
+                await message.Channel.SendMessageAsync(_responseList[Random.Shared.Next(_responseList.Count)]);
             }
         }
     }
