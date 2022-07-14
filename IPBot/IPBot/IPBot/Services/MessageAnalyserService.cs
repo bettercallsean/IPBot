@@ -8,6 +8,15 @@ public class MessageAnalyserService
     private readonly List<string> _responseList = Resources.Resources.ResponseGifs.Split(Environment.NewLine).ToList();
     private readonly AnimeAnalyser.AnimeAnalyser _animeAnalyser;
     private readonly TenorApiHelper _tenorApiHelper;
+    private readonly List<string> _imageFormats = new()
+    {
+        ".png",
+        ".jpeg",
+        ".jpg",
+        ".tiff",
+        ".mp4",
+        ".gif"
+    };
 
     public MessageAnalyserService(AnimeAnalyser.AnimeAnalyser animeAnalyser, TenorApiHelper tenorApiHelper)
     {
@@ -55,17 +64,8 @@ public class MessageAnalyserService
                     }
                     else
                     {
-                        var imageFormats = new List<string>
-                        {
-                            ".png",
-                            ".jpeg",
-                            ".jpg",
-                            ".tiff",
-                            ".mp4"
-                        };
-
                         var url = messageMediaModel.Url;
-                        if (!imageFormats.Any(x => message.Content.Contains(x)))
+                        if (message.Content.Contains("tenor.com") && !_imageFormats.Any(x => message.Content.Contains(x)))
                         {
                             url = await _tenorApiHelper.GetDirectTenorGifUrlAsync(messageMediaModel.Url);
                         }
