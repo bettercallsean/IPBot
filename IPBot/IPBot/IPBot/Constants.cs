@@ -1,6 +1,4 @@
-﻿using System.Reflection.PortableExecutable;
-
-namespace IPBot;
+﻿namespace IPBot;
 
 public static class Constants
 {
