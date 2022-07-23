@@ -1,4 +1,6 @@
-﻿namespace IPBot;
+﻿using System.Reflection.PortableExecutable;
+
+namespace IPBot;
 
 public static class Constants
 {
@@ -7,4 +9,5 @@ public static class Constants
     public static readonly string ConfigDirectory = AppContext.BaseDirectory + "Configs";
     public const string ServerOfflineString = "The server is currently offline :(";
     public const string SeverOnlineString = "The server is online!";
+    public const double AnimeScoreTolerance = 0.75;
 }

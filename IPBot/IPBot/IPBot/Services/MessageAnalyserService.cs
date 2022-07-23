@@ -74,7 +74,7 @@ public class MessageAnalyserService
                     }
                 }
                 
-                if (animeScore > 0)
+                if (animeScore > Constants.AnimeScoreTolerance)
                 {
                     return true;
                 }
@@ -87,7 +87,7 @@ public class MessageAnalyserService
             {
                 var animeScore = await GetAnimeScoreAsync(attachment.ProxyUrl);
 
-                if (!(animeScore > 0)) continue;
+                if (!(animeScore > Constants.AnimeScoreTolerance)) continue;
 
                 return true;
             }
