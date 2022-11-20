@@ -1,7 +1,7 @@
 ﻿using IPBot.Infrastructure.Models;
 using Newtonsoft.Json;
 
-namespace IPBot.API.Helpers;
+namespace IPBot.Infrastructure.Helpers;
 
 public static class ServerInfoHelper
 {

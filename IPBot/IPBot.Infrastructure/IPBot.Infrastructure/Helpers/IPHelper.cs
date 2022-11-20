@@ -1,4 +1,4 @@
-﻿namespace IPBot.API.Helpers;
+﻿namespace IPBot.Infrastructure.Helpers;
 
 public static class IPHelper
 {

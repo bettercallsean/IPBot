@@ -1,7 +1,7 @@
 ﻿using System.Diagnostics;
 using System.Runtime.InteropServices;
 
-namespace IPBot.API.Helpers;
+namespace IPBot.Infrastructure.Helpers;
 
 public static class PythonScriptHelper
 {

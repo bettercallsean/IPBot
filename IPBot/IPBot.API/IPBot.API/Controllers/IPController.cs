@@ -1,5 +1,4 @@
-﻿using IPBot.API.Helpers;
-using IPBot.Infrastructure.Helpers;
+﻿using IPBot.Infrastructure.Helpers;
 using IPBot.Infrastructure.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
