@@ -17,9 +17,15 @@ public static class IPHelper
         else if (!string.IsNullOrWhiteSpace(_ip)) return _ip;
         else
         {
-            ip = !File.Exists(LatestIPFilePath)
-                ? await PythonScriptHelper.RunPythonScriptAsync("get_ip.py")
-                : await File.ReadAllTextAsync(LatestIPFilePath);
+            if (!File.Exists(LatestIPFilePath))
+            {
+                using HttpClient httpClient = new HttpClient();
+                ip = await httpClient.GetStringAsync("https://api.ipify.org");
+            }
+            else
+            {
+                ip = await File.ReadAllTextAsync(LatestIPFilePath);
+            }
         }
 
         _ip = ip.TrimEnd();
