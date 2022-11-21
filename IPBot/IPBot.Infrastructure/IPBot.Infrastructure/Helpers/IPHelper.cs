@@ -6,7 +6,7 @@ public static class IPHelper
     private static readonly string IPChangedFilePath = Path.Combine(AppContext.BaseDirectory, @"../ip_changed");
     private static string _ip = string.Empty;
 
-    public static async Task<string> GetIPFromFileAsync()
+    public static async Task<string> GetCurrentIPAsync()
     {
         string ip;
         if (File.Exists(IPChangedFilePath))
