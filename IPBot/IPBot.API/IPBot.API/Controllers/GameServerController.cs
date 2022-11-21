@@ -1,7 +1,4 @@
-using IPBot.Infrastructure.Helpers;
-using IPBot.Infrastructure.Interfaces;
 using IPBot.Infrastructure.Models;
-using Microsoft.AspNetCore.Mvc;
 
 namespace IPBot.API.Controllers;
 
