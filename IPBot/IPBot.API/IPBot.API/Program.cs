@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.HttpOverrides;
 
-WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
+var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
@@ -9,7 +9,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-WebApplication app = builder.Build();
+var app = builder.Build();
 
 app.UseForwardedHeaders(new ForwardedHeadersOptions
 {
