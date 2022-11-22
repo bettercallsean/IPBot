@@ -1,5 +1,5 @@
-﻿using IPBot.Infrastructure.Models;
-using Newtonsoft.Json;
+﻿using System.Text.Json;
+using IPBot.Infrastructure.Models;
 
 namespace IPBot.Infrastructure.Helpers;
 
@@ -12,7 +12,7 @@ public static class ServerInfoHelper
         var serverInfo = await GetServerInfoJsonAsync(gameCode, port);
         return ParseServerInfoJson(serverInfo);
     }
-    
+
     private static async Task<string> GetServerInfoJsonAsync(string gameCode, int portNumber)
     {
         var serverResults =
@@ -25,6 +25,6 @@ public static class ServerInfoHelper
     {
         return string.IsNullOrWhiteSpace(serverInfo)
             ? new ServerInfo()
-            : JsonConvert.DeserializeObject<ServerInfo>(serverInfo);
+            : JsonSerializer.Deserialize<ServerInfo>(serverInfo);
     }
 }

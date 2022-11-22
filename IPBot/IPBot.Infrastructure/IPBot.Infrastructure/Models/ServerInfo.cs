@@ -1,18 +1,18 @@
-﻿using Newtonsoft.Json;
+﻿using System.Text.Json.Serialization;
 
 namespace IPBot.Infrastructure.Models;
 
 public class ServerInfo
 {
-    [JsonProperty("online")]
+    [JsonPropertyName("online")]
     public bool Online { get; set; }
 
-    [JsonProperty("map")]
+    [JsonPropertyName("map")]
     public string Map { get; set; }
 
-    [JsonProperty("player_count")]
+    [JsonPropertyName("player_count")]
     public int PlayerCount { get; set; }
 
-    [JsonProperty("player_names")]
+    [JsonPropertyName("player_names")]
     public List<string> PlayerNames { get; set; }
 }
