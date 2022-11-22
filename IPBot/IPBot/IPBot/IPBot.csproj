@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>net7.0</TargetFramework>
   </PropertyGroup>
 
   <ItemGroup>
@@ -52,6 +52,5 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\IPBot.Infrastructure\IPBot.Infrastructure\IPBot.Infrastructure.csproj" />
-    <ProjectReference Include="..\IPBot.AnimeAnalyser\IPBot.AnimeAnalyser.csproj" />
   </ItemGroup>
 </Project>
