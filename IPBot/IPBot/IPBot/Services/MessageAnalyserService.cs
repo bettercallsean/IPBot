@@ -1,12 +1,13 @@
 ﻿using System.Text.RegularExpressions;
 using IPBot.Helpers;
+using IPBot.Infrastructure.Interfaces;
 
 namespace IPBot.Services;
 
 public class MessageAnalyserService
 {
     private readonly List<string> _responseList = Resources.Resources.ResponseGifs.Split(Environment.NewLine).ToList();
-    private readonly AnimeAnalyser.AnimeAnalyser _animeAnalyser;
+    private readonly IAnimeAnalyser _animeAnalyser;
     private readonly TenorApiHelper _tenorApiHelper;
     private readonly List<string> _imageFormats = new()
     {
@@ -18,7 +19,7 @@ public class MessageAnalyserService
         ".gif"
     };
 
-    public MessageAnalyserService(AnimeAnalyser.AnimeAnalyser animeAnalyser, TenorApiHelper tenorApiHelper)
+    public MessageAnalyserService(IAnimeAnalyser animeAnalyser, TenorApiHelper tenorApiHelper)
     {
         _animeAnalyser = animeAnalyser;
         _tenorApiHelper = tenorApiHelper;
@@ -67,13 +68,13 @@ public class MessageAnalyserService
                         var url = messageMediaModel.Url;
                         if (message.Content.Contains("tenor.com") && !_imageFormats.Any(x => message.Content.Contains(x)))
                         {
-                            url = await _tenorApiHelper.GetDirectTenorGifUrlAsync(messageMediaModel.Url);
+                            url = await _tenorApiHelper.GetDirectTenorGifUrlAsync(url);
                         }
 
                         animeScore = await GetAnimeScoreAsync(url);
                     }
                 }
-                
+
                 if (animeScore > Constants.AnimeScoreTolerance)
                 {
                     return true;
@@ -106,12 +107,12 @@ public class MessageAnalyserService
         const string discordEmojiRegex = "<:[a-zA-Z0-9]+:([0-9]+)>";
         const string urlRegex =
             @"^https?:\/\/(?:www\\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b(?:[-a-zA-Z0-9()@:%_\+.~#?&\/=]*)$";
-        
+
         foreach (var word in messageContent.Split())
         {
             var urlMatch = Regex.Match(word, urlRegex);
             var emojiMatch = Regex.Match(word, discordEmojiRegex);
-            
+
             if (!urlMatch.Success && !emojiMatch.Success) continue;
 
             return new MessageMediaModel

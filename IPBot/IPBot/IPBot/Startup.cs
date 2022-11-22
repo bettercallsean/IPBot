@@ -14,7 +14,7 @@ public class Startup
     {
         var builder = new ConfigurationBuilder()
             .SetBasePath(AppContext.BaseDirectory);
-        
+
         builder.AddJsonFile(DebugHelper.IsDebug()
             ? $"{Constants.ConfigDirectory}/appsettings.Dev.json"
             : $"{Constants.ConfigDirectory}/appsettings.json");
@@ -54,9 +54,9 @@ public class Startup
             .AddScoped<StartupService>()
             .AddScoped<MessageAnalyserService>()
             .AddScoped<TenorApiHelper>()
-            .AddSingleton<AnimeAnalyser.AnimeAnalyser>()
             .AddSingleton<IGameServerService, GameServerDataService>()
             .AddSingleton<IIPService, IPDataService>()
+            .AddSingleton<IAnimeAnalyser, AnimeAnalyserDataService>()
             .AddSingleton(_config)
             .AddHttpClient(string.Empty, x =>
             {

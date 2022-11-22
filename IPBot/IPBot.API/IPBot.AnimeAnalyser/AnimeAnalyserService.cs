@@ -1,27 +1,28 @@
-﻿using IPBot.AnimeAnalyser.Helpers;
+﻿using System.Text.Json;
+using IPBot.AnimeAnalyser.Helpers;
 using IPBot.AnimeAnalyser.Models;
+using IPBot.Infrastructure.Interfaces;
 using Microsoft.Azure.CognitiveServices.Vision.ComputerVision;
 using Microsoft.Azure.CognitiveServices.Vision.ComputerVision.Models;
-using Newtonsoft.Json;
 
 namespace IPBot.AnimeAnalyser;
 
-public class AnimeAnalyser
+public class AnimeAnalyserService : IAnimeAnalyser
 {
     private readonly ComputerVisionClient _computerVisionClient;
-    
-    public AnimeAnalyser()
+
+    public AnimeAnalyserService()
     {
         var azureCredentialsPath = Path.Combine(AppContext.BaseDirectory, "AzureConfig/azure_credentials.json");
-        var azureCredentials = JsonConvert.DeserializeObject<AzureCredentials>(File.ReadAllText(azureCredentialsPath));
-        
+        var azureCredentials = JsonSerializer.Deserialize<AzureCredentials>(File.ReadAllText(azureCredentialsPath));
+
         _computerVisionClient = Authenticate(azureCredentials.Endpoint, azureCredentials.SubscriptionKey);
     }
 
     public async Task<double> GetAnimeScoreAsync(string url)
     {
         TagResult imageTags;
-        
+
         try
         {
             imageTags = await _computerVisionClient.TagImageAsync(url);
@@ -32,10 +33,10 @@ public class AnimeAnalyser
 
             imageTags = await _computerVisionClient.TagImageInStreamAsync(compressedImage);
         }
-        
+
         return imageTags.Tags.Where(x => x.Name == "anime").Select(x => x.Confidence).FirstOrDefault();
     }
-    
+
     private ComputerVisionClient Authenticate(string endpoint, string key)
     {
         return new ComputerVisionClient(new ApiKeyServiceClientCredentials(key))

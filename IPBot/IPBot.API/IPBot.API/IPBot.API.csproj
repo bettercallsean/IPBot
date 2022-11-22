@@ -12,6 +12,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\..\IPBot.Infrastructure\IPBot.Infrastructure\IPBot.Infrastructure.csproj" />
+      <ProjectReference Include="..\IPBot.AnimeAnalyser\IPBot.AnimeAnalyser.csproj" />
     </ItemGroup>
 
 </Project>
