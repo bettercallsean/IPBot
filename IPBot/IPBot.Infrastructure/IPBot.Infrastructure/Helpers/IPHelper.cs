@@ -1,4 +1,4 @@
-﻿namespace IPBot.API.Helpers;
+﻿namespace IPBot.Infrastructure.Helpers;
 
 public static class IPHelper
 {
@@ -6,7 +6,7 @@ public static class IPHelper
     private static readonly string IPChangedFilePath = Path.Combine(AppContext.BaseDirectory, @"../ip_changed");
     private static string _ip = string.Empty;
 
-    public static async Task<string> GetIPFromFileAsync()
+    public static async Task<string> GetCurrentIPAsync()
     {
         string ip;
         if (File.Exists(IPChangedFilePath))
@@ -17,9 +17,15 @@ public static class IPHelper
         else if (!string.IsNullOrWhiteSpace(_ip)) return _ip;
         else
         {
-            ip = !File.Exists(LatestIPFilePath)
-                ? await PythonScriptHelper.RunPythonScriptAsync("get_ip.py")
-                : await File.ReadAllTextAsync(LatestIPFilePath);
+            if (!File.Exists(LatestIPFilePath))
+            {
+                using HttpClient httpClient = new HttpClient();
+                ip = await httpClient.GetStringAsync("https://api.ipify.org");
+            }
+            else
+            {
+                ip = await File.ReadAllTextAsync(LatestIPFilePath);
+            }
         }
 
         _ip = ip.TrimEnd();

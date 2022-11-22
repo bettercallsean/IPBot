@@ -7,7 +7,19 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+      <None Remove="Scripts\" />
     </ItemGroup>
-
+    <ItemGroup>
+      <None Include="..\..\..\scripts\get_server_status.py">
+        <Link>Scripts\get_server_status.py</Link>
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+      <None Include="..\..\..\scripts\settings.py">
+        <Link>Scripts\settings.py</Link>
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+    </ItemGroup>
+    <ItemGroup>
+      <Folder Include="Scripts\" />
+    </ItemGroup>
 </Project>
