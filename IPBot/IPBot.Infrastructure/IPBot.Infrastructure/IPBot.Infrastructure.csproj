@@ -10,14 +10,13 @@
       <None Remove="Scripts\" />
     </ItemGroup>
     <ItemGroup>
-      <None Include="..\..\..\scripts\get_ip.py">
-        <Link>Scripts\get_ip.py</Link>
-      </None>
       <None Include="..\..\..\scripts\get_server_status.py">
         <Link>Scripts\get_server_status.py</Link>
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </None>
       <None Include="..\..\..\scripts\settings.py">
         <Link>Scripts\settings.py</Link>
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </None>
     </ItemGroup>
     <ItemGroup>
