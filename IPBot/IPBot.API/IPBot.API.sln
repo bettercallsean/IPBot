@@ -1,8 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IPBot.API", "IPBot.API\IPBot.API.csproj", "{DE36CD7C-21EB-4CAE-AA02-397B194960D2}"
+# Visual Studio Version 17
+VisualStudioVersion = 17.4.33110.190
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IPBot.API", "IPBot.API\IPBot.API.csproj", "{DE36CD7C-21EB-4CAE-AA02-397B194960D2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IPBot.Infrastructure", "..\IPBot.Infrastructure\IPBot.Infrastructure\IPBot.Infrastructure.csproj", "{9446E447-8066-4E99-BC44-16355B86B69C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IPBot.Infrastructure", "..\IPBot.Infrastructure\IPBot.Infrastructure\IPBot.Infrastructure.csproj", "{9446E447-8066-4E99-BC44-16355B86B69C}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IPBot.AnimeAnalyser", "IPBot.AnimeAnalyser\IPBot.AnimeAnalyser.csproj", "{47AAEDFE-CACF-4992-AF1C-D43DB1F27C42}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -18,5 +23,15 @@ Global
 		{9446E447-8066-4E99-BC44-16355B86B69C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9446E447-8066-4E99-BC44-16355B86B69C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9446E447-8066-4E99-BC44-16355B86B69C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{47AAEDFE-CACF-4992-AF1C-D43DB1F27C42}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{47AAEDFE-CACF-4992-AF1C-D43DB1F27C42}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{47AAEDFE-CACF-4992-AF1C-D43DB1F27C42}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{47AAEDFE-CACF-4992-AF1C-D43DB1F27C42}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {A9555554-C2BF-4B33-9483-292F37E32D60}
 	EndGlobalSection
 EndGlobal
