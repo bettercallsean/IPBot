@@ -4,7 +4,7 @@ using IPBot.Infrastructure.Interfaces;
 namespace IPBot.DataServices;
 
 public class IPDataService : IIPService
-{    
+{
     private const string BaseUri = "IP";
     private readonly HttpClient _httpClient;
 
@@ -12,14 +12,19 @@ public class IPDataService : IIPService
     {
         _httpClient = httpClient;
     }
-    
+
     public async Task<string> GetCurrentDomainAsync()
     {
         return await _httpClient.GetStringAsync($"{BaseUri}/GetCurrentServerDomain");
     }
 
-    public async Task<string> GetCurrentIPAsync()
+    public async Task<string> GetLocalIPAsync()
     {
-        return await _httpClient.GetStringAsync($"{BaseUri}/GetCurrentIP");
+        return await _httpClient.GetStringAsync($"{BaseUri}/GetLocalIP");
+    }
+
+    public async Task<string> GetServerIPAsync()
+    {
+        return await _httpClient.GetStringAsync($"{BaseUri}/GetServerIP");
     }
 }

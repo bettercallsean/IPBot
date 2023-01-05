@@ -3,5 +3,6 @@
 public interface IIPService
 {
     Task<string> GetCurrentDomainAsync();
-    Task<string> GetCurrentIPAsync();
+    Task<string> GetLocalIPAsync();
+    Task<string> GetServerIPAsync();
 }
