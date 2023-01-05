@@ -10,9 +10,15 @@ public class IPController : ControllerBase, IIPService
         return await ServerDomainHelper.GetCurrentServerDomainAsync();
     }
 
-    [HttpGet("GetCurrentIP")]
-    public async Task<string> GetCurrentIPAsync()
+    [HttpGet("GetLocalIP")]
+    public async Task<string> GetLocalIPAsync()
     {
-        return await IPHelper.GetCurrentIPAsync();
+        return await IPHelper.GetLocalIPAsync();
+    }
+
+    [HttpGet("GetServerIP")]
+    public async Task<string> GetServerIPAsync()
+    {
+        return await IPHelper.GetSeverIPAsync();
     }
 }
