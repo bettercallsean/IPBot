@@ -745,3 +745,5 @@ ip_changed
 *.stats
 IPBot/IPBot.AnimeAnalyser/AzureConfig/azure_credentials.json
 azure_credentials.json
+
+ServiceDependencies/
