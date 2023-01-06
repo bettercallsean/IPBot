@@ -2,11 +2,10 @@
 
 public static class ServerDomainHelper
 {
-    private static readonly string DomainFilePath = Path.Combine(AppContext.BaseDirectory, @"../current_domain.txt");
+    private static readonly string CurrentDomain = DotEnvHelper.EnvironmentVariables["CURRENT_DOMAIN"];
 
-    public static async Task<string> GetCurrentServerDomainAsync()
+    public static string GetCurrentServerDomain()
     {
-        var serverDomain = await File.ReadAllTextAsync(DomainFilePath);
-        return serverDomain.Trim();
+        return CurrentDomain.Trim();
     }
 }
