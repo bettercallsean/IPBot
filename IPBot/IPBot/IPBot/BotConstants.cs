@@ -1,6 +1,6 @@
 ﻿namespace IPBot;
 
-public static class Constants
+public static class BotConstants
 {
     public const int MinecraftServerPort = 25565;
     public const int ZomboidServerPort = 16261;

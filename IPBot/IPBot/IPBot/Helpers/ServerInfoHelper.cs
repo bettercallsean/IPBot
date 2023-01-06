@@ -2,7 +2,7 @@
 
 internal static class ServerInfoHelper
 {
-    private static readonly string ArkServerDataFile = Path.Combine(Constants.ConfigDirectory, "ark_server_data.json");
+    private static readonly string ArkServerDataFile = Path.Combine(BotConstants.ConfigDirectory, "ark_server_data.json");
     
     public static string PlayerCountStatus(IEnumerable<string> players)
     {
@@ -13,10 +13,10 @@ internal static class ServerInfoHelper
 
         return playersList.Count switch
         {
-            0 => $"{Constants.SeverOnlineString} No one is currently playing :)",
-            1 => $"{Constants.SeverOnlineString} {playerName} is the only one playing :)",
-            2 => $"{Constants.SeverOnlineString} {playerName} and one other are playing :)",
-            _ => $"{Constants.SeverOnlineString} {playerName} and {playersList.Count - 1} others are playing :)"
+            0 => $"{BotConstants.SeverOnlineString} No one is currently playing :)",
+            1 => $"{BotConstants.SeverOnlineString} {playerName} is the only one playing :)",
+            2 => $"{BotConstants.SeverOnlineString} {playerName} and one other are playing :)",
+            _ => $"{BotConstants.SeverOnlineString} {playerName} and {playersList.Count - 1} others are playing :)"
         };
     }
 
@@ -24,9 +24,9 @@ internal static class ServerInfoHelper
     {
         return playerCount switch
         {
-            0 => $"{Constants.SeverOnlineString} No one is currently playing :)",
-            1 => $"{Constants.SeverOnlineString} One person is playing :)",
-            _ => $"{Constants.SeverOnlineString} {playerCount} people are playing :)",
+            0 => $"{BotConstants.SeverOnlineString} No one is currently playing :)",
+            1 => $"{BotConstants.SeverOnlineString} One person is playing :)",
+            _ => $"{BotConstants.SeverOnlineString} {playerCount} people are playing :)",
         };
     }
     public static async Task<Dictionary<ushort, string>> LoadArkServerDataAsync()
