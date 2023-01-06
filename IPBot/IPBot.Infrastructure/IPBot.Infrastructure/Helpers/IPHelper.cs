@@ -5,7 +5,8 @@ public static class IPHelper
     private static readonly string LatestIPFilePath = Path.Combine(AppContext.BaseDirectory, @"../latest_ip.txt");
     private static readonly string IPChangedFilePath = Path.Combine(AppContext.BaseDirectory, @"../ip_changed");
     private static readonly string IpMiddleManApiUrl = DotEnvHelper.EnvironmentVariables["IP_MIDDLEMAN_URL"];
-    private static string _ip = string.Empty;
+    private static string _localIp = string.Empty;
+    private static string _serverIp = string.Empty;
 
     public static async Task<string> GetLocalIPAsync()
     {
@@ -15,7 +16,7 @@ public static class IPHelper
             ip = await File.ReadAllTextAsync(LatestIPFilePath);
             File.Delete(IPChangedFilePath);
         }
-        else if (!string.IsNullOrWhiteSpace(_ip)) return _ip;
+        else if (!string.IsNullOrWhiteSpace(_localIp)) return _localIp;
         else
         {
             if (!File.Exists(LatestIPFilePath))
@@ -29,9 +30,9 @@ public static class IPHelper
             }
         }
 
-        _ip = ip.TrimEnd();
+        _localIp = ip.TrimEnd();
 
-        return _ip;
+        return _localIp;
     }
 
     public static async Task<string> GetSeverIPAsync()
@@ -39,6 +40,10 @@ public static class IPHelper
         using var httpClient = new HttpClient();
         var ip = await httpClient.GetStringAsync($"{IpMiddleManApiUrl}/getIP");
 
-        return ip.Trim();
+        if (string.IsNullOrEmpty(ip)) return _serverIp;
+
+        _serverIp = ip.Trim();
+
+        return _serverIp;
     }
 }

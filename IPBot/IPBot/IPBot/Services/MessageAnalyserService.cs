@@ -8,7 +8,6 @@ public class MessageAnalyserService
 {
     private readonly List<string> _responseList = Resources.Resources.ResponseGifs.Split(Environment.NewLine).ToList();
     private readonly IAnimeAnalyser _animeAnalyser;
-    private readonly TenorApiHelper _tenorApiHelper;
     private readonly List<string> _imageFormats = new()
     {
         ".png",
@@ -19,10 +18,9 @@ public class MessageAnalyserService
         ".gif"
     };
 
-    public MessageAnalyserService(IAnimeAnalyser animeAnalyser, TenorApiHelper tenorApiHelper)
+    public MessageAnalyserService(IAnimeAnalyser animeAnalyser)
     {
         _animeAnalyser = animeAnalyser;
-        _tenorApiHelper = tenorApiHelper;
     }
 
     public async Task CheckMessageForAnimeAsync(SocketMessage message)
@@ -68,14 +66,14 @@ public class MessageAnalyserService
                         var url = messageMediaModel.Url;
                         if (message.Content.Contains("tenor.com") && !_imageFormats.Any(x => message.Content.Contains(x)))
                         {
-                            url = await _tenorApiHelper.GetDirectTenorGifUrlAsync(url);
+                            url = await TenorApiHelper.GetDirectTenorGifUrlAsync(url);
                         }
 
                         animeScore = await GetAnimeScoreAsync(url);
                     }
                 }
 
-                if (animeScore > Constants.AnimeScoreTolerance)
+                if (animeScore > BotConstants.AnimeScoreTolerance)
                 {
                     return true;
                 }
@@ -88,7 +86,7 @@ public class MessageAnalyserService
             {
                 var animeScore = await GetAnimeScoreAsync(attachment.ProxyUrl);
 
-                if (!(animeScore > Constants.AnimeScoreTolerance)) continue;
+                if (!(animeScore > BotConstants.AnimeScoreTolerance)) continue;
 
                 return true;
             }

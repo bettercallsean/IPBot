@@ -17,7 +17,7 @@ public class ServerCommands : InteractionModuleBase<SocketInteractionContext>
     public async Task GetMinecraftServerStatusAsync()
     {
         var serverInfo =
-            await _gameServerService.GetMinecraftServerStatusAsync(Constants.MinecraftServerPort);
+            await _gameServerService.GetMinecraftServerStatusAsync(BotConstants.MinecraftServerPort);
 
         await PostServerStatusAsync(serverInfo);
     }
@@ -49,8 +49,8 @@ public class ServerCommands : InteractionModuleBase<SocketInteractionContext>
             else
             {
                 serverStatus.AppendLine(string.IsNullOrWhiteSpace(map)
-                    ? $"{Constants.ServerOfflineString} | Port: {port}"
-                    : $"Map: {map} - {Constants.ServerOfflineString} | Port: {port}");
+                    ? $"{BotConstants.ServerOfflineString} | Port: {port}"
+                    : $"Map: {map} - {BotConstants.ServerOfflineString} | Port: {port}");
             }
         }
 
@@ -64,7 +64,7 @@ public class ServerCommands : InteractionModuleBase<SocketInteractionContext>
     [SlashCommand("zomboid", "get the status of the zomboid server")]
     public async Task GetProjectZomboidServerStatusAsync()
     {
-        var serverInfo = await _gameServerService.GetSteamServerStatusAsync(Constants.ZomboidServerPort);
+        var serverInfo = await _gameServerService.GetSteamServerStatusAsync(BotConstants.ZomboidServerPort);
 
         await PostServerStatusAsync(serverInfo);
     }
@@ -83,12 +83,12 @@ public class ServerCommands : InteractionModuleBase<SocketInteractionContext>
             }
             else
             {
-                await RespondAsync(Constants.ServerOfflineString);
+                await RespondAsync(BotConstants.ServerOfflineString);
             }
         }
         else
         {
-            await RespondAsync(Constants.ServerOfflineString);
+            await RespondAsync(BotConstants.ServerOfflineString);
         }
     }
 }

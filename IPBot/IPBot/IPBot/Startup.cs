@@ -1,5 +1,7 @@
 ﻿using IPBot.DataServices;
 using IPBot.Helpers;
+using IPBot.Infrastructure;
+using IPBot.Infrastructure.Helpers;
 using IPBot.Infrastructure.Interfaces;
 using IPBot.Services;
 using Microsoft.Extensions.DependencyInjection;
@@ -16,8 +18,10 @@ public class Startup
             .SetBasePath(AppContext.BaseDirectory);
 
         builder.AddJsonFile(DebugHelper.IsDebug()
-            ? $"{Constants.ConfigDirectory}/appsettings.Dev.json"
-            : $"{Constants.ConfigDirectory}/appsettings.json");
+            ? $"{BotConstants.ConfigDirectory}/appsettings.Dev.json"
+            : $"{BotConstants.ConfigDirectory}/appsettings.json");
+
+        DotEnvHelper.Load(Constants.CredentialsFile);
 
         _config = builder.Build();
     }
@@ -53,7 +57,6 @@ public class Startup
             .AddSingleton<CommandHandler>()
             .AddScoped<StartupService>()
             .AddScoped<MessageAnalyserService>()
-            .AddScoped<TenorApiHelper>()
             .AddSingleton<IGameServerService, GameServerDataService>()
             .AddSingleton<IIPService, IPDataService>()
             .AddSingleton<IAnimeAnalyser, AnimeAnalyserDataService>()

@@ -8,14 +8,13 @@ public static class DotEnvHelper
 
     public static void Load(string filePath)
     {
-        if (!File.Exists(filePath))
+        var envDirectory = Path.Combine(AppContext.BaseDirectory, filePath);
+        if (!File.Exists(envDirectory))
             return;
 
-        foreach (var line in File.ReadAllLines(filePath))
+        foreach (var line in File.ReadAllLines(envDirectory))
         {
-            var parts = line.Split(
-                '=',
-                StringSplitOptions.RemoveEmptyEntries);
+            var parts = line.Split('=', StringSplitOptions.RemoveEmptyEntries);
 
             if (parts.Length != 2)
                 continue;

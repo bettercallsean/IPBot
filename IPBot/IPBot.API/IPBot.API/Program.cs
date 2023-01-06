@@ -1,4 +1,5 @@
 using IPBot.AnimeAnalyser;
+using IPBot.Infrastructure;
 using Microsoft.AspNetCore.HttpOverrides;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -11,7 +12,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddSingleton<IAnimeAnalyser, AnimeAnalyserService>();
 
-DotEnvHelper.Load("credentials.env");
+DotEnvHelper.Load(Constants.CredentialsFile);
 
 var app = builder.Build();
 
