@@ -5,9 +5,9 @@
 public class IPController : ControllerBase, IIPService
 {
     [HttpGet("GetCurrentServerDomain")]
-    public async Task<string> GetCurrentDomainAsync()
+    public Task<string> GetCurrentDomainAsync()
     {
-        return await ServerDomainHelper.GetCurrentServerDomainAsync();
+        return Task.FromResult(ServerDomainHelper.GetCurrentServerDomain());
     }
 
     [HttpGet("GetLocalIP")]

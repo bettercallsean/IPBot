@@ -1,4 +1,5 @@
-﻿using IPBot.Infrastructure.Interfaces;
+﻿using IPBot.Infrastructure.Helpers;
+using IPBot.Infrastructure.Interfaces;
 
 namespace IPBot.Commands;
 
@@ -14,7 +15,7 @@ public class IPCommands : InteractionModuleBase<SocketInteractionContext>
     [SlashCommand("ip", "get the current IP of the server")]
     public async Task GetSeverDomainNameAsync()
     {
-        var serverDomain = await _ipService.GetCurrentDomainAsync();
+        var serverDomain = ServerDomainHelper.GetCurrentServerDomain();
         var ip = await _ipService.GetServerIPAsync();
 
         await RespondAsync($"`{ip}` {Environment.NewLine}" +

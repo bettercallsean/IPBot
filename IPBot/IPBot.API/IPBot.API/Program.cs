@@ -11,6 +11,8 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddSingleton<IAnimeAnalyser, AnimeAnalyserService>();
 
+DotEnvHelper.Load("credentials.env");
+
 var app = builder.Build();
 
 app.UseForwardedHeaders(new ForwardedHeadersOptions

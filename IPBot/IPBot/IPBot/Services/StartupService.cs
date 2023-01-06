@@ -32,7 +32,7 @@ public class StartupService
 
     private async Task DiscordOnConnected()
     {
-        var serverDomain = await ServerDomainHelper.GetCurrentServerDomainAsync();
+        var serverDomain = ServerDomainHelper.GetCurrentServerDomain();
 
         await _discord.SetGameAsync(serverDomain);
     }

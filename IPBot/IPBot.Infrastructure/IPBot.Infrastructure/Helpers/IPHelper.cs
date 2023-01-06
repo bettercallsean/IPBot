@@ -4,9 +4,8 @@ public static class IPHelper
 {
     private static readonly string LatestIPFilePath = Path.Combine(AppContext.BaseDirectory, @"../latest_ip.txt");
     private static readonly string IPChangedFilePath = Path.Combine(AppContext.BaseDirectory, @"../ip_changed");
-    private static readonly string IPMiddlePointFilePath = Path.Combine(AppContext.BaseDirectory, @"../ip_api_middlepoint.txt");
+    private static readonly string IpMiddleManApiUrl = DotEnvHelper.EnvironmentVariables["IP_MIDDLEMAN_URL"];
     private static string _ip = string.Empty;
-    private static string _ipApiMiddlePointUrl = string.Empty;
 
     public static async Task<string> GetLocalIPAsync()
     {
@@ -37,11 +36,8 @@ public static class IPHelper
 
     public static async Task<string> GetSeverIPAsync()
     {
-        if (string.IsNullOrWhiteSpace(_ipApiMiddlePointUrl))
-            _ipApiMiddlePointUrl = File.ReadAllText(IPMiddlePointFilePath);
-
         using var httpClient = new HttpClient();
-        var ip = await httpClient.GetStringAsync($"{_ipApiMiddlePointUrl}/getIP");
+        var ip = await httpClient.GetStringAsync($"{IpMiddleManApiUrl}/getIP");
 
         return ip.Trim();
     }
