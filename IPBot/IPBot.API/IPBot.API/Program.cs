@@ -1,6 +1,10 @@
 using IPBot.AnimeAnalyser;
+using IPBot.DataServices.Data;
+using IPBot.DataServices.DataServices;
+using IPBot.DataServices.Interfaces;
 using IPBot.Infrastructure;
 using Microsoft.AspNetCore.HttpOverrides;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,6 +15,9 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddSingleton<IAnimeAnalyser, AnimeAnalyserService>();
+builder.Services.AddScoped<IUserDataService, UserDataService>();
+builder.Services.AddDbContext<IIpBotDataContext, IpBotDbContext>(
+    options => options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 DotEnvHelper.Load(Constants.CredentialsFile);
 

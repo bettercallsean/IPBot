@@ -1,9 +1,18 @@
-﻿namespace IPBot.API.Controllers;
+﻿using IPBot.DataServices.Interfaces;
+
+namespace IPBot.API.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
 public class IPController : ControllerBase, IIPService
 {
+    private readonly IUserDataService _userDataService;
+
+    public IPController(IUserDataService userDataService)
+    {
+        _userDataService = userDataService;
+    }
+
     [HttpGet("GetCurrentServerDomain")]
     public Task<string> GetCurrentDomainAsync()
     {
