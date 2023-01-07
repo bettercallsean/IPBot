@@ -10,5 +10,5 @@ public class IpBotDbContext : DbContext, IIpBotDataContext
 
     public DbSet<User> Users { get; set; }
 
-    public void SaveChangesAsync() => base.SaveChangesAsync();
+    public Task<int> SaveChangesAsync() => base.SaveChangesAsync();
 }

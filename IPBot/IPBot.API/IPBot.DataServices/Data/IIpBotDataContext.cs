@@ -5,5 +5,5 @@ namespace IPBot.DataServices.Data;
 public interface IIpBotDataContext
 {
     DbSet<User> Users { get; set; }
-    void SaveChangesAsync();
+    Task<int> SaveChangesAsync();
 }
