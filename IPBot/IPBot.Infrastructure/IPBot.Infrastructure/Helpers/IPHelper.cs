@@ -1,4 +1,6 @@
-﻿namespace IPBot.Infrastructure.Helpers;
+﻿using System.Net;
+
+namespace IPBot.Infrastructure.Helpers;
 
 public static class IPHelper
 {
@@ -35,15 +37,18 @@ public static class IPHelper
         return _localIp;
     }
 
-    public static async Task<string> GetSeverIPAsync()
+    public static Task<string> GetSeverIPAsync()
     {
-        using var httpClient = new HttpClient();
-        var ip = await httpClient.GetStringAsync($"{IpMiddleManApiUrl}/getIP");
+        return Task.FromResult(_serverIp);
+    }
 
-        if (string.IsNullOrEmpty(ip)) return _serverIp;
+    public static bool UpdateServerIP(string ip)
+    {
+        if (!IPAddress.TryParse(ip, out var _) || ip.Equals(_serverIp))
+            return false;
 
-        _serverIp = ip.Trim();
+        _serverIp = ip;
 
-        return _serverIp;
+        return true;
     }
 }

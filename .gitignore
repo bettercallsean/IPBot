@@ -748,3 +748,9 @@ azure_credentials.json
 
 ServiceDependencies/
 credentials.env
+
+# Entity Framework Stuff
+*.db
+Migrations
+*.db-wal
+*.db-shm
