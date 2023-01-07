@@ -1,4 +1,6 @@
-﻿namespace IPBot.API.Controllers;
+﻿using Microsoft.AspNetCore.Authorization;
+
+namespace IPBot.API.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
@@ -10,6 +12,7 @@ public class AnimeAnalyserController : ControllerBase, IAnimeAnalyser
         _animeAnalyser = animeAnalyser;
     }
 
+    [Authorize]
     [HttpGet("GetAnimeScore")]
     public async Task<double> GetAnimeScoreAsync(string imageUrl)
     {

@@ -1,4 +1,6 @@
-﻿namespace IPBot.API.Controllers;
+﻿using Microsoft.AspNetCore.Authorization;
+
+namespace IPBot.API.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
@@ -20,5 +22,12 @@ public class IPController : ControllerBase, IIPService
     public async Task<string> GetServerIPAsync()
     {
         return await IPHelper.GetSeverIPAsync();
+    }
+
+    [Authorize]
+    [HttpGet("UpdateServerIP")]
+    public async Task<bool> UpdateServerIPAsync(string ip)
+    {
+        return await Task.FromResult(IPHelper.UpdateServerIP(ip));
     }
 }
