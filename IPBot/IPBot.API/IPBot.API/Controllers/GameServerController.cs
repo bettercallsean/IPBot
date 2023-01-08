@@ -11,7 +11,7 @@ public class GameServerController : ControllerBase, IGameServerService
     {
         return await ServerInfoHelper.GetServerInfoAsync(Constants.MinecraftServerCode, portNumber);
     }
-    
+
     [HttpGet("GetSteamServerStatus/{portNumber:int}")]
     public async Task<ServerInfo> GetSteamServerStatusAsync(int portNumber)
     {

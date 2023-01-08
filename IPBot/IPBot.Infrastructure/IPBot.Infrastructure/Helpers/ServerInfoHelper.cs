@@ -9,14 +9,15 @@ public static class ServerInfoHelper
 
     public static async Task<ServerInfo> GetServerInfoAsync(string gameCode, int port)
     {
-        var serverInfo = await GetServerInfoJsonAsync(gameCode, port);
+        var serverIP = await IPHelper.GetSeverIPAsync();
+        var serverInfo = await GetServerInfoJsonAsync(gameCode, serverIP, port);
         return ParseServerInfoJson(serverInfo);
     }
 
-    private static async Task<string> GetServerInfoJsonAsync(string gameCode, int portNumber)
+    private static async Task<string> GetServerInfoJsonAsync(string gameCode, string serverIP, int portNumber)
     {
         var serverResults =
-            await PythonScriptHelper.RunPythonScriptAsync(ServerStatusScriptName, $"{gameCode} {portNumber}");
+            await PythonScriptHelper.RunPythonScriptAsync(ServerStatusScriptName, $"{gameCode} {serverIP} {portNumber}");
 
         return serverResults;
     }
