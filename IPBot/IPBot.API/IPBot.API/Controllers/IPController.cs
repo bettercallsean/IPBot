@@ -3,6 +3,7 @@
 namespace IPBot.API.Controllers;
 
 [ApiController]
+[Authorize]
 [Route("api/[controller]")]
 public class IPController : ControllerBase, IIPService
 {
@@ -24,7 +25,6 @@ public class IPController : ControllerBase, IIPService
         return await IPHelper.GetSeverIPAsync();
     }
 
-    [Authorize]
     [HttpGet("UpdateServerIP")]
     public async Task<bool> UpdateServerIPAsync(string ip)
     {
