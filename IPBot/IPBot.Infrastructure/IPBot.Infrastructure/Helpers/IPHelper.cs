@@ -6,7 +6,6 @@ public static class IPHelper
 {
     private static readonly string LatestIPFilePath = Path.Combine(AppContext.BaseDirectory, @"../latest_ip.txt");
     private static readonly string IPChangedFilePath = Path.Combine(AppContext.BaseDirectory, @"../ip_changed");
-    private static readonly string IpMiddleManApiUrl = DotEnvHelper.EnvironmentVariables["IP_MIDDLEMAN_URL"];
     private static string _localIp = string.Empty;
     private static string _serverIp = string.Empty;
 
@@ -37,9 +36,19 @@ public static class IPHelper
         return _localIp;
     }
 
-    public static Task<string> GetSeverIPAsync()
+    public static async Task<string> GetSeverIPAsync()
     {
-        return Task.FromResult(_serverIp);
+        if (string.IsNullOrWhiteSpace(_serverIp))
+        {
+            using var httpClient = new HttpClient();
+
+            var serverDomain = new Uri($"https://{DotEnvHelper.EnvironmentVariables["CURRENT_DOMAIN"]}");
+            var ips = await Dns.GetHostAddressesAsync(serverDomain.Host);
+
+            _serverIp = ips[0].ToString();
+        }
+
+        return _serverIp;
     }
 
     public static bool UpdateServerIP(string ip)
