@@ -12,10 +12,12 @@ public class ServerCommands : InteractionModuleBase<SocketInteractionContext>
     {
         _gameServerService = gameServerService;
     }
-    
+
     [SlashCommand("mc", "get the status of the minecraft server")]
     public async Task GetMinecraftServerStatusAsync()
     {
+        await DeferAsync();
+
         var serverInfo =
             await _gameServerService.GetMinecraftServerStatusAsync(BotConstants.MinecraftServerPort);
 
@@ -64,6 +66,8 @@ public class ServerCommands : InteractionModuleBase<SocketInteractionContext>
     [SlashCommand("zomboid", "get the status of the zomboid server")]
     public async Task GetProjectZomboidServerStatusAsync()
     {
+        await DeferAsync();
+
         var serverInfo = await _gameServerService.GetSteamServerStatusAsync(BotConstants.ZomboidServerPort);
 
         await PostServerStatusAsync(serverInfo);
