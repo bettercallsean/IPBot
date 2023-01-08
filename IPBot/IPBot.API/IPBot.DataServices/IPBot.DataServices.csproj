@@ -22,4 +22,10 @@
     <ProjectReference Include="..\..\IPBot.Infrastructure\IPBot.Infrastructure\IPBot.Infrastructure.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="Data\ipbot.db">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>
