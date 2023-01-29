@@ -4,17 +4,31 @@ namespace IPBot.API.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class GameServerController : ControllerBase, IGameServerService
+public class GameServerController : ControllerBase
 {
     [HttpGet("GetMinecraftServerStatus/{portNumber:int}")]
-    public async Task<ServerInfo> GetMinecraftServerStatusAsync(int portNumber)
+    public async Task<ActionResult<ServerInfo>> GetMinecraftServerStatusAsync(int portNumber)
     {
-        return await ServerInfoHelper.GetServerInfoAsync(Constants.MinecraftServerCode, portNumber);
+        try
+        {
+            return Ok(await ServerInfoHelper.GetServerInfoAsync(Constants.MinecraftServerCode, portNumber));
+        }
+        catch (Exception ex)
+        {
+            return Problem("500", ex.Message);
+        }
     }
 
     [HttpGet("GetSteamServerStatus/{portNumber:int}")]
-    public async Task<ServerInfo> GetSteamServerStatusAsync(int portNumber)
+    public async Task<ActionResult<ServerInfo>> GetSteamServerStatusAsync(int portNumber)
     {
-        return await ServerInfoHelper.GetServerInfoAsync(Constants.SteamServerCode, portNumber);
+        try
+        {
+            return Ok(await ServerInfoHelper.GetServerInfoAsync(Constants.SteamServerCode, portNumber));
+        }
+        catch (Exception ex)
+        {
+            return Problem("500", ex.Message);
+        }
     }
 }

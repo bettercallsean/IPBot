@@ -21,7 +21,9 @@ public class ServerCommands : InteractionModuleBase<SocketInteractionContext>
         var serverInfo =
             await _gameServerService.GetMinecraftServerStatusAsync(BotConstants.MinecraftServerPort);
 
-        await PostServerStatusAsync(serverInfo);
+        var serverStatus = GetServerStatus(serverInfo);
+
+        await FollowupAsync(serverStatus);
     }
 
     [SlashCommand("ark", "get the status of the ark server")]
@@ -70,10 +72,12 @@ public class ServerCommands : InteractionModuleBase<SocketInteractionContext>
 
         var serverInfo = await _gameServerService.GetSteamServerStatusAsync(BotConstants.ZomboidServerPort);
 
-        await PostServerStatusAsync(serverInfo);
+        var serverStatus = GetServerStatus(serverInfo);
+
+        await FollowupAsync(serverStatus);
     }
 
-    private async Task PostServerStatusAsync(ServerInfo serverInfo)
+    private string GetServerStatus(ServerInfo serverInfo)
     {
         if (serverInfo is not null)
         {
@@ -83,16 +87,16 @@ public class ServerCommands : InteractionModuleBase<SocketInteractionContext>
                     ? ServerInfoHelper.PlayerCountStatus(serverInfo.PlayerCount)
                     : ServerInfoHelper.PlayerCountStatus(serverInfo.PlayerNames);
 
-                await FollowupAsync(serverStatus);
+                return serverStatus;
             }
             else
             {
-                await FollowupAsync(BotConstants.ServerOfflineString);
+                return BotConstants.ServerOfflineString;
             }
         }
         else
         {
-            await FollowupAsync(BotConstants.ServerOfflineString);
+            return BotConstants.ServerOfflineString;
         }
     }
 }
