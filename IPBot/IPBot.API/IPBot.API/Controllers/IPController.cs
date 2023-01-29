@@ -4,30 +4,37 @@ namespace IPBot.API.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class IPController : ControllerBase, IIPService
+public class IPController : ControllerBase
 {
     [HttpGet("GetCurrentServerDomain")]
-    public Task<string> GetCurrentDomainAsync()
+    public ActionResult<string> GetCurrentDomain()
     {
-        return Task.FromResult(ServerDomainHelper.GetCurrentServerDomain());
+        return Ok(ServerDomainHelper.GetCurrentServerDomain());
     }
 
     [HttpGet("GetLocalIP")]
-    public async Task<string> GetLocalIPAsync()
+    public async Task<ActionResult<string>> GetLocalIPAsync()
     {
-        return await IPHelper.GetLocalIPAsync();
+        return Ok(await IPHelper.GetLocalIPAsync());
     }
 
     [HttpGet("GetServerIP")]
-    public async Task<string> GetServerIPAsync()
+    public async Task<ActionResult<string>> GetServerIPAsync()
     {
-        return await IPHelper.GetSeverIPAsync();
+        return Ok(await IPHelper.GetSeverIPAsync());
     }
 
     [Authorize]
     [HttpGet("UpdateServerIP")]
-    public async Task<bool> UpdateServerIPAsync(string ip)
+    public ActionResult<bool> UpdateServerIP(string ip)
     {
-        return await Task.FromResult(IPHelper.UpdateServerIP(ip));
+        try
+        {
+            return Ok(IPHelper.UpdateServerIP(ip));
+        }
+        catch (Exception ex)
+        {
+            return Problem(ex.Message);
+        }
     }
 }
