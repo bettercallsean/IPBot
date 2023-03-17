@@ -53,8 +53,9 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         };
     });
 
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<IIpBotDataContext, IpBotDbContext>(
-    options => options.UseMySQL(builder.Configuration.GetConnectionString("DefaultConnection")));
+    options => options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
 
 var app = builder.Build();
 

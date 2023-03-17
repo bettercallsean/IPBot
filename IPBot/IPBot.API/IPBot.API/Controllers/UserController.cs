@@ -16,14 +16,14 @@ public class UserController : ControllerBase
     }
 
     [Authorize]
-    [HttpPost("registerUser")]
+    [HttpPost("RegisterUser")]
     public async Task<ActionResult<bool>> RegisterUserAsync(UserDto dto)
     {
         await _userService.RegisterUserAsync(dto);
         return Ok(true);
     }
 
-    [HttpPost("login")]
+    [HttpPost("Login")]
     public async Task<ActionResult<string>> LoginAsync(UserDto dto)
     {
         var token = await _userService.LoginUserAsync(dto);
