@@ -12,7 +12,11 @@ public class IPCommands : InteractionModuleBase<SocketInteractionContext>
         _ipService = ipService;
     }
 
+#if DEBUG
+    [SlashCommand("ip_debug", "get the current IP of the server")]
+#else
     [SlashCommand("ip", "get the current IP of the server")]
+#endif
     public async Task GetSeverDomainNameAsync()
     {
         var serverDomain = ServerDomainHelper.GetCurrentServerDomain();
