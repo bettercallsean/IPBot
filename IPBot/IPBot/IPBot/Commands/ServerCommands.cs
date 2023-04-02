@@ -13,7 +13,11 @@ public class ServerCommands : InteractionModuleBase<SocketInteractionContext>
         _gameServerService = gameServerService;
     }
 
+#if DEBUG
+    [SlashCommand("mc_debug", "get the status of the minecraft server")]
+#else
     [SlashCommand("mc", "get the status of the minecraft server")]
+#endif
     public async Task GetMinecraftServerStatusAsync()
     {
         await DeferAsync();
@@ -26,7 +30,11 @@ public class ServerCommands : InteractionModuleBase<SocketInteractionContext>
         await FollowupAsync(serverStatus);
     }
 
+#if DEBUG
+    [SlashCommand("ark_debug", "get the status of the ark server")]
+#else
     [SlashCommand("ark", "get the status of the ark server")]
+#endif
     public async Task GetArkServerStatusAsync()
     {
         await DeferAsync();
@@ -65,7 +73,11 @@ public class ServerCommands : InteractionModuleBase<SocketInteractionContext>
         await ServerInfoHelper.SaveArkServerDataAsync(arkServers);
     }
 
+#if DEBUG
+    [SlashCommand("zomboid_debug", "get the status of the zomboid server")]
+#else
     [SlashCommand("zomboid", "get the status of the zomboid server")]
+#endif
     public async Task GetProjectZomboidServerStatusAsync()
     {
         await DeferAsync();
