@@ -756,3 +756,4 @@ Migrations
 *.db-shm
 appsettings.Development.json
 appsettings.Production.json
+.stignore
