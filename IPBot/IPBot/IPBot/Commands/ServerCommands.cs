@@ -135,7 +135,7 @@ public class ServerCommands : InteractionModuleBase<SocketInteractionContext>
         }
     }
 
-    private ComponentBuilder CreateGameServerMenuComponent(string mapName, int port)
+    private static ComponentBuilder CreateGameServerMenuComponent(string mapName, int port)
     {
         var mapsAndPorts = new Dictionary<string, int>
         {
@@ -145,7 +145,7 @@ public class ServerCommands : InteractionModuleBase<SocketInteractionContext>
         return CreateGameServerMenuComponent(mapsAndPorts);
     }
 
-    private ComponentBuilder CreateGameServerMenuComponent(Dictionary<string, int> mapsAndPorts)
+    private static ComponentBuilder CreateGameServerMenuComponent(Dictionary<string, int> mapsAndPorts)
     {
         var serverMenu = new SelectMenuBuilder
         {
