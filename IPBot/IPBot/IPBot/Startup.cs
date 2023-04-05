@@ -5,6 +5,8 @@ using IPBot.Infrastructure.Helpers;
 using IPBot.Infrastructure.Interfaces;
 using IPBot.Services;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using Serilog;
 
 namespace IPBot;
 
@@ -24,6 +26,8 @@ public class Startup
         DotEnvHelper.Load(Constants.CredentialsFile);
 
         _config = builder.Build();
+
+        Log.Logger = new LoggerConfiguration().ReadFrom.Configuration(_config).CreateLogger();
     }
 
     public static async Task RunAsync()
@@ -61,6 +65,11 @@ public class Startup
             .AddSingleton<IIPService, IPDataService>()
             .AddSingleton<IAnimeAnalyser, AnimeAnalyserDataService>()
             .AddSingleton(_config)
+            .AddLogging(config =>
+            {
+                config.AddConsole();
+                config.AddSerilog();
+            })
             .AddHttpClient(string.Empty, x =>
             {
                 x.BaseAddress = new Uri(_config["apiEndpoint"]);
