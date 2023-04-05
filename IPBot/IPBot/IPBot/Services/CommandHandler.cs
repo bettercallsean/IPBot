@@ -24,7 +24,6 @@ public class CommandHandler
         await _commands.AddModulesAsync(Assembly.GetEntryAssembly(), _services);
 
         _client.SlashCommandExecuted += SlashCommandExecuted;
-
         _client.InteractionCreated += HandleInteraction;
     }
 
@@ -33,7 +32,7 @@ public class CommandHandler
         return Task.Run(() =>
         {
             var user = arg.User as SocketGuildUser;
-            _logger.LogInformation("{userName}:{discriminator} ({userId}) called {commandName} in Guild {guildId} in Channel {channelId}", user.Username, user.DiscriminatorValue, user.Id, arg.CommandName, user.Guild.Name, arg.Channel.Name);
+            _logger.LogInformation("{userName}:{discriminator} ({userId}) called command {commandName} in {guildId} in Channel {channelId}", user.Username, user.DiscriminatorValue, user.Id, arg.CommandName, user.Guild.Name, arg.Channel.Name);
         });
     }
 
