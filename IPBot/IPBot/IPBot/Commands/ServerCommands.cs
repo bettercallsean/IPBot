@@ -1,4 +1,6 @@
-﻿using IPBot.Helpers;
+﻿using Discord;
+using IPBot.Helpers;
+using IPBot.Infrastructure.Helpers;
 using IPBot.Infrastructure.Interfaces;
 using IPBot.Infrastructure.Models;
 
@@ -6,6 +8,8 @@ namespace IPBot.Commands;
 
 public class ServerCommands : InteractionModuleBase<SocketInteractionContext>
 {
+    private const string GameServerMenu = "gameServerMenu";
+
     private readonly IGameServerService _gameServerService;
 
     public ServerCommands(IGameServerService gameServerService)
@@ -41,35 +45,38 @@ public class ServerCommands : InteractionModuleBase<SocketInteractionContext>
 
         var arkServers = await ServerInfoHelper.LoadArkServerDataAsync();
         var serverStatus = new StringBuilder();
+        var activeServers = new Dictionary<string, int>();
 
         foreach (var (port, map) in arkServers)
         {
             var serverInfo = await _gameServerService.GetSteamServerStatusAsync(port);
+            var playerCountStatus = GetServerStatus(serverInfo);
+            var serverMapHasValue = !string.IsNullOrWhiteSpace(serverInfo.Map);
 
-            if (serverInfo.Online)
-            {
-                var playerCountStatus = ServerInfoHelper.PlayerCountStatus(serverInfo.PlayerNames);
+            serverStatus.AppendLine(serverMapHasValue
+                    ? $"Map: {serverInfo.Map} - {playerCountStatus} | Port: {port}"
+                    : $"{(string.IsNullOrEmpty(map) ? string.Empty : $"Map: {map} - ")}{playerCountStatus} | Port: {port}");
 
-                serverStatus.AppendLine(
-                    $"Map: {serverInfo.Map} - {playerCountStatus} | Port: {port}");
+            if(serverInfo.Online)
+                activeServers.Add(serverInfo.Map, port);
 
-                if (!string.IsNullOrWhiteSpace(serverInfo.Map))
-                {
-                    arkServers[port] = serverInfo.Map;
-                }
-            }
-            else
-            {
-                serverStatus.AppendLine(string.IsNullOrWhiteSpace(map)
-                    ? $"{BotConstants.ServerOfflineString} | Port: {port}"
-                    : $"Map: {map} - {BotConstants.ServerOfflineString} | Port: {port}");
-            }
+            if (!string.IsNullOrWhiteSpace(serverInfo.Map) && !serverInfo.Map.Equals(map))
+                arkServers[port] = serverInfo.Map;
         }
 
-        serverStatus.AppendLine("\nBloody hell, that's a lot of servers 🦖");
+        serverStatus.AppendLine($"{Environment.NewLine}Bloody hell, that's a lot of servers 🦖");
         var serverStatusMessage = serverStatus.ToString();
 
-        await FollowupAsync(serverStatusMessage);
+        if (activeServers.Any())
+        {
+            var component = CreateGameServerMenuComponent(activeServers);
+            await FollowupAsync(serverStatusMessage, components: component.Build());
+        }
+        else
+        {
+            await FollowupAsync(serverStatusMessage);
+        }
+
         await ServerInfoHelper.SaveArkServerDataAsync(arkServers);
     }
 
@@ -86,10 +93,26 @@ public class ServerCommands : InteractionModuleBase<SocketInteractionContext>
 
         var serverStatus = GetServerStatus(serverInfo);
 
-        await FollowupAsync(serverStatus);
+        if (serverInfo.Online)
+        {
+            var component = CreateGameServerMenuComponent(serverInfo.Map, BotConstants.ZomboidServerPort);
+            await FollowupAsync(serverStatus, components: component.Build());
+        }
+        else
+        {
+            await FollowupAsync(serverStatus);
+        }
     }
 
-    private string GetServerStatus(ServerInfo serverInfo)
+    [ComponentInteraction(GameServerMenu)]
+    public async Task GenerateSteamConnectLinkAsync(string[] inputs)
+    {
+        var serverDomain = ServerDomainHelper.GetCurrentServerDomain();
+        await RespondAsync($"Open up Steam after clicking this link and you should see the 'server connect' menu{Environment.NewLine}" +
+            $"steam://connect/{serverDomain}:{inputs[0]}", ephemeral: true);
+    }
+
+    private static string GetServerStatus(ServerInfo serverInfo)
     {
         if (serverInfo is not null)
         {
@@ -110,5 +133,34 @@ public class ServerCommands : InteractionModuleBase<SocketInteractionContext>
         {
             return BotConstants.ServerOfflineString;
         }
+    }
+
+    private ComponentBuilder CreateGameServerMenuComponent(string mapName, int port)
+    {
+        var mapsAndPorts = new Dictionary<string, int>
+        {
+            { mapName, port }
+        };
+
+        return CreateGameServerMenuComponent(mapsAndPorts);
+    }
+
+    private ComponentBuilder CreateGameServerMenuComponent(Dictionary<string, int> mapsAndPorts)
+    {
+        var serverMenu = new SelectMenuBuilder
+        {
+            CustomId = "gameServerMenu",
+            Placeholder = "Select a server to join",
+        };
+
+        foreach (var (map, port) in mapsAndPorts)
+        {
+            serverMenu.AddOption(map, port.ToString(), port.ToString());
+        }
+
+        var component = new ComponentBuilder()
+            .WithSelectMenu(serverMenu);
+
+        return component;
     }
 }
