@@ -11,7 +11,7 @@ public class GameServerController : ControllerBase
     {
         try
         {
-            return Ok(await ServerInfoHelper.GetServerInfoAsync(Constants.MinecraftServerCode, portNumber));
+            return Ok(await ServerStatusHelper.GetServerInfoAsync(Constants.MinecraftServerCode, portNumber));
         }
         catch (Exception ex)
         {
@@ -24,7 +24,7 @@ public class GameServerController : ControllerBase
     {
         try
         {
-            return Ok(await ServerInfoHelper.GetServerInfoAsync(Constants.SteamServerCode, portNumber));
+            return Ok(await ServerStatusHelper.GetServerInfoAsync(Constants.SteamServerCode, portNumber));
         }
         catch (Exception ex)
         {

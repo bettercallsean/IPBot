@@ -3,7 +3,7 @@ using IPBot.Infrastructure.Models;
 
 namespace IPBot.Infrastructure.Helpers;
 
-public static class ServerInfoHelper
+public static class ServerStatusHelper
 {
     private const string ServerStatusScriptName = "get_server_status.py";
 
