@@ -22,7 +22,6 @@ public class IPCommands : InteractionModuleBase<SocketInteractionContext>
         var serverDomain = ServerDomainHelper.GetCurrentServerDomain();
         var ip = await _ipService.GetServerIPAsync();
 
-        await RespondAsync($"`{ip}` {Environment.NewLine}" +
-            $"New feature! You can now connect to Minecraft, Ark etc. etc. using `{serverDomain}` instead of using the IP 😄 This shouldn't change so there shouldn't be any worry about having to change it!");
+        await RespondAsync($"`{serverDomain}` or `{ip}`");
     }
 }
