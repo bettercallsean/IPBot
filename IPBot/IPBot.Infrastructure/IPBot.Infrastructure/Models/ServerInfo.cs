@@ -4,6 +4,9 @@ namespace IPBot.Infrastructure.Models;
 
 public class ServerInfo
 {
+    [JsonPropertyName("server_name")]
+    public bool ServerName { get; set; }
+
     [JsonPropertyName("online")]
     public bool Online { get; set; }
 
