@@ -29,7 +29,7 @@ public class ServerCommands : InteractionModuleBase<SocketInteractionContext>
         var serverInfo =
             await _gameServerService.GetMinecraftServerStatusAsync(BotConstants.MinecraftServerPort);
 
-        var serverStatus = GetServerStatus(serverInfo);
+        var serverStatus = ServerInfoHelper.GetServerStatus(serverInfo);
 
         await FollowupAsync(serverStatus);
     }
@@ -50,7 +50,7 @@ public class ServerCommands : InteractionModuleBase<SocketInteractionContext>
         foreach (var (port, map) in arkServers)
         {
             var serverInfo = await _gameServerService.GetSteamServerStatusAsync(port);
-            var playerCountStatus = GetServerStatus(serverInfo);
+            var playerCountStatus = ServerInfoHelper.GetServerStatus(serverInfo);
             var serverMapHasValue = !string.IsNullOrWhiteSpace(serverInfo.Map);
 
             serverStatus.AppendLine(serverMapHasValue
@@ -91,7 +91,7 @@ public class ServerCommands : InteractionModuleBase<SocketInteractionContext>
 
         var serverInfo = await _gameServerService.GetSteamServerStatusAsync(BotConstants.ZomboidServerPort);
 
-        var serverStatus = GetServerStatus(serverInfo);
+        var serverStatus = ServerInfoHelper.GetServerStatus(serverInfo);
 
         if (serverInfo.Online)
         {
@@ -110,29 +110,6 @@ public class ServerCommands : InteractionModuleBase<SocketInteractionContext>
         var serverDomain = ServerDomainHelper.GetCurrentServerDomain();
         await RespondAsync($"Open up Steam after clicking this link and you should see the 'server connect' menu{Environment.NewLine}" +
             $"steam://connect/{serverDomain}:{inputs[0]}", ephemeral: true);
-    }
-
-    private static string GetServerStatus(ServerInfo serverInfo)
-    {
-        if (serverInfo is not null)
-        {
-            if (serverInfo.Online)
-            {
-                var serverStatus = serverInfo.PlayerNames.Count == 0
-                    ? ServerInfoHelper.PlayerCountStatus(serverInfo.PlayerCount)
-                    : ServerInfoHelper.PlayerCountStatus(serverInfo.PlayerNames);
-
-                return serverStatus;
-            }
-            else
-            {
-                return BotConstants.ServerOfflineString;
-            }
-        }
-        else
-        {
-            return BotConstants.ServerOfflineString;
-        }
     }
 
     private static ComponentBuilder CreateGameServerMenuComponent(string mapName, int port)

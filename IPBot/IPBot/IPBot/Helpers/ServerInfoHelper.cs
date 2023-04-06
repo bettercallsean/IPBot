@@ -1,4 +1,6 @@
-﻿namespace IPBot.Helpers;
+﻿using IPBot.Infrastructure.Models;
+
+namespace IPBot.Helpers;
 
 internal static class ServerInfoHelper
 {
@@ -44,6 +46,29 @@ internal static class ServerInfoHelper
     {
         await using var file = new StreamWriter(ArkServerDataFile);
         await file.WriteAsync(JsonConvert.SerializeObject(servers));
+    }
+
+    public static string GetServerStatus(ServerInfo serverInfo)
+    {
+        if (serverInfo is not null)
+        {
+            if (serverInfo.Online)
+            {
+                var serverStatus = serverInfo.PlayerNames.Count == 0
+                    ? ServerInfoHelper.PlayerCountStatus(serverInfo.PlayerCount)
+                    : ServerInfoHelper.PlayerCountStatus(serverInfo.PlayerNames);
+
+                return serverStatus;
+            }
+            else
+            {
+                return BotConstants.ServerOfflineString;
+            }
+        }
+        else
+        {
+            return BotConstants.ServerOfflineString;
+        }
     }
 
     private static async Task CreateArkDataFileAsync()
