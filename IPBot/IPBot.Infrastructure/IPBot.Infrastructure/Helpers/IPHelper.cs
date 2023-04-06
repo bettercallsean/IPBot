@@ -40,8 +40,6 @@ public static class IPHelper
     {
         if (string.IsNullOrWhiteSpace(_serverIp))
         {
-            using var httpClient = new HttpClient();
-
             var serverDomain = new Uri($"https://{DotEnvHelper.EnvironmentVariables["CURRENT_DOMAIN"]}");
             var ips = await Dns.GetHostAddressesAsync(serverDomain.Host);
 
