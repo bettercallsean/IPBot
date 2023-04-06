@@ -25,6 +25,17 @@ public class CommandHandler
 
         _client.SlashCommandExecuted += SlashCommandExecuted;
         _client.InteractionCreated += HandleInteraction;
+        _client.SelectMenuExecuted += SelectMenuExecuted;
+    }
+
+    private Task SelectMenuExecuted(SocketMessageComponent arg)
+    {
+        return Task.Run(() =>
+        {
+            var user = arg.User as SocketGuildUser;
+            _logger.LogInformation("{userName}:{discriminator} ({userId}) clicked menu {menuName} in {guildId} - {channelId}. Selected Values: {selection}",
+                user.Username, user.DiscriminatorValue, user.Id, arg.Data.CustomId, user.Guild.Name, arg.Channel.Name, string.Join(",", arg.Data.Values));
+        });
     }
 
     private Task SlashCommandExecuted(SocketSlashCommand arg)
@@ -32,7 +43,8 @@ public class CommandHandler
         return Task.Run(() =>
         {
             var user = arg.User as SocketGuildUser;
-            _logger.LogInformation("{userName}:{discriminator} ({userId}) called command {commandName} in {guildId} in Channel {channelId}", user.Username, user.DiscriminatorValue, user.Id, arg.CommandName, user.Guild.Name, arg.Channel.Name);
+            _logger.LogInformation("{userName}:{discriminator} ({userId}) called command '{commandName}' in {guildId} - {channelId}",
+                user.Username, user.DiscriminatorValue, user.Id, arg.CommandName, user.Guild.Name, arg.Channel.Name);
         });
     }
 
@@ -45,7 +57,7 @@ public class CommandHandler
         }
         catch (Exception ex)
         {
-            Console.WriteLine(ex);
+            _logger.LogError(ex, "Error handling interaction");
             if (arg.Type == InteractionType.ApplicationCommand)
             {
                 await arg.GetOriginalResponseAsync().ContinueWith(async (msg) => await msg.Result.DeleteAsync());

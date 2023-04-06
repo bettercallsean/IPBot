@@ -19,9 +19,9 @@ public class Startup
         var builder = new ConfigurationBuilder()
             .SetBasePath(AppContext.BaseDirectory);
 
-        builder.AddJsonFile(DebugHelper.IsDebug()
-            ? $"{BotConstants.ConfigDirectory}/appsettings.Dev.json"
-            : $"{BotConstants.ConfigDirectory}/appsettings.json");
+        var environment = DebugHelper.IsDebug() ? "Development" : "Production";
+        builder.AddJsonFile("appsettings.json")
+            .AddJsonFile($"appsettings.{environment}.json", optional: true);
 
         DotEnvHelper.Load(Constants.CredentialsFile);
 
@@ -67,7 +67,6 @@ public class Startup
             .AddSingleton(_config)
             .AddLogging(config =>
             {
-                config.AddConsole();
                 config.AddSerilog();
             })
             .AddHttpClient(string.Empty, x =>
