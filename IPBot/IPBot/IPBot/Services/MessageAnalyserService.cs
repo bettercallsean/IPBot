@@ -4,7 +4,7 @@ using IPBot.Infrastructure.Interfaces;
 
 namespace IPBot.Services;
 
-public class MessageAnalyserService
+public partial class MessageAnalyserService
 {
     private readonly List<string> _responseList = Resources.Resources.ResponseGifs.Split(Environment.NewLine).ToList();
     private readonly IAnimeAnalyser _animeAnalyser;
@@ -102,14 +102,10 @@ public class MessageAnalyserService
 
     private static MessageMediaModel MessageContainsMedia(string messageContent)
     {
-        const string discordEmojiRegex = "<:[a-zA-Z0-9]+:([0-9]+)>";
-        const string urlRegex =
-            @"^https?:\/\/(?:www\\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b(?:[-a-zA-Z0-9()@:%_\+.~#?&\/=]*)$";
-
         foreach (var word in messageContent.Split())
         {
-            var urlMatch = Regex.Match(word, urlRegex);
-            var emojiMatch = Regex.Match(word, discordEmojiRegex);
+            var urlMatch = urlRegex().Match(word);
+            var emojiMatch = discorEmojiRegex().Match(word);
 
             if (!urlMatch.Success && !emojiMatch.Success) continue;
 
@@ -129,7 +125,7 @@ public class MessageAnalyserService
 
     private static MessageMediaModel MessageContainsYouTubeLink(string messageContent)
     {
-        var youtubeUrlMatch = Regex.Match(messageContent, @"^((?:https?:)?\/\/)?((?:www|m)\.)?((?:youtube(-nocookie)?\.com|youtu.be))(\/(?:[\w\-]+\?v=|embed\/|v\/)?)([\w\-]+)(\S+)?$");
+        var youtubeUrlMatch = youtubeUrlRegex().Match(messageContent);
 
         return new MessageMediaModel
         {
@@ -137,4 +133,13 @@ public class MessageAnalyserService
             Url = youtubeUrlMatch.Success ? youtubeUrlMatch.Groups.Values.ToList()[6].ToString() : string.Empty
         };
     }
+
+    [GeneratedRegex("^https?:\\/\\/(?:www\\\\.)?[-a-zA-Z0-9@:%._\\+~#=]{1,256}\\.[a-zA-Z0-9()]{1,6}\\b(?:[-a-zA-Z0-9()@:%_\\+.~#?&\\/=]*)$")]
+    private static partial Regex urlRegex();
+
+    [GeneratedRegex("<:[a-zA-Z0-9]+:([0-9]+)>")]
+    private static partial Regex discorEmojiRegex();
+
+    [GeneratedRegex("^((?:https?:)?\\/\\/)?((?:www|m)\\.)?((?:youtube(-nocookie)?\\.com|youtu.be))(\\/(?:[\\w\\-]+\\?v=|embed\\/|v\\/)?)([\\w\\-]+)(\\S+)?$")]
+    private static partial Regex youtubeUrlRegex();
 }
