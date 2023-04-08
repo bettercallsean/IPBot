@@ -9,7 +9,7 @@ using IPBot.DTOs.Dtos;
 using IPBot.Infrastructure.Helpers;
 using Microsoft.IdentityModel.Tokens;
 
-namespace IPBot.DataServices.Service;z
+namespace IPBot.DataServices.Service;
 public class UserService : IUserService
 {
     private readonly IUserDataService _userDataService;
