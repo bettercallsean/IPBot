@@ -26,8 +26,4 @@
     <ProjectReference Include="..\..\IPBot.DTOs\IPBot.DTOs.csproj" />
     <ProjectReference Include="..\..\IPBot.API.Shared\IPBot.API.Shared.csproj" />
   </ItemGroup>
-
-  <ItemGroup>
-    <None Remove="AutoMapper\" />
-  </ItemGroup>
 </Project>
