@@ -33,7 +33,7 @@ public class AnimeAnalyserService : IAnimeAnalyserService
             imageTags = await _computerVisionClient.TagImageInStreamAsync(compressedImage);
         }
 
-        return Enumerable.FirstOrDefault<double>(imageTags.Tags.Where(x => x.Name == "anime").Select(x => x.Confidence));
+        return imageTags.Tags.Where(x => x.Name == "anime").Select(x => x.Confidence).FirstOrDefault();
     }
 
     private ComputerVisionClient Authenticate(string endpoint, string key)
