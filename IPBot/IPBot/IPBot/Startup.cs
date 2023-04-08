@@ -1,10 +1,8 @@
 ﻿using IPBot.API.Shared.Services;
 using IPBot.APIServices;
-using IPBot.DataServices;
 using IPBot.Helpers;
 using IPBot.Infrastructure;
-using IPBot.Infrastructure.Helpers;
-using IPBot.Infrastructure.Interfaces;
+using IPBot.Interfaces;
 using IPBot.Services;
 using Microsoft.Extensions.DependencyInjection;
 using Serilog;
@@ -23,8 +21,6 @@ public class Startup
         var environment = DebugHelper.IsDebug() ? "Development" : "Production";
         builder.AddJsonFile("appsettings.json")
             .AddJsonFile($"appsettings.{environment}.json", optional: true);
-
-        DotEnvHelper.Load(Constants.CredentialsFile);
 
         _config = builder.Build();
 
@@ -64,15 +60,16 @@ public class Startup
             .AddScoped<MessageAnalyserService>()
             .AddSingleton<IGameService, GameService>()
             .AddSingleton<IIPService, IPService>()
-            .AddSingleton<IAnimeAnalyser, AnimeAnalyserService>()
-            .AddSingleton(_config)
+            .AddSingleton<IAnimeAnalyserService, AnimeAnalyserService>()
+            .AddSingleton<ITenorApiHelper, TenorApiHelper>()
+            .AddSingleton<IConfiguration>(_config)
             .AddLogging(config =>
             {
                 config.AddSerilog();
             })
             .AddHttpClient(string.Empty, x =>
             {
-                x.BaseAddress = new Uri(_config["apiEndpoint"]);
+                x.BaseAddress = new Uri(_config["APIEndpoint"]);
             });
     }
 }

@@ -1,6 +1,5 @@
+using IPBot.API.Shared.Dtos;
 using IPBot.API.Shared.Services;
-using IPBot.DTOs.Dtos;
-using IPBot.Infrastructure.Models;
 
 namespace IPBot.API.Controllers;
 
@@ -16,7 +15,7 @@ public class GameServerController : ControllerBase
     }
 
     [HttpGet("GetMinecraftServerStatus/{portNumber:int}")]
-    public async Task<ActionResult<ServerInfo>> GetMinecraftServerStatusAsync(int portNumber)
+    public async Task<ActionResult<ServerInfoDto>> GetMinecraftServerStatusAsync(int portNumber)
     {
         try
         {
@@ -29,7 +28,7 @@ public class GameServerController : ControllerBase
     }
 
     [HttpGet("GetSteamServerStatus/{portNumber:int}")]
-    public async Task<ActionResult<ServerInfo>> GetSteamServerStatusAsync(int portNumber)
+    public async Task<ActionResult<ServerInfoDto>> GetSteamServerStatusAsync(int portNumber)
     {
         try
         {

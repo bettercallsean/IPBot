@@ -9,10 +9,4 @@
   <ItemGroup>
     <None Remove="Services\" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Services\" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\IPBot.DTOs\IPBot.DTOs.csproj" />
-  </ItemGroup>
 </Project>

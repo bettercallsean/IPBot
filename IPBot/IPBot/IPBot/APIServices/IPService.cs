@@ -1,6 +1,6 @@
-﻿using IPBot.Infrastructure.Interfaces;
+﻿using IPBot.API.Shared.Services;
 
-namespace IPBot.DataServices;
+namespace IPBot.APIServices;
 
 public class IPService : IIPService
 {
@@ -12,7 +12,7 @@ public class IPService : IIPService
         _httpClient = httpClient;
     }
 
-    public async Task<string> GetCurrentDomainAsync()
+    public async Task<string> GetCurrentServerDomainAsync()
     {
         return await _httpClient.GetStringAsync($"{BaseUri}/GetCurrentServerDomain");
     }
@@ -25,5 +25,10 @@ public class IPService : IIPService
     public async Task<string> GetServerIPAsync()
     {
         return await _httpClient.GetStringAsync($"{BaseUri}/GetServerIP");
+    }
+
+    public Task<bool> UpdateServerIPAsync(string ip)
+    {
+        throw new NotImplementedException();
     }
 }

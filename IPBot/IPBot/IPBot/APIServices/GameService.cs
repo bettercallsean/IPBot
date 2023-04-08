@@ -1,6 +1,6 @@
 ﻿using System.Net.Http.Json;
+using IPBot.API.Shared.Dtos;
 using IPBot.API.Shared.Services;
-using IPBot.DTOs.Dtos;
 
 namespace IPBot.APIServices;
 

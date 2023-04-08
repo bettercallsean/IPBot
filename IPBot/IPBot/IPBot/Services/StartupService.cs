@@ -1,5 +1,5 @@
-﻿using IPBot.Helpers;
-using IPBot.Infrastructure.Helpers;
+﻿using IPBot.API.Shared.Services;
+using IPBot.Helpers;
 using Microsoft.Extensions.Logging;
 
 namespace IPBot.Services;
@@ -7,12 +7,16 @@ namespace IPBot.Services;
 public class StartupService
 {
     private readonly ILogger<StartupService> _logger;
+    private readonly IConfiguration _configuration;
+    private readonly IIPService _ipService;
     private readonly DiscordSocketClient _discord;
     private readonly InteractionService _commands;
 
-    public StartupService(ILogger<StartupService> logger, DiscordSocketClient discord, InteractionService commands, MessageAnalyserService messageAnalyserService)
+    public StartupService(ILogger<StartupService> logger, IConfiguration configuration, IIPService ipService, DiscordSocketClient discord, InteractionService commands)
     {
         _logger = logger;
+        _configuration = configuration;
+        _ipService = ipService;
         _discord = discord;
         _commands = commands;
     }
@@ -21,7 +25,7 @@ public class StartupService
     {
         _logger.LogInformation("Starting...");
 
-        var token = DotEnvHelper.EnvironmentVariables["TOKEN"];
+        var token = _configuration["BotToken"];
 
         await _discord.LoginAsync(Discord.TokenType.Bot, token);
         await _discord.StartAsync();
@@ -33,8 +37,9 @@ public class StartupService
     private async Task DiscordOnConnected()
     {
         _logger.LogInformation("Connected");
-
-        var serverDomain = ServerDomainHelper.GetCurrentServerDomain();
+        
+        var serverDomain = await _ipService.GetCurrentServerDomainAsync();
+        _logger.LogInformation("Domain: {serverDomain}", serverDomain);
 
         await _discord.SetGameAsync(serverDomain);
     }
@@ -43,7 +48,7 @@ public class StartupService
     {
         if (DebugHelper.IsDebug())
         {
-            var guildId = ulong.Parse(DotEnvHelper.EnvironmentVariables["TEST_GUILD"]);
+            var guildId = ulong.Parse(_configuration["TestGuild"]);
             await _commands.RegisterCommandsToGuildAsync(guildId);
         }
         else

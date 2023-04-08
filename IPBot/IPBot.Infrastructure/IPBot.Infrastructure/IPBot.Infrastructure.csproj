@@ -19,11 +19,13 @@
       </None>
     </ItemGroup>
     <ItemGroup>
+      <Folder Include="Interfaces\" />
       <Folder Include="Scripts\" />
     </ItemGroup>
     <ItemGroup>
-      <None Update="credentials.env">
-        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      </None>
+      <ProjectReference Include="..\..\IPBot.API.Shared\IPBot.API.Shared.csproj" />
+    </ItemGroup>
+    <ItemGroup>
+      <PackageReference Include="Magick.NET-Q16-AnyCPU" Version="13.0.0" />
     </ItemGroup>
 </Project>

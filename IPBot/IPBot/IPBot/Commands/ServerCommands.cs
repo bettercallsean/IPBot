@@ -1,7 +1,6 @@
 ﻿using Discord;
 using IPBot.API.Shared.Services;
 using IPBot.Helpers;
-using IPBot.Infrastructure.Helpers;
 
 namespace IPBot.Commands;
 
@@ -10,10 +9,12 @@ public class ServerCommands : InteractionModuleBase<SocketInteractionContext>
     private const string GameServerMenu = "gameServerMenu";
 
     private readonly IGameService _gameService;
+    private readonly IIPService _ipService;
 
-    public ServerCommands(IGameService gameService)
+    public ServerCommands(IGameService gameService, IIPService ipService)
     {
         _gameService = gameService;
+        _ipService = ipService;
     }
 
 #if DEBUG
@@ -65,7 +66,7 @@ public class ServerCommands : InteractionModuleBase<SocketInteractionContext>
             activeServers.Add(serverInfo.Map, server.Port);
         }
 
-        if(activeServers.Count >= 3)
+        if (activeServers.Count >= 3)
             serverStatus.AppendLine($"{Environment.NewLine}Bloody hell, that's a lot of servers 🦖");
 
         var serverStatusMessage = serverStatus.ToString();
@@ -108,7 +109,7 @@ public class ServerCommands : InteractionModuleBase<SocketInteractionContext>
     [ComponentInteraction(GameServerMenu)]
     public async Task GenerateSteamConnectLinkAsync(string[] inputs)
     {
-        var serverDomain = ServerDomainHelper.GetCurrentServerDomain();
+        var serverDomain = await _ipService.GetCurrentServerDomainAsync();
         await RespondAsync($"Open up Steam after clicking this link and you should see the 'server connect' menu{Environment.NewLine}" +
             $"steam://connect/{serverDomain}:{inputs[0]}", ephemeral: true);
     }
@@ -131,10 +132,8 @@ public class ServerCommands : InteractionModuleBase<SocketInteractionContext>
             Placeholder = "Select a server to join",
         };
 
-        foreach (var (map, port) in mapsAndPorts)
-        {
+        foreach (var (map, port) in mapsAndPorts) 
             serverMenu.AddOption(map, port.ToString(), port.ToString());
-        }
 
         var component = new ComponentBuilder()
             .WithSelectMenu(serverMenu);
