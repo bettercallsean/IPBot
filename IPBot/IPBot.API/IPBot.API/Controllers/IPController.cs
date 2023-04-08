@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using IPBot.API.Shared.Services;
+using Microsoft.AspNetCore.Authorization;
 
 namespace IPBot.API.Controllers;
 
@@ -6,31 +7,38 @@ namespace IPBot.API.Controllers;
 [Route("api/[controller]")]
 public class IPController : ControllerBase
 {
-    [HttpGet("GetCurrentServerDomain")]
-    public ActionResult<string> GetCurrentDomain()
+    private readonly IIPService _ipService;
+
+    public IPController(IIPService ipService)
     {
-        return Ok(ServerDomainHelper.GetCurrentServerDomain());
+        _ipService = ipService;
+    }
+    
+    [HttpGet("GetCurrentServerDomain")]
+    public async Task<ActionResult<string>> GetCurrentDomain()
+    {
+        return Ok(await _ipService.GetCurrentServerDomainAsync());
     }
 
     [HttpGet("GetLocalIP")]
     public async Task<ActionResult<string>> GetLocalIPAsync()
     {
-        return Ok(await IPHelper.GetLocalIPAsync());
+        return Ok(await _ipService.GetLocalIPAsync());
     }
 
     [HttpGet("GetServerIP")]
     public async Task<ActionResult<string>> GetServerIPAsync()
     {
-        return Ok(await IPHelper.GetSeverIPAsync());
+        return Ok(await _ipService.GetServerIPAsync());
     }
 
     [Authorize]
     [HttpGet("UpdateServerIP")]
-    public ActionResult<bool> UpdateServerIP(string ip)
+    public async Task<ActionResult<bool>> UpdateServerIP(string ip)
     {
         try
         {
-            return Ok(IPHelper.UpdateServerIP(ip));
+            return Ok(await _ipService.UpdateServerIPAsync(ip));
         }
         catch (Exception ex)
         {

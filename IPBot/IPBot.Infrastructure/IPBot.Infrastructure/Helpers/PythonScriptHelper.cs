@@ -5,9 +5,11 @@ namespace IPBot.Infrastructure.Helpers;
 
 public static class PythonScriptHelper
 {
+    public static readonly string ScriptsDirectory = AppContext.BaseDirectory + "Scripts";
+    
     public static async Task<string> RunPythonScriptAsync(string fileName, string arguments = "")
     {
-        var fullFilePath = Path.Combine(Constants.ScriptsDirectory, fileName);
+        var fullFilePath = Path.Combine(ScriptsDirectory, fileName);
 
         using var process = Process.Start(new ProcessStartInfo
         {

@@ -24,8 +24,8 @@
 
     <ItemGroup>
       <ProjectReference Include="..\..\IPBot.Infrastructure\IPBot.Infrastructure\IPBot.Infrastructure.csproj" />
-      <ProjectReference Include="..\IPBot.AnimeAnalyser\IPBot.AnimeAnalyser.csproj" />
-      <ProjectReference Include="..\IPBot.DataServices\IPBot.DataServices.csproj" />
+      <ProjectReference Include="..\IPBot.API.Business\IPBot.API.Business.csproj" />
+      <ProjectReference Include="..\IPBot.API.DataServices\IPBot.API.DataServices.csproj" />
     </ItemGroup>
 
     <ItemGroup>

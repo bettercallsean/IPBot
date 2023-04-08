@@ -1,13 +1,16 @@
 ﻿using System.Text.RegularExpressions;
+using IPBot.API.Shared.Services;
 using IPBot.Helpers;
-using IPBot.Infrastructure.Interfaces;
+using IPBot.Interfaces;
 
 namespace IPBot.Services;
 
 public partial class MessageAnalyserService
 {
     private readonly List<string> _responseList = Resources.Resources.ResponseGifs.Split(Environment.NewLine).ToList();
-    private readonly IAnimeAnalyser _animeAnalyser;
+    private readonly IAnimeAnalyserService _animeAnalyserService;
+    private readonly ITenorApiHelper _tenorApiHelper;
+
     private readonly List<string> _imageFormats = new()
     {
         ".png",
@@ -18,9 +21,10 @@ public partial class MessageAnalyserService
         ".gif"
     };
 
-    public MessageAnalyserService(IAnimeAnalyser animeAnalyser)
+    public MessageAnalyserService(IAnimeAnalyserService animeAnalyserService, ITenorApiHelper tenorApiHelper)
     {
-        _animeAnalyser = animeAnalyser;
+        _animeAnalyserService = animeAnalyserService;
+        _tenorApiHelper = tenorApiHelper;
     }
 
     public async Task CheckMessageForAnimeAsync(SocketMessage message)
@@ -66,7 +70,7 @@ public partial class MessageAnalyserService
                         var url = messageMediaModel.Url;
                         if (message.Content.Contains("tenor.com") && !_imageFormats.Any(x => message.Content.Contains(x)))
                         {
-                            url = await TenorApiHelper.GetDirectTenorGifUrlAsync(url);
+                            url = await _tenorApiHelper.GetDirectTenorGifUrlAsync(url);
                         }
 
                         animeScore = await GetAnimeScoreAsync(url);
@@ -97,7 +101,7 @@ public partial class MessageAnalyserService
 
     private async Task<double> GetAnimeScoreAsync(string url)
     {
-        return await _animeAnalyser.GetAnimeScoreAsync(url);
+        return await _animeAnalyserService.GetAnimeScoreAsync(url);
     }
 
     private static MessageMediaModel MessageContainsMedia(string messageContent)

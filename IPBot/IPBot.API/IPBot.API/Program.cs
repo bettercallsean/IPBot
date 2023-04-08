@@ -1,12 +1,10 @@
 using System.Text;
-using IPBot.AnimeAnalyser;
+using IPBot.API.Business.AutoMapper;
+using IPBot.API.Business.Service;
 using IPBot.API.Shared.Services;
-using IPBot.DataServices.AutoMapper;
 using IPBot.DataServices.Data;
 using IPBot.DataServices.DataServices;
 using IPBot.DataServices.Interfaces.DataServices;
-using IPBot.DataServices.Service;
-using IPBot.Infrastructure;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.EntityFrameworkCore;
@@ -16,15 +14,11 @@ using Swashbuckle.AspNetCore.Filters;
 
 var builder = WebApplication.CreateBuilder(args);
 
-DotEnvHelper.Load(Constants.CredentialsFile);
-
 builder.Configuration.AddJsonFile("appsettings.json")
     .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true);
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
-
-builder.Services.AddSingleton<IAnimeAnalyser, AnimeAnalyserService>();
 
 RegisterAutoMapperProfiles();
 RegisterDataServices();
@@ -50,7 +44,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         {
             ValidateIssuerSigningKey = true,
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8
-                .GetBytes(DotEnvHelper.EnvironmentVariables["SECURITY_KEY_TOKEN"])),
+                .GetBytes(builder.Configuration["SecurityKeyToken"])),
             ValidateIssuer = false,
             ValidateAudience = false
         };
@@ -86,12 +80,15 @@ void RegisterDataServices()
     builder.Services.AddScoped<IUserDataService, UserDataService>();
     builder.Services.AddScoped<IGameServerDataService, GameServerDataService>();
     builder.Services.AddScoped<IGameDataService, GameDataService>();
+    builder.Services.AddScoped<IDomainDataService, DomainDataService>();
 }
 
 void RegisterServices()
 {
     builder.Services.AddScoped<IUserService, UserService>();
     builder.Services.AddScoped<IGameService, GameService>();
+    builder.Services.AddScoped<IIPService, IPService>();
+    builder.Services.AddSingleton<IAnimeAnalyserService, AnimeAnalyserService>();
 }
 
 void RegisterAutoMapperProfiles()
@@ -99,7 +96,6 @@ void RegisterAutoMapperProfiles()
     builder.Services.AddAutoMapper(config =>
     {
         config.AddProfile<GameProfile>();
-        config.AddProfile<ServerInfoProfile>();
         config.AddProfile<GameServerProfile>();
     });
 }

@@ -52,12 +52,6 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <None Update="Configs\discord_channels.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Configs\ark_server_data.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
     <None Update="appsettings.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -73,6 +67,5 @@
   <ItemGroup>
     <ProjectReference Include="..\..\IPBot.Infrastructure\IPBot.Infrastructure\IPBot.Infrastructure.csproj" />
     <ProjectReference Include="..\..\IPBot.API.Shared\IPBot.API.Shared.csproj" />
-    <ProjectReference Include="..\..\IPBot.DTOs\IPBot.DTOs.csproj" />
   </ItemGroup>
 </Project>

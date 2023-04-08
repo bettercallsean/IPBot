@@ -1,9 +1,9 @@
 ﻿using System.Net.Http.Json;
-using IPBot.Infrastructure.Interfaces;
+using IPBot.API.Shared.Services;
 
-namespace IPBot.DataServices;
+namespace IPBot.APIServices;
 
-public class AnimeAnalyserService : IAnimeAnalyser
+public class AnimeAnalyserService : IAnimeAnalyserService
 {
     private const string BaseUri = "AnimeAnalyser";
     private readonly HttpClient _httpClient;

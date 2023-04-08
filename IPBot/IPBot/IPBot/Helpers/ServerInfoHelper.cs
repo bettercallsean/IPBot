@@ -1,12 +1,21 @@
-﻿using IPBot.DTOs.Dtos;
+﻿using IPBot.API.Shared.Dtos;
 
 namespace IPBot.Helpers;
 
 internal static class ServerInfoHelper
 {
-    private static readonly string ArkServerDataFile = Path.Combine(BotConstants.ConfigDirectory, "ark_server_data.json");
+    public static string GetServerStatus(ServerInfoDto serverInfo)
+    {
+        if (serverInfo is null || !serverInfo.Online) return BotConstants.ServerOfflineString;
+
+        var serverStatus = serverInfo.PlayerNames.Count == 0
+            ? PlayerCountStatus(serverInfo.PlayerCount)
+            : PlayerCountStatus(serverInfo.PlayerNames);
+
+        return serverStatus;
+    }
     
-    public static string PlayerCountStatus(IEnumerable<string> players)
+    private static string PlayerCountStatus(IEnumerable<string> players)
     {
         var playersList = players.ToList();
         var playerName = playersList.Count > 0
@@ -22,7 +31,7 @@ internal static class ServerInfoHelper
         };
     }
 
-    public static string PlayerCountStatus(int playerCount)
+    private static string PlayerCountStatus(int playerCount)
     {
         return playerCount switch
         {
@@ -30,50 +39,5 @@ internal static class ServerInfoHelper
             1 => $"{BotConstants.SeverOnlineString} One person is playing :)",
             _ => $"{BotConstants.SeverOnlineString} {playerCount} people are playing :)",
         };
-    }
-    public static async Task<Dictionary<ushort, string>> LoadArkServerDataAsync()
-    {
-        if (!File.Exists(ArkServerDataFile))
-        {
-            await CreateArkDataFileAsync();
-        }
-
-        using var file = new StreamReader(ArkServerDataFile);
-        return JsonConvert.DeserializeObject<Dictionary<ushort, string>>(await file.ReadToEndAsync());
-    }
-
-    public static async Task SaveArkServerDataAsync(Dictionary<ushort, string> servers)
-    {
-        await using var file = new StreamWriter(ArkServerDataFile);
-        await file.WriteAsync(JsonConvert.SerializeObject(servers));
-    }
-
-    public static string GetServerStatus(ServerInfoDto serverInfo)
-    {
-        if (serverInfo is not null)
-        {
-            if (serverInfo.Online)
-            {
-                var serverStatus = serverInfo.PlayerNames.Count == 0
-                    ? ServerInfoHelper.PlayerCountStatus(serverInfo.PlayerCount)
-                    : ServerInfoHelper.PlayerCountStatus(serverInfo.PlayerNames);
-
-                return serverStatus;
-            }
-            else
-            {
-                return BotConstants.ServerOfflineString;
-            }
-        }
-        else
-        {
-            return BotConstants.ServerOfflineString;
-        }
-    }
-
-    private static async Task CreateArkDataFileAsync()
-    {
-        var ports = Resources.Resources.ServerPorts.Split(Environment.NewLine).ToDictionary(ushort.Parse, _ => string.Empty);
-        await SaveArkServerDataAsync(ports);
     }
 }
