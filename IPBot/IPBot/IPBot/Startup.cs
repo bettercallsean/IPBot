@@ -1,11 +1,12 @@
-﻿using IPBot.DataServices;
+﻿using IPBot.API.Shared.Services;
+using IPBot.APIServices;
+using IPBot.DataServices;
 using IPBot.Helpers;
 using IPBot.Infrastructure;
 using IPBot.Infrastructure.Helpers;
 using IPBot.Infrastructure.Interfaces;
 using IPBot.Services;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 using Serilog;
 
 namespace IPBot;
@@ -61,9 +62,9 @@ public class Startup
             .AddSingleton<CommandHandler>()
             .AddScoped<StartupService>()
             .AddScoped<MessageAnalyserService>()
-            .AddSingleton<IGameServerService, GameServerDataService>()
-            .AddSingleton<IIPService, IPDataService>()
-            .AddSingleton<IAnimeAnalyser, AnimeAnalyserDataService>()
+            .AddSingleton<IGameService, GameService>()
+            .AddSingleton<IIPService, IPService>()
+            .AddSingleton<IAnimeAnalyser, AnimeAnalyserService>()
             .AddSingleton(_config)
             .AddLogging(config =>
             {

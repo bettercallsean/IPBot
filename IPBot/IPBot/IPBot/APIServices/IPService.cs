@@ -1,14 +1,13 @@
-﻿using System.Net.Http;
-using IPBot.Infrastructure.Interfaces;
+﻿using IPBot.Infrastructure.Interfaces;
 
 namespace IPBot.DataServices;
 
-public class IPDataService : IIPService
+public class IPService : IIPService
 {
     private const string BaseUri = "IP";
     private readonly HttpClient _httpClient;
 
-    public IPDataService(HttpClient httpClient)
+    public IPService(HttpClient httpClient)
     {
         _httpClient = httpClient;
     }
