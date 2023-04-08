@@ -6,9 +6,9 @@ using Microsoft.EntityFrameworkCore;
 namespace IPBot.DataServices.DataServices;
 public class UserDataService : IUserDataService
 {
-    private readonly IIpBotDataContext _ipBotDataContext;
+    private readonly IIPBotDataContext _ipBotDataContext;
 
-    public UserDataService(IIpBotDataContext ipBotDataContext)
+    public UserDataService(IIPBotDataContext ipBotDataContext)
     {
         _ipBotDataContext = ipBotDataContext;
     }

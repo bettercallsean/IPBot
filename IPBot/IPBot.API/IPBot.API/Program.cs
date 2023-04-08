@@ -1,9 +1,10 @@
 using System.Text;
 using IPBot.AnimeAnalyser;
+using IPBot.API.Shared.Services;
+using IPBot.DataServices.AutoMapper;
 using IPBot.DataServices.Data;
 using IPBot.DataServices.DataServices;
 using IPBot.DataServices.Interfaces.DataServices;
-using IPBot.DataServices.Interfaces.Services;
 using IPBot.DataServices.Service;
 using IPBot.Infrastructure;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -24,8 +25,10 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 
 builder.Services.AddSingleton<IAnimeAnalyser, AnimeAnalyserService>();
-builder.Services.AddScoped<IUserDataService, UserDataService>();
-builder.Services.AddScoped<IUserService, UserService>();
+
+RegisterAutoMapperProfiles();
+RegisterDataServices();
+RegisterServices();
 
 builder.Services.AddSwaggerGen(options =>
 {
@@ -54,7 +57,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     });
 
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-builder.Services.AddDbContext<IIpBotDataContext, IpBotDbContext>(
+builder.Services.AddDbContext<IIPBotDataContext, IPBotDbContext>(
     options => options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
 
 var app = builder.Build();
@@ -77,3 +80,25 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
+
+void RegisterDataServices()
+{
+    builder.Services.AddScoped<IUserDataService, UserDataService>();
+    builder.Services.AddScoped<IGameServerDataService, GameServerDataService>();
+    builder.Services.AddScoped<IGameDataService, GameDataService>();
+}
+
+void RegisterServices()
+{
+    builder.Services.AddScoped<IUserService, UserService>();
+    builder.Services.AddScoped<IGameService, GameService>();
+}
+
+void RegisterAutoMapperProfiles()
+{
+    builder.Services.AddAutoMapper(config =>
+    {
+        config.AddProfile<GameProfile>();
+        config.AddProfile<ServerInfoProfile>();
+    });
+}
