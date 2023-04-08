@@ -53,4 +53,17 @@ public class GameServerController : ControllerBase
             return Problem("500", ex.Message);
         }
     }
+    
+    [HttpPost("UpdateGameServerInformation")]
+    public async Task<ActionResult<bool>> UpdateGameServerInformationAsync(GameServerDto dto)
+    {
+        try
+        {
+            return Ok(await _gameService.UpdateGameServerInformationAsync(dto));
+        }
+        catch (Exception ex)
+        {
+            return Problem("500", ex.Message);
+        }
+    }
 }

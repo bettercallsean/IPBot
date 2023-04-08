@@ -100,5 +100,6 @@ void RegisterAutoMapperProfiles()
     {
         config.AddProfile<GameProfile>();
         config.AddProfile<ServerInfoProfile>();
+        config.AddProfile<GameServerProfile>();
     });
 }

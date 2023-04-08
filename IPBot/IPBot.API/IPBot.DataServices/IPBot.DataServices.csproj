@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>net7.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>disable</Nullable>
+    <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <ItemGroup>
@@ -29,8 +29,5 @@
 
   <ItemGroup>
     <None Remove="AutoMapper\" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="AutoMapper\" />
   </ItemGroup>
 </Project>
