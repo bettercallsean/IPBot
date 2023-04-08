@@ -1,4 +1,4 @@
-﻿using IPBot.Infrastructure.Models;
+﻿using IPBot.DTOs.Dtos;
 
 namespace IPBot.Helpers;
 
@@ -48,7 +48,7 @@ internal static class ServerInfoHelper
         await file.WriteAsync(JsonConvert.SerializeObject(servers));
     }
 
-    public static string GetServerStatus(ServerInfo serverInfo)
+    public static string GetServerStatus(ServerInfoDto serverInfo)
     {
         if (serverInfo is not null)
         {

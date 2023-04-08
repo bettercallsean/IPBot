@@ -1,8 +1,7 @@
 ﻿using Discord;
+using IPBot.API.Shared.Services;
 using IPBot.Helpers;
 using IPBot.Infrastructure.Helpers;
-using IPBot.Infrastructure.Interfaces;
-using IPBot.Infrastructure.Models;
 
 namespace IPBot.Commands;
 
@@ -10,11 +9,11 @@ public class ServerCommands : InteractionModuleBase<SocketInteractionContext>
 {
     private const string GameServerMenu = "gameServerMenu";
 
-    private readonly IGameServerService _gameServerService;
+    private readonly IGameService _gameService;
 
-    public ServerCommands(IGameServerService gameServerService)
+    public ServerCommands(IGameService gameService)
     {
-        _gameServerService = gameServerService;
+        _gameService = gameService;
     }
 
 #if DEBUG
@@ -27,7 +26,7 @@ public class ServerCommands : InteractionModuleBase<SocketInteractionContext>
         await DeferAsync();
 
         var serverInfo =
-            await _gameServerService.GetMinecraftServerStatusAsync(BotConstants.MinecraftServerPort);
+            await _gameService.GetMinecraftServerStatusAsync(BotConstants.MinecraftServerPort);
 
         var serverStatus = ServerInfoHelper.GetServerStatus(serverInfo);
 
@@ -43,28 +42,26 @@ public class ServerCommands : InteractionModuleBase<SocketInteractionContext>
     {
         await DeferAsync();
 
-        var arkServers = await ServerInfoHelper.LoadArkServerDataAsync();
+        var arkServers = await _gameService.GetActiveServersAsync("Ark");
         var serverStatus = new StringBuilder();
         var activeServers = new Dictionary<string, int>();
 
-        foreach (var (port, map) in arkServers)
+        foreach (var server in arkServers)
         {
-            var serverInfo = await _gameServerService.GetSteamServerStatusAsync(port);
+            var serverInfo = await _gameService.GetSteamServerStatusAsync(server.Port);
             var playerCountStatus = ServerInfoHelper.GetServerStatus(serverInfo);
             var serverMapHasValue = !string.IsNullOrWhiteSpace(serverInfo.Map);
 
             serverStatus.AppendLine(serverMapHasValue
-                    ? $"Map: {serverInfo.Map} - {playerCountStatus} | Port: {port}"
-                    : $"{(string.IsNullOrEmpty(map) ? string.Empty : $"Map: {map} - ")}{playerCountStatus} | Port: {port}");
+                    ? $"Map: {serverInfo.Map} - {playerCountStatus} | Port: {server.Port}"
+                    : $"{(string.IsNullOrEmpty(server.Map) ? string.Empty : $"Map: {server.Map} - ")}{playerCountStatus} | Port: {server.Port}");
 
-            if(serverInfo.Online)
-                activeServers.Add(serverInfo.Map, port);
-
-            if (!string.IsNullOrWhiteSpace(serverInfo.Map) && !serverInfo.Map.Equals(map))
-                arkServers[port] = serverInfo.Map;
+            activeServers.Add(serverInfo.Map, server.Port);
         }
 
-        serverStatus.AppendLine($"{Environment.NewLine}Bloody hell, that's a lot of servers 🦖");
+        if(activeServers.Count >= 3)
+            serverStatus.AppendLine($"{Environment.NewLine}Bloody hell, that's a lot of servers 🦖");
+
         var serverStatusMessage = serverStatus.ToString();
 
         if (activeServers.Any())
@@ -76,8 +73,6 @@ public class ServerCommands : InteractionModuleBase<SocketInteractionContext>
         {
             await FollowupAsync(serverStatusMessage);
         }
-
-        await ServerInfoHelper.SaveArkServerDataAsync(arkServers);
     }
 
 #if DEBUG
@@ -89,7 +84,7 @@ public class ServerCommands : InteractionModuleBase<SocketInteractionContext>
     {
         await DeferAsync();
 
-        var serverInfo = await _gameServerService.GetSteamServerStatusAsync(BotConstants.ZomboidServerPort);
+        var serverInfo = await _gameService.GetSteamServerStatusAsync(BotConstants.ZomboidServerPort);
 
         var serverStatus = ServerInfoHelper.GetServerStatus(serverInfo);
 

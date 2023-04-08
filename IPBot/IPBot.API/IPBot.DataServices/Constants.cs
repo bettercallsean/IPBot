@@ -1,4 +1,4 @@
-﻿namespace IPBot.API;
+﻿namespace IPBot.DataServices;
 
 public class Constants
 {

@@ -1,11 +1,11 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
-using IPBot.DataServices.Dtos;
+using IPBot.API.Shared.Services;
 using IPBot.DataServices.Interfaces.DataServices;
-using IPBot.DataServices.Interfaces.Services;
 using IPBot.DataServices.Models;
 using IPBot.DataServices.Utilities;
+using IPBot.DTOs.Dtos;
 using IPBot.Infrastructure.Helpers;
 using Microsoft.IdentityModel.Tokens;
 
@@ -19,7 +19,7 @@ public class UserService : IUserService
         _userDataService = userDataService;
     }
 
-    public async Task<User> RegisterUserAsync(UserDto dto)
+    public async Task<bool> RegisterUserAsync(UserDto dto)
     {
         PasswordUtility.CreatePasswordHash(dto.Password, out var passwordHash, out var passwordSalt);
 
@@ -30,9 +30,7 @@ public class UserService : IUserService
             PasswordSalt = passwordSalt
         };
 
-        await _userDataService.CreateAsync(user);
-
-        return user;
+        return await _userDataService.CreateAsync(user);
     }
 
     public async Task<string> LoginUserAsync(UserDto dto)

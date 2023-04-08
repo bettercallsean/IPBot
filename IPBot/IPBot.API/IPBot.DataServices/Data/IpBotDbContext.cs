@@ -2,13 +2,15 @@
 using Microsoft.EntityFrameworkCore;
 
 namespace IPBot.DataServices.Data;
-public class IpBotDbContext : DbContext, IIpBotDataContext
+public class IPBotDbContext : DbContext, IIPBotDataContext
 {
-    public IpBotDbContext(DbContextOptions<IpBotDbContext> options) : base(options)
+    public IPBotDbContext(DbContextOptions<IPBotDbContext> options) : base(options)
     {
     }
 
     public DbSet<User> Users { get; set; }
+    public DbSet<Game> Games { get; set; }
+    public DbSet<GameServer> GameServers { get; set; }
 
     public Task<int> SaveChangesAsync() => base.SaveChangesAsync();
 }

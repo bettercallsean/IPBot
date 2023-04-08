@@ -1,5 +1,5 @@
-﻿using IPBot.DataServices.Dtos;
-using IPBot.DataServices.Interfaces.Services;
+﻿using IPBot.API.Shared.Services;
+using IPBot.DTOs.Dtos;
 using Microsoft.AspNetCore.Authorization;
 
 namespace IPBot.API.Controllers;
@@ -19,8 +19,8 @@ public class UserController : ControllerBase
     [HttpPost("RegisterUser")]
     public async Task<ActionResult<bool>> RegisterUserAsync(UserDto dto)
     {
-        await _userService.RegisterUserAsync(dto);
-        return Ok(true);
+        var result = await _userService.RegisterUserAsync(dto);
+        return result ? Ok() : Problem();
     }
 
     [HttpPost("Login")]

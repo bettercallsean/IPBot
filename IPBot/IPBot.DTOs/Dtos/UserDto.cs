@@ -1,4 +1,5 @@
-﻿namespace IPBot.DataServices.Dtos;
+﻿namespace IPBot.DTOs.Dtos;
+
 public record UserDto
 {
     public string Username { get; set; }
