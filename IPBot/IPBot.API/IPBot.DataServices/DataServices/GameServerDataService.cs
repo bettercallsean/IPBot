@@ -19,6 +19,13 @@ public class GameServerDataService : IGameServerDataService
         return await _ipBotDataContext.GameServers.FindAsync(id);
     }
 
+    public async Task<bool> UpdateAsync(GameServer model)
+    {
+        _ipBotDataContext.GameServers.Attach(model).State = EntityState.Modified;
+
+        return await _ipBotDataContext.SaveChangesAsync() > 0;
+    }
+
     public async Task<GameServer> GetByPortAsync(int port)
     {
         return await _ipBotDataContext.GameServers

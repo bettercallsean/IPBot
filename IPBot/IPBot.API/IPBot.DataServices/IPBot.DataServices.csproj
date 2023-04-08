@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>net7.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>disable</Nullable>
+    <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <ItemGroup>
@@ -25,12 +25,5 @@
     <ProjectReference Include="..\..\IPBot.Infrastructure\IPBot.Infrastructure\IPBot.Infrastructure.csproj" />
     <ProjectReference Include="..\..\IPBot.DTOs\IPBot.DTOs.csproj" />
     <ProjectReference Include="..\..\IPBot.API.Shared\IPBot.API.Shared.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Remove="AutoMapper\" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="AutoMapper\" />
   </ItemGroup>
 </Project>

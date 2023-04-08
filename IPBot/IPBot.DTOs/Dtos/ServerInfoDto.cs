@@ -1,6 +1,6 @@
 ﻿namespace IPBot.DTOs.Dtos;
 
-public class ServerInfoDto
+public record ServerInfoDto
 {
     public string ServerName { get; set; }
     public bool Online { get; set; }

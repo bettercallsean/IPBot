@@ -28,4 +28,10 @@ public class GameService : IGameService
     {
         return await _httpClient.GetFromJsonAsync<List<GameServerDto>>($"{BaseUri}/GetActiveServers/{gameName}");
     }
+
+    public async Task<bool> UpdateGameServerInformationAsync(GameServerDto dto)
+    {
+        var response = await _httpClient.PostAsJsonAsync($"{BaseUri}/UpdateGameServerInformation", dto);
+        return await response.Content.ReadFromJsonAsync<bool>();
+    }
 }

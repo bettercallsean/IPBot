@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using IPBot.API.Shared.Services;
 using IPBot.DataServices.Interfaces.DataServices;
+using IPBot.DataServices.Models;
 using IPBot.DTOs.Dtos;
 using IPBot.Infrastructure.Helpers;
 
@@ -40,5 +41,12 @@ public class GameService : IGameService
         var gameServers = game.GameServers.Where(x => x.Active);
 
         return _mapper.Map<List<GameServerDto>>(gameServers);
+    }
+
+    public async Task<bool> UpdateGameServerInformationAsync(GameServerDto dto)
+    {
+        var gameServer = _mapper.Map<GameServer>(dto);
+
+        return await _gameServerDataService.UpdateAsync(gameServer);
     }
 }
