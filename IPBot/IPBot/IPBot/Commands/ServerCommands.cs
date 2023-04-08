@@ -56,6 +56,12 @@ public class ServerCommands : InteractionModuleBase<SocketInteractionContext>
                     ? $"Map: {serverInfo.Map} - {playerCountStatus} | Port: {server.Port}"
                     : $"{(string.IsNullOrEmpty(server.Map) ? string.Empty : $"Map: {server.Map} - ")}{playerCountStatus} | Port: {server.Port}");
 
+            if (!string.IsNullOrWhiteSpace(serverInfo.Map) && !serverInfo.Map.Equals(server.Map))
+            {
+                server.Map = serverInfo.Map;
+                await _gameService.UpdateGameServerInformationAsync(server);
+            }
+            
             activeServers.Add(serverInfo.Map, server.Port);
         }
 
