@@ -1,6 +1,6 @@
 ﻿using Discord;
-using IPBot.API.Shared.Services;
 using IPBot.Helpers;
+using IPBot.Shared.Services;
 
 namespace IPBot.Commands;
 

@@ -1,5 +1,5 @@
 ﻿using System.Net.Http.Json;
-using IPBot.API.Shared.Services;
+using IPBot.Shared.Services;
 
 namespace IPBot.APIServices;
 

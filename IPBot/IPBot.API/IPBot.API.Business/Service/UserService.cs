@@ -1,11 +1,11 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
-using IPBot.API.Shared.Dtos;
-using IPBot.API.Shared.Services;
 using IPBot.DataServices.Interfaces.DataServices;
 using IPBot.DataServices.Models;
 using IPBot.DataServices.Utilities;
+using IPBot.Shared.Dtos;
+using IPBot.Shared.Services;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 
@@ -60,7 +60,7 @@ public class UserService : IUserService
             new Claim(ClaimTypes.Name, user.Username)
         };
 
-        var key = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes((string)_configuration["SecurityKeyToken"]));
+        var key = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(_configuration["SecurityKeyToken"]));
         var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
 
         var token = new JwtSecurityToken(

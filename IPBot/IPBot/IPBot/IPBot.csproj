@@ -65,7 +65,7 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\IPBot.Infrastructure\IPBot.Infrastructure\IPBot.Infrastructure.csproj" />
-    <ProjectReference Include="..\..\IPBot.API.Shared\IPBot.API.Shared.csproj" />
+    <ProjectReference Include="..\..\IPBot.Infrastructure\IPBot.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\IPBot.Shared\IPBot.Shared.csproj" />
   </ItemGroup>
 </Project>

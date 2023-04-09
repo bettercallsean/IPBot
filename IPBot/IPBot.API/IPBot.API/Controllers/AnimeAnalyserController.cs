@@ -1,4 +1,4 @@
-﻿using IPBot.API.Shared.Services;
+﻿using IPBot.Shared.Services;
 using Microsoft.AspNetCore.Authorization;
 
 namespace IPBot.API.Controllers;

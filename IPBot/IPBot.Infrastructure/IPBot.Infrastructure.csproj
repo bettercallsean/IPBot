@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net7.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <None Remove="Scripts\" />
+    </ItemGroup>
+    <ItemGroup>
+      <PackageReference Include="Magick.NET-Q16-AnyCPU" Version="13.0.0" />
+    </ItemGroup>
+    <ItemGroup>
+      <Content Include="..\..\scripts\get_server_status.py">
+        <Link>Scripts\get_server_status.py</Link>
+      </Content>
+      <Content Include="..\..\scripts\settings.py">
+        <Link>Scripts\settings.py</Link>
+      </Content>
+    </ItemGroup>
+</Project>

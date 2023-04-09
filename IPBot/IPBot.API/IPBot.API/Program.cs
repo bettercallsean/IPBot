@@ -1,10 +1,10 @@
 using System.Text;
 using IPBot.API.Business.AutoMapper;
 using IPBot.API.Business.Service;
-using IPBot.API.Shared.Services;
 using IPBot.DataServices.Data;
 using IPBot.DataServices.DataServices;
 using IPBot.DataServices.Interfaces.DataServices;
+using IPBot.Shared.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.EntityFrameworkCore;

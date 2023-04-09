@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace IPBot.API.Shared.Dtos;
+namespace IPBot.Shared.Dtos;
 
 public record ServerInfoDto
 {
