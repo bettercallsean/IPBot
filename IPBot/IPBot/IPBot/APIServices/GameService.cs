@@ -1,37 +1,32 @@
-﻿using System.Net.Http.Json;
-using IPBot.Shared.Dtos;
+﻿using IPBot.Shared.Dtos;
 using IPBot.Shared.Services;
+using RestSharp;
 
 namespace IPBot.APIServices;
 
-public class GameService : IGameService
+public class GameService : ServiceBase, IGameService
 {
     private const string BaseUri = "GameServer";
-    private readonly HttpClient _httpClient;
 
-    public GameService(HttpClient httpClient)
-    {
-        _httpClient = httpClient;
-    }
+    public GameService(IRestClient client) : base(client) { }
 
     public async Task<ServerInfoDto> GetMinecraftServerStatusAsync(int portNumber)
     {
-        return await _httpClient.GetFromJsonAsync<ServerInfoDto>($"{BaseUri}/GetMinecraftServerStatus/{portNumber}");
+        return await GetAsync<ServerInfoDto>($"{BaseUri}/GetMinecraftServerStatus/{portNumber}");
     }
 
     public async Task<ServerInfoDto> GetSteamServerStatusAsync(int portNumber)
     {
-        return await _httpClient.GetFromJsonAsync<ServerInfoDto>($"{BaseUri}/GetSteamServerStatus/{portNumber}");
+        return await GetAsync<ServerInfoDto>($"{BaseUri}/GetSteamServerStatus/{portNumber}");
     }
 
     public async Task<List<GameServerDto>> GetActiveServersAsync(string gameName)
     {
-        return await _httpClient.GetFromJsonAsync<List<GameServerDto>>($"{BaseUri}/GetActiveServers/{gameName}");
+        return await GetAsync<List<GameServerDto>>($"{BaseUri}/GetActiveServers/{gameName}");
     }
 
     public async Task<bool> UpdateGameServerInformationAsync(GameServerDto dto)
     {
-        var response = await _httpClient.PostAsJsonAsync($"{BaseUri}/UpdateGameServerInformation", dto);
-        return await response.Content.ReadFromJsonAsync<bool>();
+        return await PostAsync<bool>($"{BaseUri}/UpdateGameServerInformation", dto);
     }
 }

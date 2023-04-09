@@ -1,30 +1,27 @@
 ﻿using IPBot.Shared.Services;
+using RestSharp;
 
 namespace IPBot.APIServices;
 
-public class IPService : IIPService
+public class IPService : ServiceBase, IIPService
 {
     private const string BaseUri = "IP";
-    private readonly HttpClient _httpClient;
 
-    public IPService(HttpClient httpClient)
-    {
-        _httpClient = httpClient;
-    }
+    public IPService(IRestClient client) : base(client) { }
 
     public async Task<string> GetCurrentServerDomainAsync()
     {
-        return await _httpClient.GetStringAsync($"{BaseUri}/GetCurrentServerDomain");
+        return await GetAsync<string>($"{BaseUri}/GetCurrentServerDomain");
     }
 
     public async Task<string> GetLocalIPAsync()
     {
-        return await _httpClient.GetStringAsync($"{BaseUri}/GetLocalIP");
+        return await GetAsync<string>($"{BaseUri}/GetLocalIP");
     }
 
     public async Task<string> GetServerIPAsync()
     {
-        return await _httpClient.GetStringAsync($"{BaseUri}/GetServerIP");
+        return await GetAsync<string>($"{BaseUri}/GetServerIP");
     }
 
     public Task<bool> UpdateServerIPAsync(string ip)

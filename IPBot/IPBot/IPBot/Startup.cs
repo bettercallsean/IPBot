@@ -4,6 +4,7 @@ using IPBot.Interfaces;
 using IPBot.Services;
 using IPBot.Shared.Services;
 using Microsoft.Extensions.DependencyInjection;
+using RestSharp;
 using Serilog;
 
 namespace IPBot;
@@ -66,9 +67,9 @@ public class Startup
             {
                 config.AddSerilog();
             })
-            .AddHttpClient(string.Empty, x =>
+            .AddSingleton<IRestClient>(new RestClient(new HttpClient
             {
-                x.BaseAddress = new Uri(_config["APIEndpoint"]);
-            });
+                BaseAddress = new Uri(_config["APIEndpoint"])
+            }));
     }
 }

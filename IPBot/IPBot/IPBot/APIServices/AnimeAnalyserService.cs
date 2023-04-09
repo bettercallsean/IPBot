@@ -1,20 +1,17 @@
 ﻿using System.Net.Http.Json;
 using IPBot.Shared.Services;
+using RestSharp;
 
 namespace IPBot.APIServices;
 
-public class AnimeAnalyserService : IAnimeAnalyserService
+public class AnimeAnalyserService : ServiceBase, IAnimeAnalyserService
 {
     private const string BaseUri = "AnimeAnalyser";
-    private readonly HttpClient _httpClient;
 
-    public AnimeAnalyserService(HttpClient httpClient)
-    {
-        _httpClient = httpClient;
-    }
+    public AnimeAnalyserService(IRestClient client) : base(client) { }
 
     public async Task<double> GetAnimeScoreAsync(string imageUrl)
     {
-        return await _httpClient.GetFromJsonAsync<double>($"{BaseUri}/GetAnimeScore/{imageUrl}");
+        return await GetAsync<double>($"{BaseUri}/GetAnimeScore/{imageUrl}");
     }
 }
