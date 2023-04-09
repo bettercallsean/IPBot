@@ -108,8 +108,8 @@ public partial class MessageAnalyserService
     {
         foreach (var word in messageContent.Split())
         {
-            var urlMatch = urlRegex().Match(word);
-            var emojiMatch = discorEmojiRegex().Match(word);
+            var urlMatch = UrlRegex().Match(word);
+            var emojiMatch = DiscordEmojiRegex().Match(word);
 
             if (!urlMatch.Success && !emojiMatch.Success) continue;
 
@@ -129,7 +129,7 @@ public partial class MessageAnalyserService
 
     private static MessageMediaModel MessageContainsYouTubeLink(string messageContent)
     {
-        var youtubeUrlMatch = youtubeUrlRegex().Match(messageContent);
+        var youtubeUrlMatch = YouTubeUrlRegex().Match(messageContent);
 
         return new MessageMediaModel
         {
@@ -139,11 +139,11 @@ public partial class MessageAnalyserService
     }
 
     [GeneratedRegex("^https?:\\/\\/(?:www\\\\.)?[-a-zA-Z0-9@:%._\\+~#=]{1,256}\\.[a-zA-Z0-9()]{1,6}\\b(?:[-a-zA-Z0-9()@:%_\\+.~#?&\\/=]*)$")]
-    private static partial Regex urlRegex();
+    private static partial Regex UrlRegex();
 
     [GeneratedRegex("<:[a-zA-Z0-9]+:([0-9]+)>")]
-    private static partial Regex discorEmojiRegex();
+    private static partial Regex DiscordEmojiRegex();
 
     [GeneratedRegex("^((?:https?:)?\\/\\/)?((?:www|m)\\.)?((?:youtube(-nocookie)?\\.com|youtu.be))(\\/(?:[\\w\\-]+\\?v=|embed\\/|v\\/)?)([\\w\\-]+)(\\S+)?$")]
-    private static partial Regex youtubeUrlRegex();
+    private static partial Regex YouTubeUrlRegex();
 }
