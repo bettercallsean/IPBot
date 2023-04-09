@@ -30,22 +30,20 @@ public class CommandHandler
 
     private Task SelectMenuExecuted(SocketMessageComponent arg)
     {
-        return Task.Run(() =>
-        {
-            var user = arg.User as SocketGuildUser;
-            _logger.LogInformation("{userName}:{discriminator} ({userId}) clicked menu {menuName} in {guildId} - {channelId}. Selected Values: {selection}",
-                user.Username, user.DiscriminatorValue, user.Id, arg.Data.CustomId, user.Guild.Name, arg.Channel.Name, string.Join(",", arg.Data.Values));
-        });
+        var user = arg.User as SocketGuildUser;
+        _logger.LogInformation("{userName}:{discriminator} ({userId}) clicked menu {menuName} in {guildId} - {channelId}. Selected Values: {selection}",
+            user.Username, user.DiscriminatorValue, user.Id, arg.Data.CustomId, user.Guild.Name, arg.Channel.Name, string.Join(",", arg.Data.Values));
+        
+        return Task.CompletedTask;
     }
 
     private Task SlashCommandExecuted(SocketSlashCommand arg)
     {
-        return Task.Run(() =>
-        {
-            var user = arg.User as SocketGuildUser;
-            _logger.LogInformation("{userName}:{discriminator} ({userId}) called command '{commandName}' in {guildId} - {channelId}",
-                user.Username, user.DiscriminatorValue, user.Id, arg.CommandName, user.Guild.Name, arg.Channel.Name);
-        });
+        var user = arg.User as SocketGuildUser;
+        _logger.LogInformation("{userName}:{discriminator} ({userId}) called command '{commandName}' in {guildId} - {channelId}",
+            user.Username, user.DiscriminatorValue, user.Id, arg.CommandName, user.Guild.Name, arg.Channel.Name);
+
+        return Task.CompletedTask;
     }
 
     private async Task HandleInteraction(SocketInteraction arg)
