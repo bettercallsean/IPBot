@@ -1,4 +1,4 @@
-﻿using IPBot.API.Shared.Dtos;
+﻿using IPBot.Shared.Dtos;
 
 namespace IPBot.Helpers;
 

@@ -1,4 +1,4 @@
-﻿namespace IPBot.API.Shared.Services;
+﻿namespace IPBot.Shared.Services;
 
 public interface IAnimeAnalyserService
 {

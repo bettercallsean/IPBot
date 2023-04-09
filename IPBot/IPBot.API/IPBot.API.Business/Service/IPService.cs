@@ -1,6 +1,6 @@
 using System.Net;
-using IPBot.API.Shared.Services;
 using IPBot.DataServices.Interfaces.DataServices;
+using IPBot.Shared.Services;
 
 namespace IPBot.API.Business.Service;
 
@@ -67,11 +67,10 @@ public class IPService : IIPService
     {
         return Task.Run(() =>
         {
-            if (!IPAddress.TryParse(ip, out _) || ip.Equals(_serverIp))
-                return false;
-
+            if (!IPAddress.TryParse(ip, out _) || ip.Equals(_serverIp)) return false;
+            
             _serverIp = ip;
-
+            
             return true;
         });
     }

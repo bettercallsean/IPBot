@@ -1,7 +1,7 @@
 ﻿using System.Text.RegularExpressions;
-using IPBot.API.Shared.Services;
 using IPBot.Helpers;
 using IPBot.Interfaces;
+using IPBot.Shared.Services;
 
 namespace IPBot.Services;
 

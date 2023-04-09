@@ -7,7 +7,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\..\IPBot.Infrastructure\IPBot.Infrastructure\IPBot.Infrastructure.csproj" />
+      <ProjectReference Include="..\..\IPBot.Infrastructure\IPBot.Infrastructure.csproj" />
       <ProjectReference Include="..\IPBot.API.DataServices\IPBot.API.DataServices.csproj" />
     </ItemGroup>
 

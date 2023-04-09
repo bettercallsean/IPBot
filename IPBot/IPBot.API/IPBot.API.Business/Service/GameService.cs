@@ -1,17 +1,19 @@
 ﻿using System.Text.Json;
 using AutoMapper;
-using IPBot.API.Shared.Dtos;
-using IPBot.API.Shared.Services;
 using IPBot.DataServices.Interfaces.DataServices;
 using IPBot.DataServices.Models;
 using IPBot.Infrastructure.Helpers;
+using IPBot.Shared.Dtos;
+using IPBot.Shared.Services;
 
 namespace IPBot.API.Business.Service;
 
 public class GameService : IGameService
 {
     private const string ServerStatusScriptName = "get_server_status.py";
-
+    private const string SteamServerCode = "steam";
+    private const string MinecraftServerCode = "mc";
+    
     private readonly IMapper _mapper;
     private readonly IIPService _ipService;
     private readonly IGameDataService _gameDataService;
@@ -27,12 +29,12 @@ public class GameService : IGameService
 
     public async Task<ServerInfoDto> GetMinecraftServerStatusAsync(int portNumber)
     {
-        return await GetServerInfoAsync(Constants.MinecraftServerCode, portNumber);
+        return await GetServerInfoAsync(MinecraftServerCode, portNumber);
     }
 
     public async Task<ServerInfoDto> GetSteamServerStatusAsync(int portNumber)
     {
-        return await GetServerInfoAsync(Constants.SteamServerCode, portNumber);
+        return await GetServerInfoAsync(SteamServerCode, portNumber);
     }
 
     public async Task<List<GameServerDto>> GetActiveServersAsync(string gameName)
@@ -55,6 +57,7 @@ public class GameService : IGameService
     {
         var serverIP = await _ipService.GetServerIPAsync();
         var serverInfo = await GetServerInfoJsonAsync(gameCode, serverIP, port);
+        
         return ParseServerInfoJson(serverInfo);
     }
 

@@ -1,5 +1,5 @@
-﻿using IPBot.API.Shared.Services;
-using IPBot.Helpers;
+﻿using IPBot.Helpers;
+using IPBot.Shared.Services;
 using Microsoft.Extensions.Logging;
 
 namespace IPBot.Services;
@@ -37,7 +37,7 @@ public class StartupService
     private async Task DiscordOnConnected()
     {
         _logger.LogInformation("Connected");
-        
+
         var serverDomain = await _ipService.GetCurrentServerDomainAsync();
         _logger.LogInformation("Domain: {serverDomain}", serverDomain);
 

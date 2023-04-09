@@ -1,6 +1,6 @@
 using AutoMapper;
-using IPBot.API.Shared.Dtos;
 using IPBot.DataServices.Models;
+using IPBot.Shared.Dtos;
 
 namespace IPBot.API.Business.AutoMapper;
 

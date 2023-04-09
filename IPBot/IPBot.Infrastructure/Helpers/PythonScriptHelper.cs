@@ -5,7 +5,7 @@ namespace IPBot.Infrastructure.Helpers;
 
 public static class PythonScriptHelper
 {
-    public static readonly string ScriptsDirectory = AppContext.BaseDirectory + "Scripts";
+    private static readonly string ScriptsDirectory = AppContext.BaseDirectory + "Scripts";
     
     public static async Task<string> RunPythonScriptAsync(string fileName, string arguments = "")
     {
