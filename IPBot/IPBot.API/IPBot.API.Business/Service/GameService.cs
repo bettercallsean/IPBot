@@ -1,4 +1,5 @@
 ﻿using System.Text.Json;
+using System.Text.RegularExpressions;
 using AutoMapper;
 using IPBot.DataServices.Interfaces.DataServices;
 using IPBot.DataServices.Models;
@@ -8,7 +9,7 @@ using IPBot.Shared.Services;
 
 namespace IPBot.API.Business.Service;
 
-public class GameService : IGameService
+public partial class GameService : IGameService
 {
     private const string ServerStatusScriptName = "get_server_status.py";
     private const string SteamServerCode = "steam";
@@ -57,7 +58,7 @@ public class GameService : IGameService
     {
         var serverIP = await _ipService.GetServerIPAsync();
         var serverInfo = await GetServerInfoJsonAsync(gameCode, serverIP, port);
-        
+
         return ParseServerInfoJson(serverInfo);
     }
 
@@ -71,8 +72,16 @@ public class GameService : IGameService
 
     private static ServerInfoDto ParseServerInfoJson(string serverInfo)
     {
-        return (string.IsNullOrWhiteSpace(serverInfo)
+        var serverInfoModel = (string.IsNullOrWhiteSpace(serverInfo)
             ? new ServerInfoDto()
             : JsonSerializer.Deserialize<ServerInfoDto>(serverInfo))!;
+        
+        if (!string.IsNullOrWhiteSpace(serverInfoModel.Map))
+            serverInfoModel.Map = string.Join(" ", CapitalLetterRegex().Split(serverInfoModel.Map));
+
+        return serverInfoModel;
     }
+
+    [GeneratedRegex("(?<!^)(?=[A-Z])")]
+    private static partial Regex CapitalLetterRegex();
 }
