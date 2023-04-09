@@ -62,8 +62,9 @@ public class ServerCommands : InteractionModuleBase<SocketInteractionContext>
                 server.Map = serverInfo.Map;
                 await _gameService.UpdateGameServerInformationAsync(server);
             }
-            
-            activeServers.Add(serverInfo.Map, server.Port);
+
+            if (serverInfo.Online)
+                activeServers.Add(serverInfo.Map, server.Port);
         }
 
         if (activeServers.Count >= 3)
@@ -128,11 +129,11 @@ public class ServerCommands : InteractionModuleBase<SocketInteractionContext>
     {
         var serverMenu = new SelectMenuBuilder
         {
-            CustomId = "gameServerMenu",
+            CustomId = GameServerMenu,
             Placeholder = "Select a server to join",
         };
 
-        foreach (var (map, port) in mapsAndPorts) 
+        foreach (var (map, port) in mapsAndPorts)
             serverMenu.AddOption(map, port.ToString(), port.ToString());
 
         var component = new ComponentBuilder()
