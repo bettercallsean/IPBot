@@ -11,7 +11,7 @@ public class IPService : IIPService
     private readonly IDomainDataService _domainDataService;
 
     private static string _localIp = string.Empty;
-    private static string _serverIp = string.Empty;
+    private static string _serverIP = string.Empty;
     
     public IPService(IDomainDataService domainDataService)
     {
@@ -53,23 +53,23 @@ public class IPService : IIPService
     
     public async Task<string> GetServerIPAsync()
     {
-        if (!string.IsNullOrWhiteSpace(_serverIp)) return _serverIp;
+        if (!string.IsNullOrWhiteSpace(_serverIP)) return _serverIP;
         
         var serverDomain = new Uri($"https://{await GetCurrentServerDomainAsync()}");
         var ips = await Dns.GetHostAddressesAsync(serverDomain.Host);
 
-        _serverIp = ips[0].ToString();
+        _serverIP = ips[0].ToString();
 
-        return _serverIp;
+        return _serverIP;
     }
 
     public Task<bool> UpdateServerIPAsync(string ip)
     {
         return Task.Run(() =>
         {
-            if (!IPAddress.TryParse(ip, out _) || ip.Equals(_serverIp)) return false;
+            if (!IPAddress.TryParse(ip, out _) || ip.Equals(_serverIP)) return false;
             
-            _serverIp = ip;
+            _serverIP = ip;
             
             return true;
         });

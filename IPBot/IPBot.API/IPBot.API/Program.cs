@@ -1,4 +1,5 @@
 using System.Text;
+using IPBot.API;
 using IPBot.API.Business.AutoMapper;
 using IPBot.API.Business.Service;
 using IPBot.DataServices.Data;
@@ -10,12 +11,17 @@ using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Serilog;
+using Serilog.Events;
 using Swashbuckle.AspNetCore.Filters;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Configuration.AddJsonFile("appsettings.json")
     .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true);
+
+builder.Host.UseSerilog((ctx, lc) => 
+    lc.ReadFrom.Configuration(ctx.Configuration));
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
@@ -55,6 +61,20 @@ builder.Services.AddDbContext<IIPBotDataContext, IPBotDbContext>(
     options => options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
 
 var app = builder.Build();
+
+app.UseSerilogRequestLogging(options =>
+    {
+        options.MessageTemplate = "{RemoteIpAddress} {RequestScheme} {RequestHost} {RequestMethod} {RequestPath} responded {StatusCode} in {Elapsed:0.0000} ms\n" +
+                                  "{Headers}";
+        
+        options.EnrichDiagnosticContext = (diagnosticContext, httpContext) =>
+        {
+            diagnosticContext.Set("RequestHost", httpContext.Request.Host.Value);
+            diagnosticContext.Set("RequestScheme", httpContext.Request.Scheme);
+            diagnosticContext.Set("RemoteIpAddress", httpContext.Connection.RemoteIpAddress);
+            diagnosticContext.Set("Headers", httpContext.Request.Headers);
+        };
+    });
 
 app.UseForwardedHeaders(new ForwardedHeadersOptions
 {

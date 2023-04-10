@@ -13,10 +13,12 @@
     </ItemGroup>
     <ItemGroup>
       <Content Include="..\..\scripts\get_server_status.py">
-        <Link>Scripts\get_server_status.py</Link>
+        <Link>Scripts/get_server_status.py</Link>
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </Content>
       <Content Include="..\..\scripts\settings.py">
-        <Link>Scripts\settings.py</Link>
+        <Link>Scripts/settings.py</Link>
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </Content>
     </ItemGroup>
 </Project>
