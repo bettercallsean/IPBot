@@ -1,7 +1,7 @@
-﻿using IPBot.DataServices.Models;
+﻿using IPBot.API.DataServices.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace IPBot.DataServices.Data;
+namespace IPBot.API.DataServices.Data;
 
 public interface IIPBotDataContext
 {

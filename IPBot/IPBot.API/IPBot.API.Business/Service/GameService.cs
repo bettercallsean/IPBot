@@ -1,8 +1,8 @@
 ﻿using System.Text.Json;
 using System.Text.RegularExpressions;
 using AutoMapper;
-using IPBot.DataServices.Interfaces.DataServices;
-using IPBot.DataServices.Models;
+using IPBot.API.DataServices.Interfaces.DataServices;
+using IPBot.API.DataServices.Models;
 using IPBot.Infrastructure.Helpers;
 using IPBot.Shared.Dtos;
 using IPBot.Shared.Services;
