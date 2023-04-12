@@ -1,5 +1,4 @@
 using System.Text;
-using IPBot.API;
 using IPBot.API.Business.AutoMapper;
 using IPBot.API.Business.Service;
 using IPBot.API.DataServices.Data;
@@ -12,7 +11,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Serilog;
-using Serilog.Events;
 using Swashbuckle.AspNetCore.Filters;
 
 var builder = WebApplication.CreateBuilder(args);
