@@ -64,15 +64,13 @@ var app = builder.Build();
 
 app.UseSerilogRequestLogging(options =>
     {
-        options.MessageTemplate = "{RemoteIpAddress} {RequestScheme} {RequestHost} {RequestMethod} {RequestPath} responded {StatusCode} in {Elapsed:0.0000} ms\n" +
-                                  "{Headers}";
+        options.MessageTemplate = "{RemoteIpAddress} {RequestScheme} {RequestHost} {RequestMethod} {RequestPath} responded {StatusCode} in {Elapsed:0.0000} ms";
         
         options.EnrichDiagnosticContext = (diagnosticContext, httpContext) =>
         {
             diagnosticContext.Set("RequestHost", httpContext.Request.Host.Value);
             diagnosticContext.Set("RequestScheme", httpContext.Request.Scheme);
             diagnosticContext.Set("RemoteIpAddress", httpContext.Connection.RemoteIpAddress);
-            diagnosticContext.Set("Headers", httpContext.Request.Headers);
         };
     });
 
