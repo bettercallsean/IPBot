@@ -1,5 +1,5 @@
 using System.Net;
-using IPBot.DataServices.Interfaces.DataServices;
+using IPBot.API.DataServices.Interfaces.DataServices;
 using IPBot.Shared.Services;
 
 namespace IPBot.API.Business.Service;

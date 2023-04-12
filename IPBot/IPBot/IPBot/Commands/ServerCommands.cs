@@ -34,11 +34,11 @@ public class ServerCommands : InteractionModuleBase<SocketInteractionContext>
         var serverInfo =
             await _gameService.GetMinecraftServerStatusAsync(BotConstants.MinecraftServerPort);
     
-        _logger.LogInformation("{port} online: {online}", BotConstants.MinecraftServerPort, serverInfo.Online);
+        _logger.LogInformation("{Port} online: {Online}", BotConstants.MinecraftServerPort, serverInfo.Online);
 
         var serverStatus = ServerInfoHelper.GetServerStatus(serverInfo);
         
-        _logger.LogInformation("{serverStatus}", serverStatus);
+        _logger.LogInformation("{ServerStatus}", serverStatus);
         await FollowupAsync(serverStatus);
     }
 
@@ -60,13 +60,13 @@ public class ServerCommands : InteractionModuleBase<SocketInteractionContext>
 
         foreach (var server in arkServers)
         {
-            _logger.LogInformation("Getting server info for port {port}", server.Port);
+            _logger.LogInformation("Getting server info for port {Port}", server.Port);
 
             var serverInfo = await _gameService.GetSteamServerStatusAsync(server.Port);
             var playerCountStatus = ServerInfoHelper.GetServerStatus(serverInfo);
             var serverMapHasValue = !string.IsNullOrWhiteSpace(serverInfo.Map);
             
-            _logger.LogInformation("{map} - {port} online: {online}", server.Map, server.Port, serverInfo.Online);
+            _logger.LogInformation("{Map} - {Port} online: {Online}", server.Map, server.Port, serverInfo.Online);
 
             serverStatus.AppendLine(serverMapHasValue
                     ? $"Map: {serverInfo.Map} - {playerCountStatus} | Port: {server.Port}"
@@ -74,7 +74,7 @@ public class ServerCommands : InteractionModuleBase<SocketInteractionContext>
 
             if (!string.IsNullOrWhiteSpace(serverInfo.Map) && !serverInfo.Map.Equals(server.Map))
             {
-                _logger.LogInformation("Updating map information for {port}. Map updating from {savedMap} to {newMap}", server.Port, server.Map, serverInfo.Map);
+                _logger.LogInformation("Updating map information for {Port}. Map updating from {SavedMap} to {NewMap}", server.Port, server.Map, serverInfo.Map);
 
                 server.Map = serverInfo.Map;
                 await _gameService.UpdateGameServerInformationAsync(server);
@@ -91,17 +91,17 @@ public class ServerCommands : InteractionModuleBase<SocketInteractionContext>
 
         if (activeServers.Any())
         {
-            _logger.LogInformation("Building component for {activeServerCount}", activeServers.Count);
+            _logger.LogInformation("Building component for {ActiveServerCount} server(s)", activeServers.Count);
             var component = CreateGameServerMenuComponent(activeServers);
             
-            _logger.LogInformation("{serverStatusMessage}", serverStatusMessage);
             await FollowupAsync(serverStatusMessage, components: component.Build());
         }
         else
         {
-            _logger.LogInformation("{serverStatusMessage}", serverStatusMessage);
             await FollowupAsync(serverStatusMessage);
         }
+        
+        _logger.LogInformation("{ServerStatusMessage}", serverStatusMessage);
     }
 
 #if DEBUG
@@ -117,21 +117,21 @@ public class ServerCommands : InteractionModuleBase<SocketInteractionContext>
 
         var serverInfo = await _gameService.GetSteamServerStatusAsync(BotConstants.ZomboidServerPort);
         
-        _logger.LogInformation("{map} - {port} online: {online}", serverInfo.Map, BotConstants.ZomboidServerPort, serverInfo.Online);
+        _logger.LogInformation("{Map} - {Port} online: {Online}", serverInfo.Map, BotConstants.ZomboidServerPort, serverInfo.Online);
 
         var serverStatus = ServerInfoHelper.GetServerStatus(serverInfo);
 
         if (serverInfo.Online)
         {
-            _logger.LogInformation("Building component for {port}", BotConstants.ZomboidServerPort);
+            _logger.LogInformation("Building component for {Port}", BotConstants.ZomboidServerPort);
             var component = CreateGameServerMenuComponent(serverInfo.Map, BotConstants.ZomboidServerPort);
             
-            _logger.LogInformation("{serverStatus}", serverStatus);
+            _logger.LogInformation("{ServerStatus}", serverStatus);
             await FollowupAsync(serverStatus, components: component.Build());
         }
         else
         {
-            _logger.LogInformation("{serverStatus}", serverStatus);
+            _logger.LogInformation("{ServerStatus}", serverStatus);
             await FollowupAsync(serverStatus);
         }
     }

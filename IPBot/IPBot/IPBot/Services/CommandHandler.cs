@@ -31,7 +31,7 @@ public class CommandHandler
     private Task SelectMenuExecuted(SocketMessageComponent arg)
     {
         var user = arg.User as SocketGuildUser;
-        _logger.LogInformation("{userName}:{discriminator} ({userId}) clicked menu {menuName} in {guildId} - {channelId}. Selected Values: {selection}",
+        _logger.LogInformation("{UserName}:{Discriminator} ({UserId}) clicked menu {MenuName} in {GuildId} - {ChannelId}. Selected Values: {Selection}",
             user.Username, user.DiscriminatorValue, user.Id, arg.Data.CustomId, user.Guild.Name, arg.Channel.Name, string.Join(",", arg.Data.Values));
         
         return Task.CompletedTask;
@@ -40,7 +40,7 @@ public class CommandHandler
     private Task SlashCommandExecuted(SocketSlashCommand arg)
     {
         var user = arg.User as SocketGuildUser;
-        _logger.LogInformation("{userName}:{discriminator} ({userId}) called command '{commandName}' in {guildId} - {channelId}",
+        _logger.LogInformation("{UserName}:{Discriminator} ({UserId}) called command '{CommandName}' in {GuildId} - {ChannelId}",
             user.Username, user.DiscriminatorValue, user.Id, arg.CommandName, user.Guild.Name, arg.Channel.Name);
 
         return Task.CompletedTask;

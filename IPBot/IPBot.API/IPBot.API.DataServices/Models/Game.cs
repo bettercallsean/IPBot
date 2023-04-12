@@ -1,4 +1,4 @@
-﻿namespace IPBot.DataServices.Models;
+﻿namespace IPBot.API.DataServices.Models;
 
 public record Game
 {

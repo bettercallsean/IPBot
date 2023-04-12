@@ -1,6 +1,6 @@
-﻿using IPBot.DataServices.Models;
+﻿using IPBot.API.DataServices.Models;
 
-namespace IPBot.DataServices.Interfaces.DataServices;
+namespace IPBot.API.DataServices.Interfaces.DataServices;
 
 public interface IUserDataService
 {

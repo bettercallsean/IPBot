@@ -1,9 +1,9 @@
-﻿using IPBot.DataServices.Data;
-using IPBot.DataServices.Interfaces.DataServices;
-using IPBot.DataServices.Models;
+﻿using IPBot.API.DataServices.Data;
+using IPBot.API.DataServices.Interfaces.DataServices;
+using IPBot.API.DataServices.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace IPBot.DataServices.DataServices;
+namespace IPBot.API.DataServices.DataServices;
 public class UserDataService : IUserDataService
 {
     private readonly IIPBotDataContext _ipBotDataContext;
