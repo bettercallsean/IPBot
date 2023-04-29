@@ -39,7 +39,6 @@ public class StartupService
         _logger.LogInformation("Connected");
 
         var serverDomain = await _ipService.GetCurrentServerDomainAsync();
-        _logger.LogInformation("Domain: {ServerDomain}", serverDomain);
 
         await _discord.SetGameAsync(serverDomain);
     }
