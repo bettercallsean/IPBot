@@ -8,7 +8,7 @@ public class GameService : ServiceBase, IGameService
 {
     private const string BaseUri = "GameServer";
 
-    public GameService(IRestClient client) : base(client) { }
+    public GameService(IRestClient client, IConfiguration configuration) : base(client, configuration)  { }
 
     public async Task<ServerInfoDto> GetMinecraftServerStatusAsync(int portNumber)
     {

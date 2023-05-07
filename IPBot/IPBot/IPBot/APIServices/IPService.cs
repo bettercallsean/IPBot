@@ -7,7 +7,7 @@ public class IPService : ServiceBase, IIPService
 {
     private const string BaseUri = "IP";
 
-    public IPService(IRestClient client) : base(client) { }
+    public IPService(IRestClient client, IConfiguration configuration) : base(client, configuration)  { }
 
     public async Task<string> GetCurrentServerDomainAsync()
     {

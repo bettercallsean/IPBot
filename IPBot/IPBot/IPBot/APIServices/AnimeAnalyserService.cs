@@ -8,7 +8,7 @@ public class AnimeAnalyserService : ServiceBase, IAnimeAnalyserService
 {
     private const string BaseUri = "AnimeAnalyser";
 
-    public AnimeAnalyserService(IRestClient client) : base(client) { }
+    public AnimeAnalyserService(IRestClient client, IConfiguration configuration) : base(client, configuration) { }
 
     public async Task<double> GetAnimeScoreAsync(string imageUrl)
     {

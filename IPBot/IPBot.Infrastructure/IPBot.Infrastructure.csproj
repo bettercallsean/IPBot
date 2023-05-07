@@ -9,7 +9,8 @@
       <None Remove="Scripts\" />
     </ItemGroup>
     <ItemGroup>
-      <PackageReference Include="Magick.NET-Q16-AnyCPU" Version="13.0.0" />
+      <PackageReference Include="Magick.NET-Q16-AnyCPU" Version="13.1.0" />
+      <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.30.0" />
     </ItemGroup>
     <ItemGroup>
       <Content Include="..\..\scripts\get_server_status.py">
