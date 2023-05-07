@@ -16,7 +16,7 @@ public class UserController : ControllerBase
     }
 
     [Authorize]
-    [HttpPost("RegisterUser")]
+    [HttpPost("Register")]
     public async Task<ActionResult<bool>> RegisterUserAsync(UserDto dto)
     {
         var result = await _userService.RegisterUserAsync(dto);

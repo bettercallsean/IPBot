@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace IPBot.API.Controllers;
 
+[Authorize]
 [ApiController]
 [Route("api/[controller]")]
 public class IPController : ControllerBase
@@ -31,8 +32,7 @@ public class IPController : ControllerBase
     {
         return Ok(await _ipService.GetServerIPAsync());
     }
-
-    [Authorize]
+    
     [HttpGet("UpdateServerIP")]
     public async Task<ActionResult<bool>> UpdateServerIP(string ip)
     {

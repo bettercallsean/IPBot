@@ -1,8 +1,10 @@
 using IPBot.Shared.Dtos;
 using IPBot.Shared.Services;
+using Microsoft.AspNetCore.Authorization;
 
 namespace IPBot.API.Controllers;
 
+[Authorize]
 [ApiController]
 [Route("api/[controller]")]
 public class GameServerController : ControllerBase
