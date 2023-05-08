@@ -5,7 +5,7 @@ namespace IPBot.APIServices;
 
 public class IPService : ServiceBase, IIPService
 {
-    private const string BaseUri = "IP";
+    private const string BaseUri = "/IP";
 
     public IPService(IRestClient client, IConfiguration configuration) : base(client, configuration)  { }
 

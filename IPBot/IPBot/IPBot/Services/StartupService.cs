@@ -1,5 +1,6 @@
 ﻿using IPBot.Helpers;
 using IPBot.Shared.Services;
+using Microsoft.AspNetCore.SignalR.Client;
 using Microsoft.Extensions.Logging;
 
 namespace IPBot.Services;
@@ -11,6 +12,7 @@ public class StartupService
     private readonly IIPService _ipService;
     private readonly DiscordSocketClient _discord;
     private readonly InteractionService _commands;
+    private readonly HubConnection _hubConnection;
 
     public StartupService(ILogger<StartupService> logger, IConfiguration configuration, IIPService ipService, DiscordSocketClient discord, InteractionService commands)
     {
@@ -19,6 +21,10 @@ public class StartupService
         _ipService = ipService;
         _discord = discord;
         _commands = commands;
+        _hubConnection = new HubConnectionBuilder()
+            .WithUrl($"{configuration["APIEndpoint"]}/hubs/iphub")
+            .WithAutomaticReconnect()
+            .Build();
     }
 
     public async Task StartAsync()
@@ -30,6 +36,11 @@ public class StartupService
         await _discord.LoginAsync(Discord.TokenType.Bot, token);
         await _discord.StartAsync();
 
+        _hubConnection.On("UpdateIP", async (string ip) => 
+            { await PostUpdatedIPAsync(ip); });
+        
+        await _hubConnection.StartAsync();
+        
         _discord.Ready += ReadyAsync;
         _discord.Connected += DiscordOnConnected;
     }
@@ -53,6 +64,17 @@ public class StartupService
         else
         {
             await _commands.RegisterCommandsGloballyAsync();
+        }
+    }
+
+    private async Task PostUpdatedIPAsync(string ip)
+    {
+        foreach (var foo in _configuration.GetSection("DiscordServers").GetChildren())
+        {
+            var guild = _discord.GetGuild(ulong.Parse(foo.Key));
+            var channel = guild.GetTextChannel(ulong.Parse(foo.Value));
+            
+            await channel.SendMessageAsync($"⚠️ Beep boop. The server IP has changed to `{ip}` ⚠️");
         }
     }
 }

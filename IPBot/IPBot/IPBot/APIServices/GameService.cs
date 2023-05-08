@@ -6,7 +6,7 @@ namespace IPBot.APIServices;
 
 public class GameService : ServiceBase, IGameService
 {
-    private const string BaseUri = "GameServer";
+    private const string BaseUri = "/GameServer";
 
     public GameService(IRestClient client, IConfiguration configuration) : base(client, configuration)  { }
 
