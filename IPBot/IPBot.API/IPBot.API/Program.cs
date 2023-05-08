@@ -1,17 +1,20 @@
 using System.Text;
-using IPBot.API.Business.AutoMapper;
-using IPBot.API.Business.Service;
+using IPBot.API.AutoMapper;
 using IPBot.API.DataServices.Data;
 using IPBot.API.DataServices.DataServices;
 using IPBot.API.DataServices.Interfaces.DataServices;
+using IPBot.API.Hubs;
+using IPBot.API.Services;
 using IPBot.Shared.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.HttpOverrides;
+using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Serilog;
 using Swashbuckle.AspNetCore.Filters;
+using GameService = IPBot.API.Services.GameService;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -21,8 +24,14 @@ builder.Configuration.AddJsonFile("appsettings.json")
 builder.Host.UseSerilog((ctx, lc) => 
     lc.ReadFrom.Configuration(ctx.Configuration));
 
+builder.Services.AddSignalR();
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddResponseCompression(opts =>
+{
+    opts.MimeTypes = ResponseCompressionDefaults.MimeTypes.Concat(
+        new[] {"application/octet-stream"});
+});
 
 RegisterAutoMapperProfiles();
 RegisterDataServices();
@@ -88,6 +97,8 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+
+app.MapHub<IPHub>("/api/hubs/iphub");
 
 app.Run();
 

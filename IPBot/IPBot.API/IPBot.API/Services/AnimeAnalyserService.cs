@@ -2,9 +2,8 @@
 using IPBot.Shared.Services;
 using Microsoft.Azure.CognitiveServices.Vision.ComputerVision;
 using Microsoft.Azure.CognitiveServices.Vision.ComputerVision.Models;
-using Microsoft.Extensions.Configuration;
 
-namespace IPBot.API.Business.Service;
+namespace IPBot.API.Services;
 
 public class AnimeAnalyserService : IAnimeAnalyserService
 {

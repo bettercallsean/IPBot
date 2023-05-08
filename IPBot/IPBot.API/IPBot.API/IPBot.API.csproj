@@ -8,6 +8,8 @@
 
     <ItemGroup>
         <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="7.0.5" />
+        <PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="7.0.5" />
+        <PackageReference Include="Microsoft.Azure.CognitiveServices.Vision.ComputerVision" Version="7.0.1" />
         <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="7.0.0" />
         <PackageReference Include="Serilog" Version="2.12.0" />
         <PackageReference Include="Serilog.AspNetCore" Version="6.1.0" />
@@ -31,7 +33,6 @@
 
     <ItemGroup>
       <ProjectReference Include="..\..\IPBot.Infrastructure\IPBot.Infrastructure.csproj" />
-      <ProjectReference Include="..\IPBot.API.Business\IPBot.API.Business.csproj" />
       <ProjectReference Include="..\IPBot.API.DataServices\IPBot.API.DataServices.csproj" />
     </ItemGroup>
 

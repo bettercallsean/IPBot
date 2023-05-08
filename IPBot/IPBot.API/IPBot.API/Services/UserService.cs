@@ -6,10 +6,9 @@ using IPBot.API.DataServices.Models;
 using IPBot.API.DataServices.Utilities;
 using IPBot.Shared.Dtos;
 using IPBot.Shared.Services;
-using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 
-namespace IPBot.API.Business.Service;
+namespace IPBot.API.Services;
 public class UserService : IUserService
 {
     private readonly IConfiguration _configuration;

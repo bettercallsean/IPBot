@@ -1,21 +1,25 @@
 using System.Net;
 using IPBot.API.DataServices.Interfaces.DataServices;
+using IPBot.API.Hubs;
 using IPBot.Shared.Services;
+using Microsoft.AspNetCore.SignalR;
 
-namespace IPBot.API.Business.Service;
+namespace IPBot.API.Services;
 
 public class IPService : IIPService
 {
     private static readonly string LatestIPFilePath = Path.Combine(AppContext.BaseDirectory, @"../latest_ip.txt");
     private static readonly string IPChangedFilePath = Path.Combine(AppContext.BaseDirectory, @"../ip_changed");
     private readonly IDomainDataService _domainDataService;
+    private readonly IHubContext<IPHub> _hubContext;
 
     private static string _localIp = string.Empty;
     private static string _serverIP = string.Empty;
     
-    public IPService(IDomainDataService domainDataService)
+    public IPService(IDomainDataService domainDataService, IHubContext<IPHub> hubContext)
     {
         _domainDataService = domainDataService;
+        _hubContext = hubContext;
     }
 
     public async Task<string> GetCurrentServerDomainAsync()
@@ -63,15 +67,14 @@ public class IPService : IIPService
         return _serverIP;
     }
 
-    public Task<bool> UpdateServerIPAsync(string ip)
+    public async Task<bool> UpdateServerIPAsync(string ip)
     {
-        return Task.Run(() =>
-        {
-            if (!IPAddress.TryParse(ip, out _) || ip.Equals(_serverIP)) return false;
-            
-            _serverIP = ip;
-            
-            return true;
-        });
+        if (!IPAddress.TryParse(ip, out _) || ip.Equals(_serverIP)) return false;
+        
+        _serverIP = ip;
+        
+        await _hubContext.Clients.All.SendAsync("UpdateIP", _serverIP);
+        
+        return true;
     }
 }

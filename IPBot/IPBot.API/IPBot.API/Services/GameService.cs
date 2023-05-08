@@ -7,7 +7,7 @@ using IPBot.Infrastructure.Helpers;
 using IPBot.Shared.Dtos;
 using IPBot.Shared.Services;
 
-namespace IPBot.API.Business.Service;
+namespace IPBot.API.Services;
 
 public partial class GameService : IGameService
 {
