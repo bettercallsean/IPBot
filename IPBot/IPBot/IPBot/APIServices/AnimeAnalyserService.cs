@@ -6,7 +6,7 @@ namespace IPBot.APIServices;
 
 public class AnimeAnalyserService : ServiceBase, IAnimeAnalyserService
 {
-    private const string BaseUri = "AnimeAnalyser";
+    private const string BaseUri = "/AnimeAnalyser";
 
     public AnimeAnalyserService(IRestClient client, IConfiguration configuration) : base(client, configuration) { }
 
