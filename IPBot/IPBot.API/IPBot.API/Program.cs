@@ -14,7 +14,6 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Serilog;
 using Swashbuckle.AspNetCore.Filters;
-using GameService = IPBot.API.Services.GameService;
 
 var builder = WebApplication.CreateBuilder(args);
 
