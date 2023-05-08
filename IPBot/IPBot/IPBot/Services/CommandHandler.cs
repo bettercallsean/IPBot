@@ -26,6 +26,16 @@ public class CommandHandler
         _client.SlashCommandExecuted += SlashCommandExecuted;
         _client.InteractionCreated += HandleInteraction;
         _client.SelectMenuExecuted += SelectMenuExecuted;
+        _client.ButtonExecuted += ButtonExecuted;
+    }
+
+    private Task ButtonExecuted(SocketMessageComponent arg)
+    {
+        var user = arg.User as SocketGuildUser;
+        _logger.LogInformation("{UserName}:{Discriminator} ({UserId}) clicked button {ButtonName} in {GuildId} - {ChannelId}",
+            user.Username, user.DiscriminatorValue, user.Id, arg.Data.CustomId, user.Guild.Name, arg.Channel.Name);
+        
+        return Task.CompletedTask;
     }
 
     private Task SelectMenuExecuted(SocketMessageComponent arg)
