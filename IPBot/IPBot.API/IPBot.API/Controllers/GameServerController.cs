@@ -17,6 +17,7 @@ public class GameServerController : ControllerBase
     }
 
     [HttpGet("GetMinecraftServerStatus/{portNumber:int}")]
+    [ResponseCache(Duration = 60, Location = ResponseCacheLocation.Any, NoStore = false)]
     public async Task<ActionResult<ServerInfoDto>> GetMinecraftServerStatusAsync(int portNumber)
     {
         try
@@ -30,6 +31,7 @@ public class GameServerController : ControllerBase
     }
 
     [HttpGet("GetSteamServerStatus/{portNumber:int}")]
+    [ResponseCache(Duration = 60, Location = ResponseCacheLocation.Any, NoStore = false)]
     public async Task<ActionResult<ServerInfoDto>> GetSteamServerStatusAsync(int portNumber)
     {
         try

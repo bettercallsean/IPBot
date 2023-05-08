@@ -10,6 +10,8 @@ public record ServerInfoDto
     public bool Online { get; set; }
     [JsonPropertyName("map")]
     public string Map { get; set; }
+    [JsonPropertyName("motd")]
+    public string Motd { get; set; } 
     [JsonPropertyName("player_count")]
     public int PlayerCount { get; set; }
     [JsonPropertyName("player_names")]
