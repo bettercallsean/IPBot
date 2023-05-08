@@ -1,5 +1,6 @@
 ﻿using Discord;
 using IPBot.Helpers;
+using IPBot.Shared.Dtos;
 using IPBot.Shared.Services;
 using Microsoft.Extensions.Logging;
 
@@ -8,6 +9,7 @@ namespace IPBot.Commands;
 public class ServerCommands : InteractionModuleBase<SocketInteractionContext>
 {
     private const string GameServerMenu = "gameServerMenu";
+    private const string GameServerButton = "gameServerButton";
 
     private readonly ILogger<ServerCommands> _logger;
     private readonly IGameService _gameService;
@@ -39,7 +41,19 @@ public class ServerCommands : InteractionModuleBase<SocketInteractionContext>
         var serverStatus = ServerInfoHelper.GetServerStatus(serverInfo);
         
         _logger.LogInformation("{ServerStatus}", serverStatus);
-        await FollowupAsync(serverStatus);
+
+        if (serverInfo.PlayerCount > 0)
+        {
+            _logger.LogInformation("Building component for Minecraft server");
+
+            var button = CreateMinecraftButtonComponent();
+            await FollowupAsync(serverStatus, components: button.Build());
+        }
+        else
+        {
+            await FollowupAsync(serverStatus);
+        }
+
     }
 
 #if DEBUG
@@ -142,8 +156,23 @@ public class ServerCommands : InteractionModuleBase<SocketInteractionContext>
         _logger.LogInformation("GenerateSteamConnectLinkAsync executed");
 
         var serverDomain = await _ipService.GetCurrentServerDomainAsync();
-        await RespondAsync($"Open up Steam after clicking this link and you should see the 'server connect' menu{Environment.NewLine}" +
+        var serverInfo = await GetServerInfoStringAsync("steam", int.Parse(inputs[0]));
+        
+        await RespondAsync($"{serverInfo}{Environment.NewLine}{Environment.NewLine}" +
+            $"Open up Steam after clicking this link and you should see the 'server connect' menu{Environment.NewLine}" +
             $"steam://connect/{serverDomain}:{inputs[0]}", ephemeral: true);
+    }
+    
+    [ComponentInteraction(GameServerButton)]
+    public async Task GenerateMinecraftInfoAsync()
+    {
+        _logger.LogInformation("GenerateSteamConnectLinkAsync executed");
+
+        var serverInfo = await _gameService.GetMinecraftServerStatusAsync(BotConstants.MinecraftServerPort);
+
+        var serverInfoString = await GetServerInfoStringAsync("mc", BotConstants.MinecraftServerPort);
+        
+        await RespondAsync(serverInfoString, ephemeral: true);
     }
 
     private static ComponentBuilder CreateGameServerMenuComponent(string mapName, int port)
@@ -171,5 +200,41 @@ public class ServerCommands : InteractionModuleBase<SocketInteractionContext>
             .WithSelectMenu(serverMenu);
 
         return component;
+    }
+    
+    private static ComponentBuilder CreateMinecraftButtonComponent()
+    {
+        var serverMenu = new ButtonBuilder
+        {
+            CustomId = GameServerButton,
+            Label = "More info",
+            Style = ButtonStyle.Primary,
+            
+        };
+
+        var component = new ComponentBuilder()
+            .WithButton(serverMenu);
+
+        return component;
+    }
+
+    private async Task<string> GetServerInfoStringAsync(string gameCode, int port)
+    {
+        ServerInfoDto serverInfo;
+        if (gameCode == "mc")
+            serverInfo = await _gameService.GetMinecraftServerStatusAsync(port);
+        else
+            serverInfo = await _gameService.GetSteamServerStatusAsync(port);
+
+        var playerInfo = new StringBuilder();
+
+        playerInfo.Append($"{Environment.NewLine}Players online: {(serverInfo.PlayerNames.Count > 0 
+            ? string.Join(", ", serverInfo.PlayerNames) 
+            : serverInfo.PlayerCount)}");
+
+        if (!string.IsNullOrWhiteSpace(serverInfo.Motd))
+            playerInfo.Append($"{Environment.NewLine}MOTD: {serverInfo.Motd}");
+
+        return playerInfo.ToString();
     }
 }
