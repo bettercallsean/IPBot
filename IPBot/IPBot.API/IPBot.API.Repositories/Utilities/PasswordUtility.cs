@@ -1,6 +1,6 @@
 ﻿using System.Security.Cryptography;
 
-namespace IPBot.API.DataServices.Utilities;
+namespace IPBot.API.Repositories.Utilities;
 public static class PasswordUtility
 {
     public static void CreatePasswordHash(string password, out byte[] passwordHash, out byte[] passwordSalt)

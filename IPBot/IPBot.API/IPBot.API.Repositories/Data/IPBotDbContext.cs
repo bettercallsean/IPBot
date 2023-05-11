@@ -1,7 +1,7 @@
-﻿using IPBot.API.DataServices.Models;
+﻿using IPBot.API.Repositories.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace IPBot.API.DataServices.Data;
+namespace IPBot.API.Repositories.Data;
 public class IPBotDbContext : DbContext, IIPBotDataContext
 {
     public IPBotDbContext(DbContextOptions<IPBotDbContext> options) : base(options)

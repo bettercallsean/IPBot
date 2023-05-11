@@ -1,8 +1,8 @@
 ﻿using System.Text.Json;
 using System.Text.RegularExpressions;
 using AutoMapper;
-using IPBot.API.DataServices.Interfaces.DataServices;
-using IPBot.API.DataServices.Models;
+using IPBot.API.Repositories.Interfaces.Repositories;
+using IPBot.API.Repositories.Models;
 using IPBot.Infrastructure.Helpers;
 using IPBot.Shared.Dtos;
 using IPBot.Shared.Services;
@@ -40,7 +40,7 @@ public partial class GameService : IGameService
 
     public async Task<List<GameServerDto>> GetActiveServersAsync(string gameName)
     {
-        var game = await _gameDataService.GetByShortNameAsync(gameName);
+        var game = await _gameDataService.GetWhereAsync(x => x.ShortName == gameName, x => x.GameServers);
 
         var gameServers = game.GameServers.Where(x => x.Active);
 

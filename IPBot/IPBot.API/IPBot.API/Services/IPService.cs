@@ -1,6 +1,6 @@
 using System.Net;
-using IPBot.API.DataServices.Interfaces.DataServices;
 using IPBot.API.Hubs;
+using IPBot.API.Repositories.Interfaces.Repositories;
 using IPBot.Shared.Services;
 using Microsoft.AspNetCore.SignalR;
 
@@ -24,7 +24,7 @@ public class IPService : IIPService
 
     public async Task<string> GetCurrentServerDomainAsync()
     {
-        var domain = await _domainDataService.GetByDescriptionAsync("Server Domain");
+        var domain = await _domainDataService.GetWhereAsync(x => x.Description == "Server Domain");
         return domain.URL;
     }
 

@@ -33,7 +33,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\..\IPBot.Infrastructure\IPBot.Infrastructure.csproj" />
-      <ProjectReference Include="..\IPBot.API.DataServices\IPBot.API.DataServices.csproj" />
+      <ProjectReference Include="..\IPBot.API.Repositories\IPBot.API.Repositories.csproj" />
     </ItemGroup>
 
     <ItemGroup>

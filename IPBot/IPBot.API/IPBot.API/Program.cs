@@ -1,9 +1,9 @@
 using System.Text;
 using IPBot.API.AutoMapper;
-using IPBot.API.DataServices.Data;
-using IPBot.API.DataServices.DataServices;
-using IPBot.API.DataServices.Interfaces.DataServices;
 using IPBot.API.Hubs;
+using IPBot.API.Repositories.Data;
+using IPBot.API.Repositories.Interfaces.Repositories;
+using IPBot.API.Repositories.Repositories;
 using IPBot.API.Services;
 using IPBot.Shared.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -103,11 +103,11 @@ app.Run();
 
 void RegisterDataServices()
 {
-    builder.Services.AddScoped<IUserDataService, UserDataService>();
-    builder.Services.AddScoped<IGameServerDataService, GameServerDataService>();
-    builder.Services.AddScoped<IGameDataService, GameDataService>();
-    builder.Services.AddScoped<IDomainDataService, DomainDataService>();
-    builder.Services.AddScoped<IDiscordChannelDataService, DiscordChannelDataService>();
+    builder.Services.AddScoped<IUserDataService, UserRepository>();
+    builder.Services.AddScoped<IGameServerDataService, GameServerRepository>();
+    builder.Services.AddScoped<IGameDataService, GameRepository>();
+    builder.Services.AddScoped<IDomainDataService, DomainRepository>();
+    builder.Services.AddScoped<IDiscordChannelDataService, DiscordChannelRepository>();
 }
 
 void RegisterServices()

@@ -1,5 +1,5 @@
 using AutoMapper;
-using IPBot.API.DataServices.Interfaces.DataServices;
+using IPBot.API.Repositories.Interfaces.Repositories;
 using IPBot.Shared.Dtos;
 using IPBot.Shared.Services;
 
@@ -18,8 +18,8 @@ public class DiscordService : IDiscordService
 
     public async Task<List<DiscordChannelDto>> GetInUseDiscordChannelsAsync()
     {
-        var channels = await _discordChannelDataService.GetAllAsync();
+        var channels = await _discordChannelDataService.GetWhereAsync(x => x.InUse);
 
-        return _mapper.Map<List<DiscordChannelDto>>(channels.Where(x => x.InUse));
+        return _mapper.Map<List<DiscordChannelDto>>(channels);
     }
 }
