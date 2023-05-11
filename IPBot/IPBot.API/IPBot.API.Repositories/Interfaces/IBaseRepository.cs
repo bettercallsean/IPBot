@@ -1,6 +1,6 @@
 using System.Linq.Expressions;
 
-namespace IPBot.API.Repositories.Interfaces.Repositories;
+namespace IPBot.API.Repositories.Interfaces;
 
 public interface IBaseRepository<T> where T : class
 {

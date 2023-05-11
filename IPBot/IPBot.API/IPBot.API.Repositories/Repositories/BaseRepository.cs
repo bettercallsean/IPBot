@@ -1,7 +1,7 @@
 using System.Linq.Expressions;
 using IPBot.API.Repositories.Data;
 using IPBot.API.Repositories.ExtensionMethods;
-using IPBot.API.Repositories.Interfaces.Repositories;
+using IPBot.API.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 namespace IPBot.API.Repositories.Repositories;

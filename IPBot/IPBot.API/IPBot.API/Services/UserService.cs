@@ -1,7 +1,7 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
-using IPBot.API.Repositories.Interfaces.Repositories;
+using IPBot.API.Repositories.Interfaces;
 using IPBot.API.Repositories.Models;
 using IPBot.API.Repositories.Utilities;
 using IPBot.Shared.Dtos;
@@ -12,12 +12,12 @@ namespace IPBot.API.Services;
 public class UserService : IUserService
 {
     private readonly IConfiguration _configuration;
-    private readonly IUserDataService _userDataService;
+    private readonly IUserRepository _userRepository;
 
-    public UserService(IConfiguration configuration, IUserDataService userDataService)
+    public UserService(IConfiguration configuration, IUserRepository userRepository)
     {
         _configuration = configuration;
-        _userDataService = userDataService;
+        _userRepository = userRepository;
     }
 
     public async Task<bool> RegisterUserAsync(UserDto dto)
@@ -31,12 +31,12 @@ public class UserService : IUserService
             PasswordSalt = passwordSalt
         };
 
-        return await _userDataService.AddAsync(user);
+        return await _userRepository.AddAsync(user);
     }
 
     public async Task<string> LoginUserAsync(UserDto dto)
     {
-        var user = await _userDataService.GetWhereAsync(x => x.Username == dto.Username);
+        var user = await _userRepository.GetWhereAsync(x => x.Username == dto.Username);
 
         return user == null || !VerifyPasswordHash(dto.Password, user.PasswordHash, user.PasswordSalt)
             ? string.Empty
