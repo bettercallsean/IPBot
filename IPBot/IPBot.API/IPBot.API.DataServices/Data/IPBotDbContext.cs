@@ -8,10 +8,11 @@ public class IPBotDbContext : DbContext, IIPBotDataContext
     {
     }
 
-    public DbSet<User> Users { get; set; }
-    public DbSet<Game> Games { get; set; }
-    public DbSet<GameServer> GameServers { get; set; }
-    public DbSet<Domain> Domains { get; set; }
+    public virtual DbSet<User> Users { get; set; }
+    public virtual DbSet<Game> Games { get; set; }
+    public virtual DbSet<GameServer> GameServers { get; set; }
+    public virtual DbSet<Domain> Domains { get; set; }
+    public virtual DbSet<DiscordChannel> DiscordChannels { get; set; }
 
     public Task<int> SaveChangesAsync() => base.SaveChangesAsync();
 }
