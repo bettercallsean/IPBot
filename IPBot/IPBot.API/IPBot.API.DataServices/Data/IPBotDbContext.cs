@@ -13,6 +13,7 @@ public class IPBotDbContext : DbContext, IIPBotDataContext
     public virtual DbSet<GameServer> GameServers { get; set; }
     public virtual DbSet<Domain> Domains { get; set; }
     public virtual DbSet<DiscordChannel> DiscordChannels { get; set; }
+    public DbSet<T> Set<T>() where T : class => base.Set<T>();
 
     public Task<int> SaveChangesAsync() => base.SaveChangesAsync();
 }
