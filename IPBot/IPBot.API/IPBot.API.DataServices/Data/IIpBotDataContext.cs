@@ -9,5 +9,6 @@ public interface IIPBotDataContext
     DbSet<Game> Games { get; set; }
     DbSet<GameServer> GameServers { get; set; }
     DbSet<Domain> Domains { get; set; }
+    DbSet<DiscordChannel> DiscordChannels { get; set; }
     Task<int> SaveChangesAsync();
 }

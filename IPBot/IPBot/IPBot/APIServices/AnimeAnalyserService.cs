@@ -1,5 +1,4 @@
-﻿using System.Net.Http.Json;
-using IPBot.Shared.Services;
+﻿using IPBot.Shared.Services;
 using RestSharp;
 
 namespace IPBot.APIServices;

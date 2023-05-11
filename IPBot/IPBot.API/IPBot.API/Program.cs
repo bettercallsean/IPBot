@@ -107,6 +107,7 @@ void RegisterDataServices()
     builder.Services.AddScoped<IGameServerDataService, GameServerDataService>();
     builder.Services.AddScoped<IGameDataService, GameDataService>();
     builder.Services.AddScoped<IDomainDataService, DomainDataService>();
+    builder.Services.AddScoped<IDiscordChannelDataService, DiscordChannelDataService>();
 }
 
 void RegisterServices()
@@ -114,7 +115,8 @@ void RegisterServices()
     builder.Services.AddScoped<IUserService, UserService>();
     builder.Services.AddScoped<IGameService, GameService>();
     builder.Services.AddScoped<IIPService, IPService>();
-    builder.Services.AddSingleton<IAnimeAnalyserService, AnimeAnalyserService>();
+    builder.Services.AddScoped<IDiscordService, DiscordService>();
+    builder.Services.AddScoped<IAnimeAnalyserService, AnimeAnalyserService>();
 }
 
 void RegisterAutoMapperProfiles()
@@ -123,5 +125,6 @@ void RegisterAutoMapperProfiles()
     {
         config.AddProfile<GameProfile>();
         config.AddProfile<GameServerProfile>();
+        config.AddProfile<DiscordChannelProfile>();
     });
 }
