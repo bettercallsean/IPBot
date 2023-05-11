@@ -2,7 +2,7 @@ using System.IdentityModel.Tokens.Jwt;
 
 namespace IPBot.Infrastructure.Helpers;
 
-public class JwtHelper
+public static class JwtHelper
 {
     public static bool CheckTokenIsValid(string token)
     {

@@ -18,7 +18,7 @@ public class DiscordService : IDiscordService
 
     public async Task<List<DiscordChannelDto>> GetInUseDiscordChannelsAsync()
     {
-        var channels = await _discordChannelRepository.GetWhereAsync(x => x.InUse);
+        var channels = await _discordChannelRepository.GetAllWhereAsync(x => x.InUse);
 
         return _mapper.Map<List<DiscordChannelDto>>(channels);
     }
