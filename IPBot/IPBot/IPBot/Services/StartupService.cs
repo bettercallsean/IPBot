@@ -12,15 +12,20 @@ public class StartupService
     private readonly IIPService _ipService;
     private readonly DiscordSocketClient _discord;
     private readonly InteractionService _commands;
+    private readonly IDiscordService _discordService;
     private readonly HubConnection _hubConnection;
 
-    public StartupService(ILogger<StartupService> logger, IConfiguration configuration, IIPService ipService, DiscordSocketClient discord, InteractionService commands)
+    private string _serverDomain;
+
+    public StartupService(ILogger<StartupService> logger, IConfiguration configuration, IIPService ipService, 
+        DiscordSocketClient discord, InteractionService commands, IDiscordService discordService)
     {
         _logger = logger;
         _configuration = configuration;
         _ipService = ipService;
         _discord = discord;
         _commands = commands;
+        _discordService = discordService;
         _hubConnection = new HubConnectionBuilder()
             .WithUrl($"{configuration["APIEndpoint"]}/hubs/iphub")
             .WithAutomaticReconnect()
@@ -41,20 +46,29 @@ public class StartupService
         
         await _hubConnection.StartAsync();
         
-        _discord.Ready += ReadyAsync;
-        _discord.Connected += DiscordOnConnected;
+        _discord.Ready += DiscordOnReadyAsync;
+        _discord.Connected += DiscordOnConnectedAsync;
+        _discord.Disconnected += DiscordOnDisconnectedAsync;
     }
 
-    private async Task DiscordOnConnected()
+    private Task DiscordOnDisconnectedAsync(Exception arg)
+    {
+        _logger.LogInformation("Disconnected");
+        
+        return Task.CompletedTask;
+    }
+
+    private async Task DiscordOnConnectedAsync()
     {
         _logger.LogInformation("Connected");
+        
+        if(string.IsNullOrEmpty(_serverDomain))
+            _serverDomain = await _ipService.GetCurrentServerDomainAsync();
 
-        var serverDomain = await _ipService.GetCurrentServerDomainAsync();
-
-        await _discord.SetGameAsync(serverDomain);
+        await _discord.SetGameAsync(_serverDomain);
     }
 
-    private async Task ReadyAsync()
+    private async Task DiscordOnReadyAsync()
     {
         if (DebugHelper.IsDebug())
         {
@@ -69,12 +83,16 @@ public class StartupService
 
     private async Task PostUpdatedIPAsync(string ip)
     {
-        foreach (var foo in _configuration.GetSection("DiscordServers").GetChildren())
+        var discordChannels = await _discordService.GetInUseDiscordChannelsAsync();
+        
+        _logger.LogInformation("Server IP updated to {IP}", ip);
+        foreach (var channel in discordChannels)
         {
-            var guild = _discord.GetGuild(ulong.Parse(foo.Key));
-            var channel = guild.GetTextChannel(ulong.Parse(foo.Value));
+            var guild = _discord.GetGuild(channel.GuildId);
+            var textChannel = guild.GetTextChannel(channel.Id);
             
-            await channel.SendMessageAsync($"⚠️ Beep boop. The server IP has changed to `{ip}` ⚠️");
+            _logger.LogInformation("Sending IP update message to {GuildName} - {ChannelName}", guild.Name, textChannel.Name);
+            await textChannel.SendMessageAsync($"⚠️ Beep boop. The server IP has changed to `{ip}` ⚠️");
         }
     }
 }

@@ -61,6 +61,7 @@ public class Startup
             .AddSingleton<IGameService, GameService>()
             .AddSingleton<IIPService, IPService>()
             .AddSingleton<IAnimeAnalyserService, AnimeAnalyserService>()
+            .AddSingleton<IDiscordService, DiscordService>()
             .AddSingleton<ITenorApiHelper, TenorApiHelper>()
             .AddSingleton<IConfiguration>(_config)
             .AddLogging(config =>
