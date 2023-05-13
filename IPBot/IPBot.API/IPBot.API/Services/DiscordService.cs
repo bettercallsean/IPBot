@@ -1,5 +1,5 @@
 using AutoMapper;
-using IPBot.API.Repositories.Interfaces;
+using IPBot.API.Domain.Interfaces;
 using IPBot.Shared.Dtos;
 using IPBot.Shared.Services;
 

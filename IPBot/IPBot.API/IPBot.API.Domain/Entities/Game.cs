@@ -1,4 +1,4 @@
-﻿namespace IPBot.API.Repositories.Models;
+﻿namespace IPBot.API.Domain.Entities;
 
 public record Game
 {

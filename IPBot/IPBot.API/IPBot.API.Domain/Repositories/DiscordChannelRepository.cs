@@ -1,8 +1,8 @@
-using IPBot.API.Repositories.Data;
-using IPBot.API.Repositories.Interfaces;
-using IPBot.API.Repositories.Models;
+using IPBot.API.Domain.Data;
+using IPBot.API.Domain.Entities;
+using IPBot.API.Domain.Interfaces;
 
-namespace IPBot.API.Repositories.Repositories;
+namespace IPBot.API.Domain.Repositories;
 
 public class DiscordChannelRepository : BaseRepository<DiscordChannel>, IDiscordChannelRepository
 {

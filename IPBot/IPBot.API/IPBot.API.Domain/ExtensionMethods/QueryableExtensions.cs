@@ -1,7 +1,7 @@
 using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
 
-namespace IPBot.API.Repositories.ExtensionMethods;
+namespace IPBot.API.Domain.ExtensionMethods;
 
 public static class QueryableExtensions
 {

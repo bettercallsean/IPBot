@@ -1,10 +1,10 @@
 using System.Linq.Expressions;
-using IPBot.API.Repositories.Data;
-using IPBot.API.Repositories.ExtensionMethods;
-using IPBot.API.Repositories.Interfaces;
+using IPBot.API.Domain.Data;
+using IPBot.API.Domain.ExtensionMethods;
+using IPBot.API.Domain.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
-namespace IPBot.API.Repositories.Repositories;
+namespace IPBot.API.Domain.Repositories;
 
 public class BaseRepository<T> : IBaseRepository<T> where T : class
 {

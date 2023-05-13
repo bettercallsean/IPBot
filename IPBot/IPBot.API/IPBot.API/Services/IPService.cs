@@ -1,6 +1,6 @@
 using System.Net;
+using IPBot.API.Domain.Interfaces;
 using IPBot.API.Hubs;
-using IPBot.API.Repositories.Interfaces;
 using IPBot.Shared.Services;
 using Microsoft.AspNetCore.SignalR;
 

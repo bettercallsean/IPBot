@@ -1,9 +1,9 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
-using IPBot.API.Repositories.Interfaces;
-using IPBot.API.Repositories.Models;
-using IPBot.API.Repositories.Utilities;
+using IPBot.API.Domain.Entities;
+using IPBot.API.Domain.Interfaces;
+using IPBot.API.Domain.Utilities;
 using IPBot.Shared.Dtos;
 using IPBot.Shared.Services;
 using Microsoft.IdentityModel.Tokens;

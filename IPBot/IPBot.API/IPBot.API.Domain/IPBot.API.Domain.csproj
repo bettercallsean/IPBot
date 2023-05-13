@@ -4,7 +4,7 @@
     <TargetFramework>net7.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <RootNamespace>IPBot.API.Repositories</RootNamespace>
+    <RootNamespace>IPBot.API.Domain</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>

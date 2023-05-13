@@ -1,8 +1,8 @@
 ﻿using System.Text.Json;
 using System.Text.RegularExpressions;
 using AutoMapper;
-using IPBot.API.Repositories.Interfaces;
-using IPBot.API.Repositories.Models;
+using IPBot.API.Domain.Entities;
+using IPBot.API.Domain.Interfaces;
 using IPBot.Infrastructure.Helpers;
 using IPBot.Shared.Dtos;
 using IPBot.Shared.Services;
