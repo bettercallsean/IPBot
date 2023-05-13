@@ -1,5 +1,5 @@
 using System.Net;
-using IPBot.API.DataServices.Interfaces.DataServices;
+using IPBot.API.Domain.Interfaces;
 using IPBot.API.Hubs;
 using IPBot.Shared.Services;
 using Microsoft.AspNetCore.SignalR;
@@ -10,21 +10,21 @@ public class IPService : IIPService
 {
     private static readonly string LatestIPFilePath = Path.Combine(AppContext.BaseDirectory, @"../latest_ip.txt");
     private static readonly string IPChangedFilePath = Path.Combine(AppContext.BaseDirectory, @"../ip_changed");
-    private readonly IDomainDataService _domainDataService;
+    private readonly IDomainRepository _domainRepository;
     private readonly IHubContext<IPHub> _hubContext;
 
     private static string _localIp = string.Empty;
     private static string _serverIP = string.Empty;
     
-    public IPService(IDomainDataService domainDataService, IHubContext<IPHub> hubContext)
+    public IPService(IDomainRepository domainRepository, IHubContext<IPHub> hubContext)
     {
-        _domainDataService = domainDataService;
+        _domainRepository = domainRepository;
         _hubContext = hubContext;
     }
 
     public async Task<string> GetCurrentServerDomainAsync()
     {
-        var domain = await _domainDataService.GetByDescriptionAsync("Server Domain");
+        var domain = await _domainRepository.GetWhereAsync(x => x.Description == "Server Domain");
         return domain.URL;
     }
 

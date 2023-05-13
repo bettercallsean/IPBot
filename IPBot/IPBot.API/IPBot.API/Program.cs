@@ -1,12 +1,15 @@
+using System.Net;
 using System.Text;
 using IPBot.API.AutoMapper;
-using IPBot.API.DataServices.Data;
-using IPBot.API.DataServices.DataServices;
-using IPBot.API.DataServices.Interfaces.DataServices;
+using IPBot.API.Domain.Data;
+using IPBot.API.Domain.Interfaces;
+using IPBot.API.Domain.Repositories;
 using IPBot.API.Hubs;
 using IPBot.API.Services;
+using IPBot.Shared.Dtos;
 using IPBot.Shared.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.EntityFrameworkCore;
@@ -80,6 +83,25 @@ app.UseSerilogRequestLogging(options =>
         };
     });
 
+app.UseExceptionHandler(config =>
+{
+    config.Run(async context =>
+    {
+        context.Response.StatusCode = (int) HttpStatusCode.InternalServerError;
+        context.Response.ContentType = "application/json";
+        var error = context.Features.Get<IExceptionHandlerFeature>();
+        if (error != null)
+        {
+            var ex = error.Error;
+            await context.Response.WriteAsync(new ErrorDto
+            {
+                StatusCode = context.Response.StatusCode,
+                ErrorMessage = ex.Message 
+            }.ToString()!);
+        }
+    });
+});
+
 app.UseForwardedHeaders(new ForwardedHeadersOptions
 {
     ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
@@ -103,11 +125,11 @@ app.Run();
 
 void RegisterDataServices()
 {
-    builder.Services.AddScoped<IUserDataService, UserDataService>();
-    builder.Services.AddScoped<IGameServerDataService, GameServerDataService>();
-    builder.Services.AddScoped<IGameDataService, GameDataService>();
-    builder.Services.AddScoped<IDomainDataService, DomainDataService>();
-    builder.Services.AddScoped<IDiscordChannelDataService, DiscordChannelDataService>();
+    builder.Services.AddScoped<IUserRepository, UserRepository>();
+    builder.Services.AddScoped<IGameServerRepository, GameServerRepository>();
+    builder.Services.AddScoped<IGameRepository, GameRepository>();
+    builder.Services.AddScoped<IDomainRepository, DomainRepository>();
+    builder.Services.AddScoped<IDiscordChannelRepository, DiscordChannelRepository>();
 }
 
 void RegisterServices()

@@ -166,13 +166,13 @@ public class ServerCommands : InteractionModuleBase<SocketInteractionContext>
     [ComponentInteraction(GameServerButton)]
     public async Task GenerateMinecraftInfoAsync()
     {
-        _logger.LogInformation("GenerateSteamConnectLinkAsync executed");
-
-        var serverInfo = await _gameService.GetMinecraftServerStatusAsync(BotConstants.MinecraftServerPort);
-
-        var serverInfoString = await GetServerInfoStringAsync("mc", BotConstants.MinecraftServerPort);
+        _logger.LogInformation("GenerateMinecraftInfoAsync executed");
         
+        var serverInfoString = await GetServerInfoStringAsync("mc", BotConstants.MinecraftServerPort);
+
         await RespondAsync(serverInfoString, ephemeral: true);
+        
+        _logger.LogInformation("GenerateMinecraftInfoAsync responded");
     }
 
     private static ComponentBuilder CreateGameServerMenuComponent(string mapName, int port)

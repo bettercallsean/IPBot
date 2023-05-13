@@ -1,9 +1,9 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
-using IPBot.API.DataServices.Interfaces.DataServices;
-using IPBot.API.DataServices.Models;
-using IPBot.API.DataServices.Utilities;
+using IPBot.API.Domain.Entities;
+using IPBot.API.Domain.Interfaces;
+using IPBot.API.Domain.Utilities;
 using IPBot.Shared.Dtos;
 using IPBot.Shared.Services;
 using Microsoft.IdentityModel.Tokens;
@@ -12,12 +12,12 @@ namespace IPBot.API.Services;
 public class UserService : IUserService
 {
     private readonly IConfiguration _configuration;
-    private readonly IUserDataService _userDataService;
+    private readonly IUserRepository _userRepository;
 
-    public UserService(IConfiguration configuration, IUserDataService userDataService)
+    public UserService(IConfiguration configuration, IUserRepository userRepository)
     {
         _configuration = configuration;
-        _userDataService = userDataService;
+        _userRepository = userRepository;
     }
 
     public async Task<bool> RegisterUserAsync(UserDto dto)
@@ -31,12 +31,12 @@ public class UserService : IUserService
             PasswordSalt = passwordSalt
         };
 
-        return await _userDataService.CreateAsync(user);
+        return await _userRepository.AddAsync(user);
     }
 
     public async Task<string> LoginUserAsync(UserDto dto)
     {
-        var user = await _userDataService.GetByUsernameAsync(dto.Username);
+        var user = await _userRepository.GetWhereAsync(x => x.Username == dto.Username);
 
         return user == null || !VerifyPasswordHash(dto.Password, user.PasswordHash, user.PasswordSalt)
             ? string.Empty

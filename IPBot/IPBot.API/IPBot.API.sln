@@ -5,7 +5,7 @@ VisualStudioVersion = 17.4.33110.190
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IPBot.API", "IPBot.API\IPBot.API.csproj", "{DE36CD7C-21EB-4CAE-AA02-397B194960D2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IPBot.API.DataServices", "IPBot.API.DataServices\IPBot.API.DataServices.csproj", "{C26BC85E-62C1-44E6-A8B6-51C2D7C17775}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IPBot.API.Domain", "IPBot.API.Domain\IPBot.API.Domain.csproj", "{C26BC85E-62C1-44E6-A8B6-51C2D7C17775}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IPBot.Shared", "..\IPBot.Shared\IPBot.Shared.csproj", "{D50A206E-D80C-4E7C-866E-F087462F4771}"
 EndProject

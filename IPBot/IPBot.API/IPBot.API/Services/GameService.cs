@@ -1,8 +1,8 @@
 ﻿using System.Text.Json;
 using System.Text.RegularExpressions;
 using AutoMapper;
-using IPBot.API.DataServices.Interfaces.DataServices;
-using IPBot.API.DataServices.Models;
+using IPBot.API.Domain.Entities;
+using IPBot.API.Domain.Interfaces;
 using IPBot.Infrastructure.Helpers;
 using IPBot.Shared.Dtos;
 using IPBot.Shared.Services;
@@ -17,15 +17,15 @@ public partial class GameService : IGameService
     
     private readonly IMapper _mapper;
     private readonly IIPService _ipService;
-    private readonly IGameDataService _gameDataService;
-    private readonly IGameServerDataService _gameServerDataService;
+    private readonly IGameRepository _gameRepository;
+    private readonly IGameServerRepository _gameServerRepository;
 
-    public GameService(IMapper mapper, IIPService ipService, IGameDataService gameDataService, IGameServerDataService gameServerDataService)
+    public GameService(IMapper mapper, IIPService ipService, IGameRepository gameRepository, IGameServerRepository gameServerRepository)
 	{
         _mapper = mapper;
         _ipService = ipService;
-        _gameDataService = gameDataService;
-        _gameServerDataService = gameServerDataService;
+        _gameRepository = gameRepository;
+        _gameServerRepository = gameServerRepository;
     }
 
     public async Task<ServerInfoDto> GetMinecraftServerStatusAsync(int portNumber)
@@ -40,7 +40,7 @@ public partial class GameService : IGameService
 
     public async Task<List<GameServerDto>> GetActiveServersAsync(string gameName)
     {
-        var game = await _gameDataService.GetByShortNameAsync(gameName);
+        var game = await _gameRepository.GetWhereAsync(x => x.ShortName == gameName, x => x.GameServers);
 
         var gameServers = game.GameServers.Where(x => x.Active);
 
@@ -51,7 +51,7 @@ public partial class GameService : IGameService
     {
         var gameServer = _mapper.Map<GameServer>(dto);
 
-        return await _gameServerDataService.UpdateAsync(gameServer);
+        return await _gameServerRepository.UpdateAsync(gameServer);
     }
     
     private async Task<ServerInfoDto> GetServerInfoAsync(string gameCode, int port)
