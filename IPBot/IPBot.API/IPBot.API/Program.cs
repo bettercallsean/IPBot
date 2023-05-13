@@ -1,12 +1,15 @@
+using System.Net;
 using System.Text;
 using IPBot.API.AutoMapper;
+using IPBot.API.Domain.Data;
+using IPBot.API.Domain.Interfaces;
+using IPBot.API.Domain.Repositories;
 using IPBot.API.Hubs;
-using IPBot.API.Repositories.Data;
-using IPBot.API.Repositories.Interfaces;
-using IPBot.API.Repositories.Repositories;
 using IPBot.API.Services;
+using IPBot.Shared.Dtos;
 using IPBot.Shared.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.EntityFrameworkCore;
@@ -79,6 +82,25 @@ app.UseSerilogRequestLogging(options =>
             diagnosticContext.Set("RemoteIpAddress", httpContext.Connection.RemoteIpAddress);
         };
     });
+
+app.UseExceptionHandler(config =>
+{
+    config.Run(async context =>
+    {
+        context.Response.StatusCode = (int) HttpStatusCode.InternalServerError;
+        context.Response.ContentType = "application/json";
+        var error = context.Features.Get<IExceptionHandlerFeature>();
+        if (error != null)
+        {
+            var ex = error.Error;
+            await context.Response.WriteAsync(new ErrorDto
+            {
+                StatusCode = context.Response.StatusCode,
+                ErrorMessage = ex.Message 
+            }.ToString()!);
+        }
+    });
+});
 
 app.UseForwardedHeaders(new ForwardedHeadersOptions
 {
