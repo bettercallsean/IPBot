@@ -33,7 +33,7 @@ public class IPController : ControllerBase
         return Ok(await _ipService.GetServerIPAsync());
     }
     
-    [HttpGet]
+    [HttpGet("{ip}")]
     public async Task<ActionResult<bool>> UpdateServerIP(string ip)
     {
         try

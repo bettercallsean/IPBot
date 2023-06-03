@@ -15,7 +15,7 @@ public class AnimeAnalyserController : ControllerBase
         _animeAnalyserService = animeAnalyserService;
     }
     
-    [HttpGet]
+    [HttpGet("{imageUrl}")]
     public async Task<double> GetAnimeScoreAsync(string imageUrl)
     {
         return await _animeAnalyserService.GetAnimeScoreAsync(imageUrl);

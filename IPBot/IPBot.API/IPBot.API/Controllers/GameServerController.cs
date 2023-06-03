@@ -6,7 +6,7 @@ namespace IPBot.API.Controllers;
 
 [Authorize]
 [ApiController]
-[Route("api/[controller][action]")]
+[Route("api/[controller]/[action]")]
 public class GameServerController : ControllerBase
 {
     private readonly IGameService _gameService;
