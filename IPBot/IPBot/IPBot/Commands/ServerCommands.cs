@@ -9,7 +9,7 @@ namespace IPBot.Commands;
 public class ServerCommands : InteractionModuleBase<SocketInteractionContext>
 {
     private const string GameServerMenu = "gameServerMenu";
-    private const string GameServerButton = "gameServerButton";
+    private const string GameServerButton = "minecraftServerButton";
 
     private readonly ILogger<ServerCommands> _logger;
     private readonly IGameService _gameService;
@@ -204,12 +204,14 @@ public class ServerCommands : InteractionModuleBase<SocketInteractionContext>
     
     private static ComponentBuilder CreateMinecraftButtonComponent()
     {
+        const string pigEmoji = "\uD83D\uDC37";
+        
         var serverMenu = new ButtonBuilder
         {
             CustomId = GameServerButton,
             Label = "More info",
             Style = ButtonStyle.Primary,
-            
+            Emote = new Emoji(pigEmoji)
         };
 
         var component = new ComponentBuilder()
