@@ -5,7 +5,7 @@ namespace IPBot.API.Controllers;
 
 [Authorize]
 [ApiController]
-[Route("api/[controller]")]
+[Route("api/[controller]/[action]")]
 public class IPController : ControllerBase
 {
     private readonly IIPService _ipService;
@@ -15,25 +15,25 @@ public class IPController : ControllerBase
         _ipService = ipService;
     }
     
-    [HttpGet("GetCurrentServerDomain")]
-    public async Task<ActionResult<string>> GetCurrentDomain()
+    [HttpGet]
+    public async Task<ActionResult<string>> GetCurrentServerDomainAsync()
     {
         return Ok(await _ipService.GetCurrentServerDomainAsync());
     }
 
-    [HttpGet("GetLocalIP")]
+    [HttpGet]
     public async Task<ActionResult<string>> GetLocalIPAsync()
     {
         return Ok(await _ipService.GetLocalIPAsync());
     }
 
-    [HttpGet("GetServerIP")]
+    [HttpGet]
     public async Task<ActionResult<string>> GetServerIPAsync()
     {
         return Ok(await _ipService.GetServerIPAsync());
     }
     
-    [HttpGet("UpdateServerIP")]
+    [HttpGet]
     public async Task<ActionResult<bool>> UpdateServerIP(string ip)
     {
         try

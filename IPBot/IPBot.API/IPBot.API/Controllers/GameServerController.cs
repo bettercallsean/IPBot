@@ -6,7 +6,7 @@ namespace IPBot.API.Controllers;
 
 [Authorize]
 [ApiController]
-[Route("api/[controller]")]
+[Route("api/[controller][action]")]
 public class GameServerController : ControllerBase
 {
     private readonly IGameService _gameService;
@@ -16,7 +16,7 @@ public class GameServerController : ControllerBase
         _gameService = gameService;
     }
 
-    [HttpGet("GetMinecraftServerStatus/{portNumber:int}")]
+    [HttpGet("{portNumber:int}")]
     [ResponseCache(Duration = 60, Location = ResponseCacheLocation.Any, NoStore = false)]
     public async Task<ActionResult<ServerInfoDto>> GetMinecraftServerStatusAsync(int portNumber)
     {
@@ -30,7 +30,7 @@ public class GameServerController : ControllerBase
         }
     }
 
-    [HttpGet("GetSteamServerStatus/{portNumber:int}")]
+    [HttpGet("{portNumber:int}")]
     [ResponseCache(Duration = 60, Location = ResponseCacheLocation.Any, NoStore = false)]
     public async Task<ActionResult<ServerInfoDto>> GetSteamServerStatusAsync(int portNumber)
     {
@@ -44,7 +44,7 @@ public class GameServerController : ControllerBase
         }
     }
 
-    [HttpGet("GetActiveServers/{gameName}")]
+    [HttpGet("{gameName}")]
     public async Task<ActionResult<List<GameServerDto>>> GetActiveServersAsync(string gameName)
     {
         try
@@ -57,7 +57,7 @@ public class GameServerController : ControllerBase
         }
     }
     
-    [HttpPost("UpdateGameServerInformation")]
+    [HttpPost]
     public async Task<ActionResult<bool>> UpdateGameServerInformationAsync(GameServerDto dto)
     {
         try
