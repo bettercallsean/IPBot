@@ -5,7 +5,7 @@ namespace IPBot.API.Controllers;
 
 [Authorize]
 [ApiController]
-[Route("api/[controller]")]
+[Route("api/[controller]/[action]")]
 public class AnimeAnalyserController : ControllerBase
 {
     private readonly IAnimeAnalyserService _animeAnalyserService;
@@ -15,7 +15,7 @@ public class AnimeAnalyserController : ControllerBase
         _animeAnalyserService = animeAnalyserService;
     }
     
-    [HttpGet("GetAnimeScore")]
+    [HttpGet]
     public async Task<double> GetAnimeScoreAsync(string imageUrl)
     {
         return await _animeAnalyserService.GetAnimeScoreAsync(imageUrl);
