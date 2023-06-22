@@ -86,13 +86,15 @@ public class StartupService
         var discordChannels = await _discordService.GetInUseDiscordChannelsAsync();
         
         _logger.LogInformation("Server IP updated to {IP}", ip);
+        var ipUpdatedMessage = $"⚠️ Beep boop. The server IP has changed to `{ip}` ⚠️";
+        
         foreach (var channel in discordChannels)
         {
             var guild = _discord.GetGuild(channel.GuildId);
             var textChannel = guild.GetTextChannel(channel.Id);
             
             _logger.LogInformation("Sending IP update message to {GuildName} - {ChannelName}", guild.Name, textChannel.Name);
-            await textChannel.SendMessageAsync($"⚠️ Beep boop. The server IP has changed to `{ip}` ⚠️");
+            await textChannel.SendMessageAsync(ipUpdatedMessage);
         }
     }
 }
