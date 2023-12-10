@@ -35,7 +35,7 @@ public class AnimeAnalyserService : IAnimeAnalyserService
         return imageTags.Tags.Where(x => x.Name == "anime").Select(x => x.Confidence).FirstOrDefault();
     }
 
-    private ComputerVisionClient Authenticate(string endpoint, string key)
+    private static ComputerVisionClient Authenticate(string endpoint, string key)
     {
         return new ComputerVisionClient(new ApiKeyServiceClientCredentials(key))
         {

@@ -1,5 +1,6 @@
 ﻿using IPBot.Shared.Services;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.IdentityModel.Tokens;
 
 namespace IPBot.API.Controllers;
 
@@ -9,15 +10,16 @@ namespace IPBot.API.Controllers;
 public class AnimeAnalyserController : ControllerBase
 {
     private readonly IAnimeAnalyserService _animeAnalyserService;
-    
+
     public AnimeAnalyserController(IAnimeAnalyserService animeAnalyserService)
     {
         _animeAnalyserService = animeAnalyserService;
     }
-    
-    [HttpGet("{imageUrl}")]
-    public async Task<double> GetAnimeScoreAsync(string imageUrl)
+
+    [HttpGet("{encodedUrl}")]
+    public async Task<double> GetAnimeScoreAsync(string encodedUrl)
     {
-        return await _animeAnalyserService.GetAnimeScoreAsync(imageUrl);
+        var decodedUrl = Base64UrlEncoder.Decode(encodedUrl);
+        return await _animeAnalyserService.GetAnimeScoreAsync(decodedUrl);
     }
 }

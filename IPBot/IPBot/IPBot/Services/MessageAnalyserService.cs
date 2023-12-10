@@ -2,6 +2,7 @@
 using IPBot.Helpers;
 using IPBot.Interfaces;
 using IPBot.Shared.Services;
+using Microsoft.IdentityModel.Tokens;
 
 namespace IPBot.Services;
 
@@ -101,7 +102,8 @@ public partial class MessageAnalyserService
 
     private async Task<double> GetAnimeScoreAsync(string url)
     {
-        return await _animeAnalyserService.GetAnimeScoreAsync(url);
+        var encodedUrl = Base64UrlEncoder.Encode(url);
+        return await _animeAnalyserService.GetAnimeScoreAsync(encodedUrl);
     }
 
     private static MessageMediaModel MessageContainsMedia(string messageContent)
