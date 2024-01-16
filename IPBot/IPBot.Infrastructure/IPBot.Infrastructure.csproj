@@ -10,7 +10,7 @@
     </ItemGroup>
     <ItemGroup>
       <PackageReference Include="Magick.NET-Q16-AnyCPU" Version="13.3.0" />
-      <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.31.0" />
+      <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.34.0" />
     </ItemGroup>
     <ItemGroup>
       <Content Include="..\..\scripts\get_server_status.py">
