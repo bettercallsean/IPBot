@@ -1,0 +1,11 @@
+{
+  "profiles": {
+    "IPBot": {
+      "commandName": "Project"
+    },
+    "Docker": {
+      "commandName": "Docker",
+      "DockerfileRunArguments": "--network ipbot-net"
+    }
+  }
+}
