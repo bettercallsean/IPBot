@@ -36,7 +36,7 @@ public static partial class A2SHelper
 
     private static async Task<SteamServerInfo> SendA2SInfoRequestAsync(UdpClient client, IPEndPoint endPoint)
     {
-        SteamServerInfo steamServerInfo;
+        var steamServerInfo = new SteamServerInfo();
 
         await client.SendAsync(A2S_INFO, A2S_INFO.Length);
 
@@ -47,8 +47,8 @@ public static partial class A2SHelper
 
             if (response[4] == ChallengeResponse)
             {
-                var foo = A2S_INFO.Concat(response[5..]).ToArray();
-                client.Send(foo, foo.Length);
+                var concatenatedResponse = A2S_INFO.Concat(response[5..]).ToArray();
+                client.Send(concatenatedResponse, concatenatedResponse.Length);
                 response = client.Receive(ref endPoint);
             }
 
@@ -92,10 +92,7 @@ public static partial class A2SHelper
         }
         catch
         {
-            return new SteamServerInfo
-            {
-                Online = false
-            };
+            return steamServerInfo;
         }
     }
 

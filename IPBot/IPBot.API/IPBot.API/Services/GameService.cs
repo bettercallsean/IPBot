@@ -1,17 +1,23 @@
 ﻿using AutoMapper;
+using IPBot.API.Constants;
 using IPBot.API.Domain.Entities;
 using IPBot.API.Domain.Interfaces;
+using IPBot.API.Domain.Models;
 using IPBot.API.Domain.Utilities;
 using IPBot.Shared.Dtos;
 using IPBot.Shared.Services;
 
 namespace IPBot.API.Services;
 
-public class GameService(IMapper mapper, IIPService ipService, IGameRepository gameRepository, IGameServerRepository gameServerRepository) : IGameService
+public class GameService(IMapper mapper, IIPService ipService, IGameRepository gameRepository, IGameServerRepository gameServerRepository, IHttpClientFactory httpClientFactory) : IGameService
 {
     public async Task<ServerInfoDto> GetMinecraftServerStatusAsync(int portNumber)
     {
-        return await GetServerInfoAsync(portNumber);
+        var serverIP = await ipService.GetServerIPAsync();
+        var httpClient = httpClientFactory.CreateClient(KeyedHttpClientNames.MinecraftServerClient);
+        var minecraftServerInfo = await httpClient.GetFromJsonAsync<MinecraftServerInfo>($"/status/java/{serverIP}:{portNumber}");
+
+        return mapper.Map<ServerInfoDto>(minecraftServerInfo);
     }
 
     public async Task<ServerInfoDto> GetSteamServerStatusAsync(int portNumber)
