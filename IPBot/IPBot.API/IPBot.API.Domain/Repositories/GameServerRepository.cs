@@ -4,7 +4,6 @@ using IPBot.API.Domain.Interfaces;
 
 namespace IPBot.API.Domain.Repositories;
 
-public class GameServerRepository : BaseRepository<GameServer>, IGameServerRepository
+public class GameServerRepository(IIPBotDataContext ipBotDataContext) : BaseRepository<GameServer>(ipBotDataContext), IGameServerRepository
 {
-    public GameServerRepository(IIPBotDataContext ipBotDataContext) : base(ipBotDataContext) { }
 }

@@ -4,7 +4,6 @@ using IPBot.API.Domain.Interfaces;
 
 namespace IPBot.API.Domain.Repositories;
 
-public class DiscordChannelRepository : BaseRepository<DiscordChannel>, IDiscordChannelRepository
+public class DiscordChannelRepository(IIPBotDataContext ipBotDataContext) : BaseRepository<DiscordChannel>(ipBotDataContext), IDiscordChannelRepository
 {
-    public DiscordChannelRepository(IIPBotDataContext ipBotDataContext) : base(ipBotDataContext) { }
 }

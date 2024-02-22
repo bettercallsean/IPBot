@@ -2,12 +2,8 @@
 using Microsoft.EntityFrameworkCore;
 
 namespace IPBot.API.Domain.Data;
-public class IPBotDbContext : DbContext, IIPBotDataContext
+public class IPBotDbContext(DbContextOptions<IPBotDbContext> options) : DbContext(options), IIPBotDataContext
 {
-    public IPBotDbContext(DbContextOptions<IPBotDbContext> options) : base(options)
-    {
-    }
-
     public virtual DbSet<User> Users { get; set; }
     public virtual DbSet<Game> Games { get; set; }
     public virtual DbSet<GameServer> GameServers { get; set; }

@@ -7,21 +7,8 @@ using IPBot.Shared.Services;
 
 namespace IPBot.API.Services;
 
-public class GameService : IGameService
+public class GameService(IMapper mapper, IIPService ipService, IGameRepository gameRepository, IGameServerRepository gameServerRepository) : IGameService
 {
-    private readonly IMapper _mapper;
-    private readonly IIPService _ipService;
-    private readonly IGameRepository _gameRepository;
-    private readonly IGameServerRepository _gameServerRepository;
-
-    public GameService(IMapper mapper, IIPService ipService, IGameRepository gameRepository, IGameServerRepository gameServerRepository)
-    {
-        _mapper = mapper;
-        _ipService = ipService;
-        _gameRepository = gameRepository;
-        _gameServerRepository = gameServerRepository;
-    }
-
     public async Task<ServerInfoDto> GetMinecraftServerStatusAsync(int portNumber)
     {
         return await GetServerInfoAsync(portNumber);
@@ -34,27 +21,25 @@ public class GameService : IGameService
 
     public async Task<List<GameServerDto>> GetActiveServersAsync(string gameName)
     {
-        var game = await _gameRepository.GetWhereAsync(x => x.ShortName == gameName, x => x.GameServers);
+        var game = await gameRepository.GetWhereAsync(x => x.ShortName == gameName, x => x.GameServers);
 
         var gameServers = game.GameServers.Where(x => x.Active);
 
-        return _mapper.Map<List<GameServerDto>>(gameServers);
+        return mapper.Map<List<GameServerDto>>(gameServers);
     }
 
     public async Task<bool> UpdateGameServerInformationAsync(GameServerDto dto)
     {
-        var gameServer = _mapper.Map<GameServer>(dto);
+        var gameServer = mapper.Map<GameServer>(dto);
 
-        return await _gameServerRepository.UpdateAsync(gameServer);
+        return await gameServerRepository.UpdateAsync(gameServer);
     }
 
     private async Task<ServerInfoDto> GetServerInfoAsync(int port)
     {
-        var serverIP = await _ipService.GetServerIPAsync();
-        serverIP = "5.252.102.179";
-        port = 29008;
+        var serverIP = await ipService.GetServerIPAsync();
         var serverInfo = await A2SHelper.SendA2SRequestsAsync($"{serverIP}:{port}");
 
-        return _mapper.Map<ServerInfoDto>(serverInfo);
+        return mapper.Map<ServerInfoDto>(serverInfo);
     }
 }

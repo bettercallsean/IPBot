@@ -6,25 +6,16 @@ using Microsoft.AspNetCore.SignalR;
 
 namespace IPBot.API.Services;
 
-public class IPService : IIPService
+public class IPService(IDomainRepository domainRepository, IHubContext<IPHub> hubContext) : IIPService
 {
     private static readonly string LatestIPFilePath = Path.Combine(AppContext.BaseDirectory, @"../latest_ip.txt");
     private static readonly string IPChangedFilePath = Path.Combine(AppContext.BaseDirectory, @"../ip_changed");
-    private readonly IDomainRepository _domainRepository;
-    private readonly IHubContext<IPHub> _hubContext;
-
     private static string _localIp = string.Empty;
     private static string _serverIP = string.Empty;
-    
-    public IPService(IDomainRepository domainRepository, IHubContext<IPHub> hubContext)
-    {
-        _domainRepository = domainRepository;
-        _hubContext = hubContext;
-    }
 
     public async Task<string> GetCurrentServerDomainAsync()
     {
-        var domain = await _domainRepository.GetWhereAsync(x => x.Description == "Server Domain");
+        var domain = await domainRepository.GetWhereAsync(x => x.Description == "Server Domain");
         return domain.URL;
     }
 
@@ -73,7 +64,7 @@ public class IPService : IIPService
         
         _serverIP = ip;
         
-        await _hubContext.Clients.All.SendAsync("UpdateIP", _serverIP);
+        await hubContext.Clients.All.SendAsync("UpdateIP", _serverIP);
         
         return true;
     }

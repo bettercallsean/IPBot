@@ -3,7 +3,6 @@ using IPBot.API.Domain.Interfaces;
 
 namespace IPBot.API.Domain.Repositories;
 
-public class DomainRepository : BaseRepository<Entities.Domain>, IDomainRepository
+public class DomainRepository(IIPBotDataContext ipBotDataContext) : BaseRepository<Entities.Domain>(ipBotDataContext), IDomainRepository
 {
-    public DomainRepository(IIPBotDataContext ipBotDataContext) : base(ipBotDataContext) { }
 }

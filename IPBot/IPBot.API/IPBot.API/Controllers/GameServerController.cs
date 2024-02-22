@@ -7,22 +7,15 @@ namespace IPBot.API.Controllers;
 [Authorize]
 [ApiController]
 [Route("api/[controller]/[action]")]
-public class GameServerController : ControllerBase
+public class GameServerController(IGameService gameService) : ControllerBase
 {
-    private readonly IGameService _gameService;
-
-    public GameServerController(IGameService gameService)
-    {
-        _gameService = gameService;
-    }
-
     [HttpGet("{portNumber:int}")]
     [ResponseCache(Duration = 60, Location = ResponseCacheLocation.Any, NoStore = false)]
     public async Task<ActionResult<ServerInfoDto>> GetMinecraftServerStatusAsync(int portNumber)
     {
         try
         {
-            return Ok(await _gameService.GetMinecraftServerStatusAsync(portNumber));
+            return Ok(await gameService.GetMinecraftServerStatusAsync(portNumber));
         }
         catch (Exception ex)
         {
@@ -36,7 +29,7 @@ public class GameServerController : ControllerBase
     {
         try
         {
-            return Ok(await _gameService.GetSteamServerStatusAsync(portNumber));
+            return Ok(await gameService.GetSteamServerStatusAsync(portNumber));
         }
         catch (Exception ex)
         {
@@ -49,7 +42,7 @@ public class GameServerController : ControllerBase
     {
         try
         {
-            return Ok(await _gameService.GetActiveServersAsync(gameName));
+            return Ok(await gameService.GetActiveServersAsync(gameName));
         }
         catch (Exception ex)
         {
@@ -62,7 +55,7 @@ public class GameServerController : ControllerBase
     {
         try
         {
-            return Ok(await _gameService.UpdateGameServerInformationAsync(dto));
+            return Ok(await gameService.UpdateGameServerInformationAsync(dto));
         }
         catch (Exception ex)
         {
