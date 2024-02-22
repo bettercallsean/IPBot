@@ -14,14 +14,14 @@ public partial class GameService : IGameService
     private const string ServerStatusScriptName = "get_server_status.py";
     private const string SteamServerCode = "steam";
     private const string MinecraftServerCode = "mc";
-    
+
     private readonly IMapper _mapper;
     private readonly IIPService _ipService;
     private readonly IGameRepository _gameRepository;
     private readonly IGameServerRepository _gameServerRepository;
 
     public GameService(IMapper mapper, IIPService ipService, IGameRepository gameRepository, IGameServerRepository gameServerRepository)
-	{
+    {
         _mapper = mapper;
         _ipService = ipService;
         _gameRepository = gameRepository;
@@ -53,13 +53,15 @@ public partial class GameService : IGameService
 
         return await _gameServerRepository.UpdateAsync(gameServer);
     }
-    
+
     private async Task<ServerInfoDto> GetServerInfoAsync(string gameCode, int port)
     {
         var serverIP = await _ipService.GetServerIPAsync();
+        var foobar = new SteamServerInfo("86.31.125.58:27030");
+        var foo = foobar.Online;
         var serverInfo = await GetServerInfoJsonAsync(gameCode, serverIP, port);
 
-        return ParseServerInfoJson(serverInfo);
+        return _mapper.Map<ServerInfoDto>(foobar);
     }
 
     private static async Task<string> GetServerInfoJsonAsync(string gameCode, string serverIP, int portNumber)
@@ -75,7 +77,7 @@ public partial class GameService : IGameService
         var serverInfoModel = (string.IsNullOrWhiteSpace(serverInfo)
             ? new ServerInfoDto()
             : JsonSerializer.Deserialize<ServerInfoDto>(serverInfo))!;
-        
+
         if (!string.IsNullOrWhiteSpace(serverInfoModel.Map))
             serverInfoModel.Map = string.Join(" ", CapitalLetterRegex().Split(serverInfoModel.Map));
 

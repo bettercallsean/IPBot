@@ -18,6 +18,7 @@
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite.Core" Version="8.0.1" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Enums/ValveServerQueries/" />
     <Folder Include="Scripts\" />
   </ItemGroup>
   <ItemGroup>
