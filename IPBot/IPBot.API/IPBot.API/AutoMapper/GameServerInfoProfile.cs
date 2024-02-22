@@ -9,6 +9,6 @@ public class GameServerInfoProfile : Profile
     {
         CreateMap<SteamServerInfo, ServerInfoDto>()
             .ForMember(x => x.ServerName, y => y.MapFrom(z => z.Name))
-            .ForMember(x => x.PlayerCount, y => y.MapFrom(z => z.Players));
+            .ForMember(x => x.PlayerCount, y => y.MapFrom(z => z.PlayerCount));
     }
 }

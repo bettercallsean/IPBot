@@ -17,13 +17,4 @@
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="8.0.1" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite.Core" Version="8.0.1" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Enums/ValveServerQueries/" />
-    <Folder Include="Scripts\" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="..\..\..\scripts\get_server_status.py" Link="Scripts\get_server_status.py">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
 </Project>
