@@ -1,4 +1,5 @@
 ﻿using IPBot.API.AutoMapper;
+using IPBot.API.Constants;
 using IPBot.API.Domain.Interfaces;
 using IPBot.API.Domain.Repositories;
 using IPBot.API.Services;
@@ -13,6 +14,21 @@ public static class ServiceCollectionExtensions
         RegisterDataServices(services);
         RegisterControllerServices(services);
         RegisterAutoMapperProfiles(services);
+
+        return services;
+    }
+
+    public static IServiceCollection RegisterHttpClients(this IServiceCollection services)
+    {
+        services.AddHttpClient(KeyedHttpClientNames.LocalIPClient, c =>
+        {
+            c.BaseAddress = new Uri("https://api.ipify.org");
+        });
+
+        services.AddHttpClient(KeyedHttpClientNames.MinecraftServerClient, c =>
+        {
+            c.BaseAddress = new Uri("https://api.mcstatus.io/v2");
+        });
 
         return services;
     }

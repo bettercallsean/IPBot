@@ -1,6 +1,5 @@
 using System.Net;
 using System.Text;
-using IPBot.API.Constants;
 using IPBot.API.Domain.Data;
 using IPBot.API.Extensions;
 using IPBot.API.Hubs;
@@ -34,15 +33,7 @@ builder.Services.AddResponseCompression(opts =>
 
 builder.Services.RegisterServices();
 
-builder.Services.AddHttpClient(KeyedHttpClientNames.LocalIPClient, c =>
-{
-    c.BaseAddress = new Uri("https://api.ipify.org");
-});
-
-builder.Services.AddHttpClient(KeyedHttpClientNames.MinecraftServerClient, c =>
-{
-    c.BaseAddress = new Uri("https://api.mcstatus.io/v2");
-});
+builder.Services.RegisterHttpClients();
 
 builder.Services.AddSwaggerGen(options =>
 {
