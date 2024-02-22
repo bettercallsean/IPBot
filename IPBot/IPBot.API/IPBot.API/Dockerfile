@@ -24,7 +24,3 @@ FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
 ENTRYPOINT ["dotnet", "IPBot.API.dll"]
-
-FROM python:3
-RUN pip install --upgrade pip && \
-	pip install python-a2s mcstatus python-dotenv
