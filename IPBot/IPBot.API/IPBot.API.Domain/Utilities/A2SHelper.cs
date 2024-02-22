@@ -114,6 +114,7 @@ public static partial class A2SHelper
             }
 
             using BinaryReader br = new(new MemoryStream(response));
+
             br.ReadBytes(4);
             var header = br.ReadByte();
             var players = br.ReadByte();
@@ -126,9 +127,7 @@ public static partial class A2SHelper
                 var duration = br.ReadSingle();
 
                 if (!string.IsNullOrEmpty(name))
-                {
                     playerNames.Add(name);
-                }
             }
 
             return playerNames;
