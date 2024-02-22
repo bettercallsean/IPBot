@@ -1,13 +1,9 @@
 using System.Net;
 using System.Text;
-using IPBot.API.AutoMapper;
 using IPBot.API.Domain.Data;
-using IPBot.API.Domain.Interfaces;
-using IPBot.API.Domain.Repositories;
+using IPBot.API.Extensions;
 using IPBot.API.Hubs;
-using IPBot.API.Services;
 using IPBot.Shared.Dtos;
-using IPBot.Shared.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.HttpOverrides;
@@ -23,7 +19,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Configuration.AddJsonFile("appsettings.json")
     .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true);
 
-builder.Host.UseSerilog((ctx, lc) => 
+builder.Host.UseSerilog((ctx, lc) =>
     lc.ReadFrom.Configuration(ctx.Configuration));
 
 builder.Services.AddSignalR();
@@ -32,12 +28,10 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddResponseCompression(opts =>
 {
     opts.MimeTypes = ResponseCompressionDefaults.MimeTypes.Concat(
-        new[] {"application/octet-stream"});
+        ["application/octet-stream"]);
 });
 
-RegisterAutoMapperProfiles();
-RegisterDataServices();
-RegisterServices();
+builder.Services.RegisterServices();
 
 builder.Services.AddSwaggerGen(options =>
 {
@@ -74,7 +68,7 @@ var app = builder.Build();
 app.UseSerilogRequestLogging(options =>
     {
         options.MessageTemplate = "{RemoteIpAddress} {RequestScheme} {RequestHost} {RequestMethod} {RequestPath} responded {StatusCode} in {Elapsed:0.0000} ms";
-        
+
         options.EnrichDiagnosticContext = (diagnosticContext, httpContext) =>
         {
             diagnosticContext.Set("RequestHost", httpContext.Request.Host.Value);
@@ -87,7 +81,7 @@ app.UseExceptionHandler(config =>
 {
     config.Run(async context =>
     {
-        context.Response.StatusCode = (int) HttpStatusCode.InternalServerError;
+        context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
         context.Response.ContentType = "application/json";
         var error = context.Features.Get<IExceptionHandlerFeature>();
         if (error != null)
@@ -96,7 +90,7 @@ app.UseExceptionHandler(config =>
             await context.Response.WriteAsync(new ErrorDto
             {
                 StatusCode = context.Response.StatusCode,
-                ErrorMessage = ex.Message 
+                ErrorMessage = ex.Message
             }.ToString()!);
         }
     });
@@ -122,31 +116,3 @@ app.MapControllers();
 app.MapHub<IPHub>("/api/hubs/iphub");
 
 app.Run();
-
-void RegisterDataServices()
-{
-    builder.Services.AddScoped<IUserRepository, UserRepository>();
-    builder.Services.AddScoped<IGameServerRepository, GameServerRepository>();
-    builder.Services.AddScoped<IGameRepository, GameRepository>();
-    builder.Services.AddScoped<IDomainRepository, DomainRepository>();
-    builder.Services.AddScoped<IDiscordChannelRepository, DiscordChannelRepository>();
-}
-
-void RegisterServices()
-{
-    builder.Services.AddScoped<IUserService, UserService>();
-    builder.Services.AddScoped<IGameService, GameService>();
-    builder.Services.AddScoped<IIPService, IPService>();
-    builder.Services.AddScoped<IDiscordService, DiscordService>();
-    builder.Services.AddScoped<IAnimeAnalyserService, AnimeAnalyserService>();
-}
-
-void RegisterAutoMapperProfiles()
-{
-    builder.Services.AddAutoMapper(config =>
-    {
-        config.AddProfile<GameProfile>();
-        config.AddProfile<GameServerProfile>();
-        config.AddProfile<DiscordChannelProfile>();
-    });
-}
