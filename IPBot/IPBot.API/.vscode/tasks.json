@@ -81,7 +81,7 @@
                 "docker-build: debug"
             ],
             "dockerRun": {
-                "ports": [{"containerPort": 8080, "hostPort": 9000}]
+                "ports": [{"containerPort": 8080, "hostPort": 5000}]
             },
             "netCore": {
                 "appProject": "${workspaceFolder}/IPBot.API/IPBot.API.csproj",

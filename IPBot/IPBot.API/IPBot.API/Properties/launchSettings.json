@@ -25,8 +25,8 @@
       },
       "publishAllPorts": true,
       "useSSL": true,
-      "httpPort": 9000,
-      "sslPort": 9001
+      "httpPort": 5000,
+      "sslPort": 5001
     }
   },
   "$schema": "https://json.schemastore.org/launchsettings.json",

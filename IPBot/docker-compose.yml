@@ -19,5 +19,5 @@ services:
       context: ./IPBot.API
       dockerfile: IPBot.API/Dockerfile
     ports:
-      - "9000:8080"
-      - "9001:8081"
+      - "5000:8080"
+      - "5001:8081"
