@@ -1,6 +1,6 @@
 ﻿namespace IPBot.API.Domain.Entities;
 
-public record Game
+public class Game
 {
 	public int Id { get; set; }
 	public string Name { get; set; }

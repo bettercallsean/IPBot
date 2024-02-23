@@ -6,21 +6,14 @@ namespace IPBot.API.Controllers;
 [Authorize]
 [ApiController]
 [Route("api/[controller]/[action]")]
-public class DiscordController : ControllerBase
+public class DiscordController(IDiscordService discordService) : ControllerBase
 {
-    private readonly IDiscordService _discordService;
-
-    public DiscordController(IDiscordService discordService)
-    {
-        _discordService = discordService;
-    }
-    
     [HttpGet]
     public async Task<ActionResult<string>> GetInUseDiscordChannelsAsync()
     {
         try
         {
-            return Ok(await _discordService.GetInUseDiscordChannelsAsync());
+            return Ok(await discordService.GetInUseDiscordChannelsAsync());
         }
         catch (Exception ex)
         {

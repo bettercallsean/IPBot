@@ -5,21 +5,12 @@ using IPBot.Shared.Services;
 
 namespace IPBot.API.Services;
 
-public class DiscordService : IDiscordService
+public class DiscordService(IMapper mapper, IDiscordChannelRepository discordChannelRepository) : IDiscordService
 {
-    private readonly IMapper _mapper;
-    private readonly IDiscordChannelRepository _discordChannelRepository;
-
-    public DiscordService(IMapper mapper, IDiscordChannelRepository discordChannelRepository)
-    {
-        _mapper = mapper;
-        _discordChannelRepository = discordChannelRepository;
-    }
-
     public async Task<List<DiscordChannelDto>> GetInUseDiscordChannelsAsync()
     {
-        var channels = await _discordChannelRepository.GetAllWhereAsync(x => x.InUse);
+        var channels = await discordChannelRepository.GetAllWhereAsync(x => x.InUse);
 
-        return _mapper.Map<List<DiscordChannelDto>>(channels);
+        return mapper.Map<List<DiscordChannelDto>>(channels);
     }
 }

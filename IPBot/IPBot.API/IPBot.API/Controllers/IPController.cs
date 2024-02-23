@@ -6,31 +6,24 @@ namespace IPBot.API.Controllers;
 [Authorize]
 [ApiController]
 [Route("api/[controller]/[action]")]
-public class IPController : ControllerBase
+public class IPController(IIPService ipService) : ControllerBase
 {
-    private readonly IIPService _ipService;
-
-    public IPController(IIPService ipService)
-    {
-        _ipService = ipService;
-    }
-    
     [HttpGet]
     public async Task<ActionResult<string>> GetCurrentServerDomainAsync()
     {
-        return Ok(await _ipService.GetCurrentServerDomainAsync());
+        return Ok(await ipService.GetCurrentServerDomainAsync());
     }
 
     [HttpGet]
     public async Task<ActionResult<string>> GetLocalIPAsync()
     {
-        return Ok(await _ipService.GetLocalIPAsync());
+        return Ok(await ipService.GetLocalIPAsync());
     }
 
     [HttpGet]
     public async Task<ActionResult<string>> GetServerIPAsync()
     {
-        return Ok(await _ipService.GetServerIPAsync());
+        return Ok(await ipService.GetServerIPAsync());
     }
     
     [HttpGet("{ip}")]
@@ -38,7 +31,7 @@ public class IPController : ControllerBase
     {
         try
         {
-            return Ok(await _ipService.UpdateServerIPAsync(ip));
+            return Ok(await ipService.UpdateServerIPAsync(ip));
         }
         catch (Exception ex)
         {

@@ -1,6 +1,6 @@
 namespace IPBot.API.Domain.Entities;
 
-public record DiscordChannel
+public class DiscordChannel
 {
     public ulong Id { get; set; }
     public ulong GuildId { get; set; }
