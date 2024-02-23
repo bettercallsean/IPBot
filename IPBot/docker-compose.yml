@@ -1,0 +1,23 @@
+version: '3.4'
+
+services:
+  ipbot:
+    container_name: ipbot
+    image: ipbot
+    build:
+      context: ./IPBot
+      dockerfile: IPBot/Dockerfile
+    depends_on:
+      - ipbotapi
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+  ipbotapi:
+    container_name: ipbotapi
+    image: ipbotapi
+    build:
+      context: ./IPBot.API
+      dockerfile: IPBot.API/Dockerfile
+    ports:
+      - "5000:8080"
+      - "5001:8081"
