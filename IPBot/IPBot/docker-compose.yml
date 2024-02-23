@@ -1,0 +1,18 @@
+
+version: '3.4'
+
+services:
+  ipbot:
+    image: ipbot
+    build:
+      context: .
+      dockerfile: IPBot/IPBot/Dockerfile
+
+  ipbotapi:
+    image: ipbotapi
+    build:
+      context: .
+      dockerfile: IPBot.API/IPBot.API/Dockerfile
+    ports:
+      - 8080:8080
+      - 8081:8081
