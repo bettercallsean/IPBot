@@ -23,8 +23,3 @@ services:
     ports:
       - "57890:8080"
       - "57891:8081"
-    healthcheck:
-      test: [ "bash", "curl", "-f", "http://localhost:57890" ]
-      interval: 30s
-      timeout: 10s
-      retries: 5
