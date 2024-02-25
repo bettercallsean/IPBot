@@ -1,0 +1,33 @@
+version: '3.4'
+
+services:
+  ipbot:
+    container_name: ipbot
+    image: raspberrypi.local:9298/ipbot
+    build:
+      context: ./IPBot
+      dockerfile: IPBot/Dockerfile
+      args:
+        - configuration=Debug
+    volumes:
+      - ~/.vsdbg:/remote_debugger:rw
+    depends_on:
+      - ipbotapi
+    links:
+      - ipbotapi
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+  ipbotapi:
+    container_name: ipbot-api
+    image: raspberrypi.local:9298/ipbot-api
+    build:
+      context: ./IPBot.API
+      dockerfile: IPBot.API/Dockerfile
+      args:
+        - configuration=Debug
+    volumes:
+      - ~/.vsdbg:/remote_debugger:rw
+    ports:
+      - "57890:8080"
+      - "57891:8081"
