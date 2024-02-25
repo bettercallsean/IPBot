@@ -7,10 +7,6 @@ services:
     build:
       context: ./IPBot
       dockerfile: IPBot/Dockerfile
-      args:
-        - configuration=Debug
-    volumes:
-      - ~/.vsdbg:/remote_debugger:rw
     depends_on:
       - ipbotapi
     links:
@@ -24,12 +20,6 @@ services:
     build:
       context: ./IPBot.API
       dockerfile: IPBot.API/Dockerfile
-      args:
-        - configuration=Debug
     ports:
       - "57890:8080"
       - "57891:8081"
-    environment:
-      - ASPNETCORE_ENVIRONMENT=Development
-    volumes:
-      - ~/.vsdbg:/remote_debugger:rw
