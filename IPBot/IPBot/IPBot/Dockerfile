@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/dotnet/runtime:8.0 AS base
+FROM mcr.microsoft.com/dotnet/runtime:8.0-jammy-chiseled AS base
 WORKDIR /app
 
 USER app
@@ -14,7 +14,7 @@ RUN dotnet build "IPBot.csproj" -c $configuration -o /app/build
 
 FROM build AS publish
 ARG configuration=Release
-RUN dotnet publish "IPBot.csproj" -c $configuration -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "IPBot.csproj" -c $configuration -o /app/publish
 
 FROM base AS final
 WORKDIR /app
