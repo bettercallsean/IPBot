@@ -9,10 +9,6 @@ services:
       dockerfile: IPBot/Dockerfile
     depends_on:
       - ipbotapi
-    links:
-      - ipbotapi
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
 
   ipbotapi:
     container_name: ipbot-api
