@@ -6,6 +6,7 @@
     <UserSecretsId>c54ce14f-e382-4807-a4d0-caadbffe7ec5</UserSecretsId>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
   </PropertyGroup>
+
   <ItemGroup>
     <PackageReference Include="IPBot.Common" Version="0.1.0" />
     <PackageReference Include="Microsoft.Azure.CognitiveServices.Vision.ComputerVision" Version="7.0.1" />
