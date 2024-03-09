@@ -1,7 +1,7 @@
 using AutoMapper;
 using IPBot.API.Domain.Interfaces;
-using IPBot.Shared.Dtos;
-using IPBot.Shared.Services;
+using IPBot.Common.Dtos;
+using IPBot.Common.Services;
 
 namespace IPBot.API.Services;
 

@@ -1,4 +1,4 @@
-﻿using IPBot.Shared.Services;
+﻿using IPBot.Common.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.IdentityModel.Tokens;
 

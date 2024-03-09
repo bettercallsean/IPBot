@@ -10,7 +10,6 @@
     <PackageReference Include="Discord.Net.Commands" Version="3.10.0" />
     <PackageReference Include="Discord.Net.Core" Version="3.10.0" />
     <PackageReference Include="Discord.Net.Webhook" Version="3.10.0" />
-    <PackageReference Include="IPBot.Common" Version="0.1.0" />
     <PackageReference Include="Microsoft.NET.Build.Containers" Version="8.0.200" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.19.5" />
     <PackageReference Include="RestSharp" Version="110.2.0" />
@@ -64,4 +63,5 @@
       <DependentUpon>appsettings.json</DependentUpon>
     </None>
   </ItemGroup>
+  <Import Project="..\..\IPBot.Common\IPBot.Common.projitems" Label="Shared" />
 </Project>

@@ -5,10 +5,15 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <UserSecretsId>c54ce14f-e382-4807-a4d0-caadbffe7ec5</UserSecretsId>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+    <RuntimeIdentifiers>linux-x64</RuntimeIdentifiers>
+	<ContainerRegistry>raspberrypi.local:9298</ContainerRegistry>
+	<ContainerFamily>jammy-chiseled</ContainerFamily>
+    <EnableSdkContainerDebugging>True</EnableSdkContainerDebugging>
+	<ContainerImageTag>latest</ContainerImageTag>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="IPBot.Common" Version="0.1.0" />
+    <PackageReference Include="Magick.NET-Q16-AnyCPU" Version="13.6.0" />
     <PackageReference Include="Microsoft.Azure.CognitiveServices.Vision.ComputerVision" Version="7.0.1" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.19.6" />
     <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="8.0.0-beta.2" />
@@ -43,4 +48,5 @@
       <DependentUpon>appsettings.json</DependentUpon>
     </Content>
   </ItemGroup>
+  <Import Project="..\..\IPBot.Common\IPBot.Common.projitems" Label="Shared" />
 </Project>

@@ -4,8 +4,8 @@ using System.Security.Cryptography;
 using IPBot.API.Domain.Entities;
 using IPBot.API.Domain.Interfaces;
 using IPBot.API.Domain.Utilities;
-using IPBot.Shared.Dtos;
-using IPBot.Shared.Services;
+using IPBot.Common.Dtos;
+using IPBot.Common.Services;
 using Microsoft.IdentityModel.Tokens;
 
 namespace IPBot.API.Services;

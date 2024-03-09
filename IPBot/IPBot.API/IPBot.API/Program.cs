@@ -3,7 +3,7 @@ using System.Text;
 using IPBot.API.Domain.Data;
 using IPBot.API.Extensions;
 using IPBot.API.Hubs;
-using IPBot.Shared.Dtos;
+using IPBot.Common.Dtos;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.HttpOverrides;

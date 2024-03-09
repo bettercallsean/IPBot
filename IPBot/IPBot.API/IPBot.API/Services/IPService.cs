@@ -2,7 +2,7 @@ using System.Net;
 using IPBot.API.Constants;
 using IPBot.API.Domain.Interfaces;
 using IPBot.API.Hubs;
-using IPBot.Shared.Services;
+using IPBot.Common.Services;
 using Microsoft.AspNetCore.SignalR;
 
 namespace IPBot.API.Services;
