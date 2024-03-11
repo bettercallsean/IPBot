@@ -1,4 +1,4 @@
-﻿using IPBot.Shared.Services;
+﻿using IPBot.Common.Services;
 using RestSharp;
 
 namespace IPBot.APIServices;

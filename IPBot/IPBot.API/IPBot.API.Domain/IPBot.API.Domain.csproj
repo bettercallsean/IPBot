@@ -18,4 +18,7 @@
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="8.0.2" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite.Core" Version="8.0.2" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\IPBot.Common\IPBot.Common.csproj" />
+  </ItemGroup>
 </Project>

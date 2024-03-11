@@ -6,7 +6,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IPBot.API", "IPBot.API\IPBo
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IPBot.API.Domain", "IPBot.API.Domain\IPBot.API.Domain.csproj", "{C26BC85E-62C1-44E6-A8B6-51C2D7C17775}"
 EndProject
-Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "IPBot.Common", "..\IPBot.Common\IPBot.Common.shproj", "{AFC7BD96-B844-4746-8284-04552B122264}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IPBot.Common", "..\IPBot.Common\IPBot.Common.csproj", "{69FDBA46-FCE4-4220-A561-AD838023EDF9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -22,15 +22,15 @@ Global
 		{C26BC85E-62C1-44E6-A8B6-51C2D7C17775}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C26BC85E-62C1-44E6-A8B6-51C2D7C17775}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C26BC85E-62C1-44E6-A8B6-51C2D7C17775}.Release|Any CPU.Build.0 = Release|Any CPU
+		{69FDBA46-FCE4-4220-A561-AD838023EDF9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{69FDBA46-FCE4-4220-A561-AD838023EDF9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{69FDBA46-FCE4-4220-A561-AD838023EDF9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{69FDBA46-FCE4-4220-A561-AD838023EDF9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {A9555554-C2BF-4B33-9483-292F37E32D60}
-	EndGlobalSection
-	GlobalSection(SharedMSBuildProjectFiles) = preSolution
-		..\IPBot.Common\IPBot.Common.projitems*{afc7bd96-b844-4746-8284-04552b122264}*SharedItemsImports = 13
-		..\IPBot.Common\IPBot.Common.projitems*{de36cd7c-21eb-4cae-aa02-397b194960d2}*SharedItemsImports = 5
 	EndGlobalSection
 EndGlobal

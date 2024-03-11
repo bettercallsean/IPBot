@@ -1,7 +1,7 @@
 ﻿using Discord;
+using IPBot.Common.Dtos;
+using IPBot.Common.Services;
 using IPBot.Helpers;
-using IPBot.Shared.Dtos;
-using IPBot.Shared.Services;
 using Microsoft.Extensions.Logging;
 
 namespace IPBot.Commands;
@@ -30,16 +30,16 @@ public class ServerCommands : InteractionModuleBase<SocketInteractionContext>
     public async Task GetMinecraftServerStatusAsync()
     {
         _logger.LogInformation("GetMinecraftServerStatusAsync executed");
-        
+
         await DeferAsync();
 
         var serverInfo =
             await _gameService.GetMinecraftServerStatusAsync(BotConstants.MinecraftServerPort);
-    
+
         _logger.LogInformation("{Port} online: {Online}", BotConstants.MinecraftServerPort, serverInfo.Online);
 
         var serverStatus = ServerInfoHelper.GetServerStatus(serverInfo);
-        
+
         _logger.LogInformation("{ServerStatus}", serverStatus);
 
         if (serverInfo.PlayerCount > 0)
@@ -79,7 +79,7 @@ public class ServerCommands : InteractionModuleBase<SocketInteractionContext>
             var serverInfo = await _gameService.GetSteamServerStatusAsync(server.Port);
             var playerCountStatus = ServerInfoHelper.GetServerStatus(serverInfo);
             var serverMapHasValue = !string.IsNullOrWhiteSpace(serverInfo.Map);
-            
+
             _logger.LogInformation("{Map} - {Port} online: {Online}", server.Map, server.Port, serverInfo.Online);
 
             serverStatus.AppendLine(serverMapHasValue
@@ -107,14 +107,14 @@ public class ServerCommands : InteractionModuleBase<SocketInteractionContext>
         {
             _logger.LogInformation("Building component for {ActiveServerCount} server(s)", activeServers.Count);
             var component = CreateGameServerMenuComponent(activeServers);
-            
+
             await FollowupAsync(serverStatusMessage, components: component.Build());
         }
         else
         {
             await FollowupAsync(serverStatusMessage);
         }
-        
+
         _logger.LogInformation("{ServerStatusMessage}", serverStatusMessage);
     }
 
@@ -130,7 +130,7 @@ public class ServerCommands : InteractionModuleBase<SocketInteractionContext>
         await DeferAsync();
 
         var serverInfo = await _gameService.GetSteamServerStatusAsync(BotConstants.ZomboidServerPort);
-        
+
         _logger.LogInformation("{Map} - {Port} online: {Online}", serverInfo.Map, BotConstants.ZomboidServerPort, serverInfo.Online);
 
         var serverStatus = ServerInfoHelper.GetServerStatus(serverInfo);
@@ -139,7 +139,7 @@ public class ServerCommands : InteractionModuleBase<SocketInteractionContext>
         {
             _logger.LogInformation("Building component for {Port}", BotConstants.ZomboidServerPort);
             var component = CreateGameServerMenuComponent(serverInfo.Map, BotConstants.ZomboidServerPort);
-            
+
             _logger.LogInformation("{ServerStatus}", serverStatus);
             await FollowupAsync(serverStatus, components: component.Build());
         }
@@ -157,21 +157,21 @@ public class ServerCommands : InteractionModuleBase<SocketInteractionContext>
 
         var serverDomain = await _ipService.GetCurrentServerDomainAsync();
         var serverInfo = await GetServerInfoStringAsync("steam", int.Parse(inputs[0]));
-        
+
         await RespondAsync($"{serverInfo}{Environment.NewLine}{Environment.NewLine}" +
             $"Open up Steam after clicking this link and you should see the 'server connect' menu{Environment.NewLine}" +
             $"steam://connect/{serverDomain}:{inputs[0]}", ephemeral: true);
     }
-    
+
     [ComponentInteraction(GameServerButton)]
     public async Task GenerateMinecraftInfoAsync()
     {
         _logger.LogInformation("GenerateMinecraftInfoAsync executed");
-        
+
         var serverInfoString = await GetServerInfoStringAsync("mc", BotConstants.MinecraftServerPort);
 
         await RespondAsync(serverInfoString, ephemeral: true);
-        
+
         _logger.LogInformation("GenerateMinecraftInfoAsync responded");
     }
 
@@ -201,11 +201,11 @@ public class ServerCommands : InteractionModuleBase<SocketInteractionContext>
 
         return component;
     }
-    
+
     private static ComponentBuilder CreateMinecraftButtonComponent()
     {
         const string pigEmoji = "\uD83D\uDC37";
-        
+
         var serverMenu = new ButtonBuilder
         {
             CustomId = GameServerButton,
@@ -230,8 +230,8 @@ public class ServerCommands : InteractionModuleBase<SocketInteractionContext>
 
         var playerInfo = new StringBuilder();
 
-        playerInfo.Append($"{Environment.NewLine}Players online: {(serverInfo.PlayerNames.Count > 0 
-            ? string.Join(", ", serverInfo.PlayerNames) 
+        playerInfo.Append($"{Environment.NewLine}Players online: {(serverInfo.PlayerNames.Count > 0
+            ? string.Join(", ", serverInfo.PlayerNames)
             : serverInfo.PlayerCount)}");
 
         if (!string.IsNullOrWhiteSpace(serverInfo.Motd))

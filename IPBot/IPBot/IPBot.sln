@@ -5,7 +5,7 @@ VisualStudioVersion = 17.0.31912.275
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IPBot", "IPBot\IPBot.csproj", "{51AD51CF-CC75-47B1-8EBE-AE4B72610323}"
 EndProject
-Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "IPBot.Common", "..\IPBot.Common\IPBot.Common.shproj", "{AFC7BD96-B844-4746-8284-04552B122264}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IPBot.Common", "..\IPBot.Common\IPBot.Common.csproj", "{C23EC96C-CBB7-4498-A66E-BE4EBE6A7E1B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -17,15 +17,15 @@ Global
 		{51AD51CF-CC75-47B1-8EBE-AE4B72610323}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{51AD51CF-CC75-47B1-8EBE-AE4B72610323}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{51AD51CF-CC75-47B1-8EBE-AE4B72610323}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C23EC96C-CBB7-4498-A66E-BE4EBE6A7E1B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C23EC96C-CBB7-4498-A66E-BE4EBE6A7E1B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C23EC96C-CBB7-4498-A66E-BE4EBE6A7E1B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C23EC96C-CBB7-4498-A66E-BE4EBE6A7E1B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {BA1D5EB9-C086-4FC2-9B81-42DE4ADDB241}
-	EndGlobalSection
-	GlobalSection(SharedMSBuildProjectFiles) = preSolution
-		..\IPBot.Common\IPBot.Common.projitems*{51ad51cf-cc75-47b1-8ebe-ae4b72610323}*SharedItemsImports = 5
-		..\IPBot.Common\IPBot.Common.projitems*{afc7bd96-b844-4746-8284-04552b122264}*SharedItemsImports = 13
 	EndGlobalSection
 EndGlobal

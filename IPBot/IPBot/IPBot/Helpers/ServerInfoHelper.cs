@@ -1,4 +1,4 @@
-﻿using IPBot.Shared.Dtos;
+﻿using IPBot.Common.Dtos;
 
 namespace IPBot.Helpers;
 
@@ -14,7 +14,7 @@ internal static class ServerInfoHelper
 
         return serverStatus;
     }
-    
+
     private static string PlayerCountStatus(IEnumerable<string> players)
     {
         var playersList = players.ToList();
