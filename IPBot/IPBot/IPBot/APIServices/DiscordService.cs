@@ -4,13 +4,9 @@ using RestSharp;
 
 namespace IPBot.APIServices;
 
-public class DiscordService : ServiceBase, IDiscordService
+public class DiscordService(IRestClient client, IConfiguration configuration) : ServiceBase(client, configuration), IDiscordService
 {
     private const string BaseUri = "/Discord";
-
-    public DiscordService(IRestClient client, IConfiguration configuration) : base(client, configuration)
-    {
-    }
 
     public async Task<List<DiscordChannelDto>> GetInUseDiscordChannelsAsync()
     {

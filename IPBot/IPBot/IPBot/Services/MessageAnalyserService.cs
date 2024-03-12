@@ -6,27 +6,18 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace IPBot.Services;
 
-public partial class MessageAnalyserService
+public partial class MessageAnalyserService(IAnimeAnalyserService animeAnalyserService, ITenorApiHelper tenorApiHelper)
 {
-    private readonly List<string> _responseList = Resources.Resources.ResponseGifs.Split(Environment.NewLine).ToList();
-    private readonly IAnimeAnalyserService _animeAnalyserService;
-    private readonly ITenorApiHelper _tenorApiHelper;
-
-    private readonly List<string> _imageFormats = new()
-    {
+    private readonly List<string> _responseList = [.. Resources.Resources.ResponseGifs.Split(Environment.NewLine)];
+    private readonly List<string> _imageFormats =
+    [
         ".png",
         ".jpeg",
         ".jpg",
         ".tiff",
         ".mp4",
         ".gif"
-    };
-
-    public MessageAnalyserService(IAnimeAnalyserService animeAnalyserService, ITenorApiHelper tenorApiHelper)
-    {
-        _animeAnalyserService = animeAnalyserService;
-        _tenorApiHelper = tenorApiHelper;
-    }
+    ];
 
     public async Task CheckMessageForAnimeAsync(SocketMessage message)
     {
@@ -71,7 +62,7 @@ public partial class MessageAnalyserService
                         var url = messageMediaModel.Url;
                         if (message.Content.Contains("tenor.com") && !_imageFormats.Any(x => message.Content.Contains(x)))
                         {
-                            url = await _tenorApiHelper.GetDirectTenorGifUrlAsync(url);
+                            url = await tenorApiHelper.GetDirectTenorGifUrlAsync(url);
                         }
 
                         animeScore = await GetAnimeScoreAsync(url);
@@ -103,7 +94,7 @@ public partial class MessageAnalyserService
     private async Task<double> GetAnimeScoreAsync(string url)
     {
         var encodedUrl = Base64UrlEncoder.Encode(url);
-        return await _animeAnalyserService.GetAnimeScoreAsync(encodedUrl);
+        return await animeAnalyserService.GetAnimeScoreAsync(encodedUrl);
     }
 
     private static MessageMediaModel MessageContainsMedia(string messageContent)

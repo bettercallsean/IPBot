@@ -5,23 +5,16 @@ using IPBot.Models.TenorModels;
 
 namespace IPBot.Helpers;
 
-public class TenorApiHelper : ITenorApiHelper
+public class TenorApiHelper(IConfiguration configuration) : ITenorApiHelper
 {
     private const string TenorGifEndpoint = "https://g.tenor.com/v1/gifs?";
-
-    private readonly IConfiguration _configuration;
-
-    public TenorApiHelper(IConfiguration configuration)
-    {
-        _configuration = configuration;
-    }
 
     public async Task<string> GetDirectTenorGifUrlAsync(string tenorUrl)
     {
         var tenorGifId = GetTenorGifIdFromUrl(tenorUrl);
         var apiUrl = CreateApiUrl(new Dictionary<string, string>
         {
-            { "key", _configuration["TenorAPIKey"] },
+            { "key", configuration["TenorAPIKey"] },
             { "media_filter", "minimal" },
             { "ids", tenorGifId }
         });
