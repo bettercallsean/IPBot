@@ -11,7 +11,6 @@ ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 COPY ["IPBot.API/IPBot.API.csproj", "IPBot.API/"]
 COPY ["IPBot.API.Domain/IPBot.API.Domain.csproj", "IPBot.API.Domain/"]
-COPY ["nuget.config", ""]
 RUN dotnet restore "./IPBot.API/IPBot.API.csproj"
 COPY . .
 WORKDIR "/src/IPBot.API"
