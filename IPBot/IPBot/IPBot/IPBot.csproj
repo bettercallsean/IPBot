@@ -5,8 +5,6 @@
     <ImplicitUsings>enable</ImplicitUsings>
 	<DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
 	<RuntimeIdentifiers>linux-x64</RuntimeIdentifiers>
-	<ContainerRegistry>raspberrypi.local:9298</ContainerRegistry>
-	<ContainerFamily>jammy-chiseled</ContainerFamily>
 	<EnableSdkContainerDebugging>True</EnableSdkContainerDebugging>
 	<ContainerImageTag>latest</ContainerImageTag>
   </PropertyGroup>
