@@ -1,4 +1,4 @@
-﻿using IPBot.Shared.Services;
+﻿using IPBot.Common.Services;
 using Microsoft.Extensions.Logging;
 
 namespace IPBot.Commands;
@@ -22,7 +22,7 @@ public class IPCommands : InteractionModuleBase<SocketInteractionContext>
     public async Task GetSeverDomainNameAsync()
     {
         _logger.LogInformation("GetSeverDomainNameAsync executed");
-        
+
         var serverDomain = await _ipService.GetCurrentServerDomainAsync();
         var ip = await _ipService.GetServerIPAsync();
 

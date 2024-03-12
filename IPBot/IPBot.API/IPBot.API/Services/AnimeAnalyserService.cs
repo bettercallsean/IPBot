@@ -1,5 +1,5 @@
-﻿using IPBot.Infrastructure.Helpers;
-using IPBot.Shared.Services;
+﻿using IPBot.Common.Helpers;
+using IPBot.Common.Services;
 using Microsoft.Azure.CognitiveServices.Vision.ComputerVision;
 using Microsoft.Azure.CognitiveServices.Vision.ComputerVision.Models;
 

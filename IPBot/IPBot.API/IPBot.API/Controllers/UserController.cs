@@ -1,5 +1,5 @@
-﻿using IPBot.Shared.Dtos;
-using IPBot.Shared.Services;
+﻿using IPBot.Common.Dtos;
+using IPBot.Common.Services;
 using Microsoft.AspNetCore.Authorization;
 
 namespace IPBot.API.Controllers;

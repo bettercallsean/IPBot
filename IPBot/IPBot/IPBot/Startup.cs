@@ -1,8 +1,8 @@
 ﻿using IPBot.APIServices;
+using IPBot.Common.Services;
 using IPBot.Helpers;
 using IPBot.Interfaces;
 using IPBot.Services;
-using IPBot.Shared.Services;
 using Microsoft.Extensions.DependencyInjection;
 using RestSharp;
 using Serilog;

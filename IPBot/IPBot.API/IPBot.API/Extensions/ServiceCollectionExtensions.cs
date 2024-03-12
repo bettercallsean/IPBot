@@ -3,7 +3,7 @@ using IPBot.API.Constants;
 using IPBot.API.Domain.Interfaces;
 using IPBot.API.Domain.Repositories;
 using IPBot.API.Services;
-using IPBot.Shared.Services;
+using IPBot.Common.Services;
 
 namespace IPBot.API.Extensions;
 
