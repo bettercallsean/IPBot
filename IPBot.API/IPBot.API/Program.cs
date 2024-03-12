@@ -113,7 +113,10 @@ app.UseAuthentication();
 
 app.UseAuthorization();
 
-app.MapControllers();
+if (app.Environment.IsDevelopment())
+    app.MapControllers().AllowAnonymous();
+else
+    app.MapControllers();
 
 app.MapHub<IPHub>("/api/hubs/iphub");
 
