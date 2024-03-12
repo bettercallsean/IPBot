@@ -3,11 +3,9 @@ using RestSharp;
 
 namespace IPBot.APIServices;
 
-public class AnimeAnalyserService : ServiceBase, IAnimeAnalyserService
+public class AnimeAnalyserService(IRestClient client, IConfiguration configuration) : ServiceBase(client, configuration), IAnimeAnalyserService
 {
     private const string BaseUri = "/AnimeAnalyser";
-
-    public AnimeAnalyserService(IRestClient client, IConfiguration configuration) : base(client, configuration) { }
 
     public async Task<double> GetAnimeScoreAsync(string imageUrl)
     {

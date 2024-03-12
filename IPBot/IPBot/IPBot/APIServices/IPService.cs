@@ -3,11 +3,9 @@ using RestSharp;
 
 namespace IPBot.APIServices;
 
-public class IPService : ServiceBase, IIPService
+public class IPService(IRestClient client, IConfiguration configuration) : ServiceBase(client, configuration), IIPService
 {
     private const string BaseUri = "/IP";
-
-    public IPService(IRestClient client, IConfiguration configuration) : base(client, configuration)  { }
 
     public async Task<string> GetCurrentServerDomainAsync()
     {
