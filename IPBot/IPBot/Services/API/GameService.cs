@@ -2,7 +2,7 @@
 using IPBot.Common.Services;
 using RestSharp;
 
-namespace IPBot.APIServices;
+namespace IPBot.Services.API;
 
 public class GameService(IRestClient client, IConfiguration configuration) : ServiceBase(client, configuration), IGameService
 {

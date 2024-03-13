@@ -2,7 +2,7 @@
 using Discord;
 using Microsoft.Extensions.Logging;
 
-namespace IPBot.Services;
+namespace IPBot.Services.Bot;
 
 public class CommandHandler(ILogger<CommandHandler> logger, IServiceProvider services, DiscordSocketClient client, InteractionService commands)
 {

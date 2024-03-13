@@ -3,7 +3,7 @@ using IPBot.Helpers;
 using Microsoft.AspNetCore.SignalR.Client;
 using Microsoft.Extensions.Logging;
 
-namespace IPBot.Services;
+namespace IPBot.Services.Bot;
 
 public class StartupService(ILogger<StartupService> logger, IConfiguration configuration, IIPService ipService, DiscordSocketClient discord, InteractionService commands, IDiscordService discordService)
 {

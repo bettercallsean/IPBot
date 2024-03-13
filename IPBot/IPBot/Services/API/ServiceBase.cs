@@ -3,7 +3,7 @@ using IPBot.Common.Helpers;
 using RestSharp;
 using RestSharp.Authenticators;
 
-namespace IPBot.APIServices;
+namespace IPBot.Services.API;
 
 public class ServiceBase
 {
