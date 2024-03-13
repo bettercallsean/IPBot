@@ -727,10 +727,6 @@ ark_servers
 # Old python version of bot
 bot_python
 
-# Compiled .NET Bot files
-bot 
-bot.api
-
 # Config files
 Configs/
 config.json

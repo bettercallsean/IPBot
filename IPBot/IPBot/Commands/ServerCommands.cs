@@ -1,16 +1,12 @@
-﻿using Discord;
-using IPBot.Common.Dtos;
+﻿using IPBot.Common.Dtos;
 using IPBot.Common.Services;
 using IPBot.Helpers;
 using Microsoft.Extensions.Logging;
 
 namespace IPBot.Commands;
 
-public class ServerCommands(ILogger<ServerCommands> logger, IGameService gameService, IIPService ipService) : InteractionModuleBase<SocketInteractionContext>
+public class ServerCommands(ILogger<ServerCommands> logger, IGameService gameService) : InteractionModuleBase<SocketInteractionContext>
 {
-    private const string GameServerMenu = "gameServerMenu";
-    private const string GameServerButton = "minecraftServerButton";
-
 #if DEBUG
     [SlashCommand("mc_debug", "get the status of the minecraft server")]
 #else
@@ -22,27 +18,11 @@ public class ServerCommands(ILogger<ServerCommands> logger, IGameService gameSer
 
         await DeferAsync();
 
-        var serverInfo =
-            await gameService.GetMinecraftServerStatusAsync(BotConstants.MinecraftServerPort);
+        var serverStatus = await GetMinecraftServerStatusStringAsync();
 
-        logger.LogInformation("{Port} online: {Online}", BotConstants.MinecraftServerPort, serverInfo.Online);
+        logger.LogInformation("{ServerStatus}", serverStatus.ToString());
 
-        var serverStatus = ServerInfoHelper.GetServerStatus(serverInfo);
-
-        logger.LogInformation("{ServerStatus}", serverStatus);
-
-        if (serverInfo.PlayerCount > 0)
-        {
-            logger.LogInformation("Building component for Minecraft server");
-
-            var button = CreateMinecraftButtonComponent();
-            await FollowupAsync(serverStatus, components: button.Build());
-        }
-        else
-        {
-            await FollowupAsync(serverStatus);
-        }
-
+        await FollowupAsync(serverStatus.ToString());
     }
 
 #if DEBUG
@@ -52,59 +32,19 @@ public class ServerCommands(ILogger<ServerCommands> logger, IGameService gameSer
 #endif
     public async Task GetArkServerStatusAsync()
     {
+        const string ArkShortName = "ark";
+
         logger.LogInformation("GetArkServerStatusAsync executed");
 
         await DeferAsync();
 
-        logger.LogInformation("Getting list of active servers");
-        var arkServers = await gameService.GetActiveServersAsync("Ark");
-        var serverStatus = new StringBuilder();
-        var activeServers = new Dictionary<string, int>();
+        var serverStatus = await GetSteamGameServerStatusStringAsync(ArkShortName);
 
-        foreach (var server in arkServers)
-        {
-            logger.LogInformation("Getting server info for port {Port}", server.Port);
+        if (serverStatus.Split(Environment.NewLine).Length >= 3)
+            serverStatus = $"{serverStatus}{Environment.NewLine}Bloody hell, that's a lot of servers 🦖";
 
-            var serverInfo = await gameService.GetSteamServerStatusAsync(server.Port);
-            var playerCountStatus = ServerInfoHelper.GetServerStatus(serverInfo);
-            var serverMapHasValue = !string.IsNullOrWhiteSpace(serverInfo.Map);
-
-            logger.LogInformation("{Map} - {Port} online: {Online}", server.Map, server.Port, serverInfo.Online);
-
-            serverStatus.AppendLine(serverMapHasValue
-                    ? $"Map: {serverInfo.Map} - {playerCountStatus} | Port: {server.Port}"
-                    : $"{(string.IsNullOrEmpty(server.Map) ? string.Empty : $"Map: {server.Map} - ")}{playerCountStatus} | Port: {server.Port}");
-
-            if (!string.IsNullOrWhiteSpace(serverInfo.Map) && !serverInfo.Map.Equals(server.Map))
-            {
-                logger.LogInformation("Updating map information for {Port}. Map updating from {SavedMap} to {NewMap}", server.Port, server.Map, serverInfo.Map);
-
-                server.Map = serverInfo.Map;
-                await gameService.UpdateGameServerInformationAsync(server);
-            }
-
-            if (serverInfo.Online)
-                activeServers.Add(serverInfo.Map, server.Port);
-        }
-
-        if (activeServers.Count >= 3)
-            serverStatus.AppendLine($"{Environment.NewLine}Bloody hell, that's a lot of servers 🦖");
-
-        var serverStatusMessage = serverStatus.ToString();
-
-        if (activeServers.Count != 0)
-        {
-            logger.LogInformation("Building component for {ActiveServerCount} server(s)", activeServers.Count);
-            var component = CreateGameServerMenuComponent(activeServers);
-
-            await FollowupAsync(serverStatusMessage, components: component.Build());
-        }
-        else
-        {
-            await FollowupAsync(serverStatusMessage);
-        }
-
-        logger.LogInformation("{ServerStatusMessage}", serverStatusMessage);
+        logger.LogInformation("{ServerStatus}", serverStatus.ToString());
+        await FollowupAsync(serverStatus);
     }
 
 #if DEBUG
@@ -114,118 +54,74 @@ public class ServerCommands(ILogger<ServerCommands> logger, IGameService gameSer
 #endif
     public async Task GetProjectZomboidServerStatusAsync()
     {
+        const string ProjectZomboidShortName = "zomboid";
+
         logger.LogInformation("GetProjectZomboidServerStatusAsync executed");
 
         await DeferAsync();
 
-        var serverInfo = await gameService.GetSteamServerStatusAsync(BotConstants.ZomboidServerPort);
+        var serverStatus = await GetSteamGameServerStatusStringAsync(ProjectZomboidShortName);
 
-        logger.LogInformation("{Map} - {Port} online: {Online}", serverInfo.Map, BotConstants.ZomboidServerPort, serverInfo.Online);
+        logger.LogInformation("{ServerStatus}", serverStatus);
+        await FollowupAsync(serverStatus);
+    }
 
-        var serverStatus = ServerInfoHelper.GetServerStatus(serverInfo);
+    private async Task<string> GetSteamGameServerStatusStringAsync(string gameShortName)
+    {
+        logger.LogInformation("Getting list of active servers for {GameShortName}", gameShortName);
+        var gameServers = await gameService.GetActiveServersAsync(gameShortName);
 
-        if (serverInfo.Online)
+        var serverStatus = new StringBuilder();
+
+        foreach (var gameServer in gameServers)
         {
-            logger.LogInformation("Building component for {Port}", BotConstants.ZomboidServerPort);
-            var component = CreateGameServerMenuComponent(serverInfo.Map, BotConstants.ZomboidServerPort);
+            logger.LogInformation("Getting server info for port {Port}", gameServer.Port);
 
-            logger.LogInformation("{ServerStatus}", serverStatus);
-            await FollowupAsync(serverStatus, components: component.Build());
+            var serverInfo = await gameService.GetSteamServerStatusAsync(gameServer.Port);
+            var playerCountStatus = ServerInfoHelper.GetServerStatus(serverInfo);
+            var serverMapHasValue = !string.IsNullOrWhiteSpace(serverInfo.Map);
+
+            logger.LogInformation("{Map} - {Port} online: {Online}", gameServer.Map, gameServer.Port, serverInfo.Online);
+
+            serverStatus.AppendLine(serverMapHasValue
+                    ? $"Map: {serverInfo.Map} - {playerCountStatus} | Port: {gameServer.Port}"
+                    : $"{(string.IsNullOrEmpty(gameServer.Map) ? string.Empty : $"Map: {gameServer.Map} - ")}{playerCountStatus} | Port: {gameServer.Port}");
+
+            if (serverMapHasValue && !serverInfo.Map.Equals(gameServer.Map))
+                await UpdateServerMapAsync(serverInfo, gameServer);
         }
-        else
+
+        return serverStatus.ToString();
+    }
+
+    private async Task<string> GetMinecraftServerStatusStringAsync()
+    {
+        const string MinecraftShortName = "mc";
+
+        logger.LogInformation("Getting list of active servers for {ShortName}", MinecraftShortName);
+        var gameServers = await gameService.GetActiveServersAsync(MinecraftShortName);
+        var serverStatus = new StringBuilder();
+
+        foreach (var gameServer in gameServers)
         {
-            logger.LogInformation("{ServerStatus}", serverStatus);
-            await FollowupAsync(serverStatus);
+            logger.LogInformation("Getting server info for port {Port}", gameServer.Port);
+
+            var serverInfo = await gameService.GetMinecraftServerStatusAsync(gameServer.Port);
+            var playerCountStatus = ServerInfoHelper.GetServerStatus(serverInfo);
+
+            logger.LogInformation("{Port} online: {Online}", gameServer.Port, serverInfo.Online);
+
+            serverStatus.AppendLine($"{playerCountStatus} | Port: {gameServer.Port}");
         }
+
+        return serverStatus.ToString();
     }
 
-    [ComponentInteraction(GameServerMenu)]
-    public async Task GenerateSteamConnectLinkAsync(string[] inputs)
+    private async Task UpdateServerMapAsync(ServerInfoDto serverInfo, GameServerDto gameServer)
     {
-        logger.LogInformation("GenerateSteamConnectLinkAsync executed");
+        logger.LogInformation("Updating map information for {Port}. Map updating from {SavedMap} to {NewMap}", gameServer.Port, gameServer.Map, serverInfo.Map);
 
-        var serverDomain = await ipService.GetCurrentServerDomainAsync();
-        var serverInfo = await GetServerInfoStringAsync("steam", int.Parse(inputs[0]));
-
-        await RespondAsync($"{serverInfo}{Environment.NewLine}{Environment.NewLine}" +
-            $"Open up Steam after clicking this link and you should see the 'server connect' menu{Environment.NewLine}" +
-            $"steam://connect/{serverDomain}:{inputs[0]}", ephemeral: true);
-    }
-
-    [ComponentInteraction(GameServerButton)]
-    public async Task GenerateMinecraftInfoAsync()
-    {
-        logger.LogInformation("GenerateMinecraftInfoAsync executed");
-
-        var serverInfoString = await GetServerInfoStringAsync("mc", BotConstants.MinecraftServerPort);
-
-        await RespondAsync(serverInfoString, ephemeral: true);
-
-        logger.LogInformation("GenerateMinecraftInfoAsync responded");
-    }
-
-    private static ComponentBuilder CreateGameServerMenuComponent(string mapName, int port)
-    {
-        var mapsAndPorts = new Dictionary<string, int>
-        {
-            { mapName, port }
-        };
-
-        return CreateGameServerMenuComponent(mapsAndPorts);
-    }
-
-    private static ComponentBuilder CreateGameServerMenuComponent(Dictionary<string, int> mapsAndPorts)
-    {
-        var serverMenu = new SelectMenuBuilder
-        {
-            CustomId = GameServerMenu,
-            Placeholder = "Select a server to join",
-        };
-
-        foreach (var (map, port) in mapsAndPorts)
-            serverMenu.AddOption(map, port.ToString(), port.ToString());
-
-        var component = new ComponentBuilder()
-            .WithSelectMenu(serverMenu);
-
-        return component;
-    }
-
-    private static ComponentBuilder CreateMinecraftButtonComponent()
-    {
-        const string pigEmoji = "\uD83D\uDC37";
-
-        var serverMenu = new ButtonBuilder
-        {
-            CustomId = GameServerButton,
-            Label = "More info",
-            Style = ButtonStyle.Primary,
-            Emote = new Emoji(pigEmoji)
-        };
-
-        var component = new ComponentBuilder()
-            .WithButton(serverMenu);
-
-        return component;
-    }
-
-    private async Task<string> GetServerInfoStringAsync(string gameCode, int port)
-    {
-        ServerInfoDto serverInfo;
-        if (gameCode == "mc")
-            serverInfo = await gameService.GetMinecraftServerStatusAsync(port);
-        else
-            serverInfo = await gameService.GetSteamServerStatusAsync(port);
-
-        var playerInfo = new StringBuilder();
-
-        playerInfo.Append($"{Environment.NewLine}Players online: {(serverInfo.PlayerNames.Count > 0
-            ? string.Join(", ", serverInfo.PlayerNames)
-            : serverInfo.PlayerCount)}");
-
-        if (!string.IsNullOrWhiteSpace(serverInfo.Motd))
-            playerInfo.Append($"{Environment.NewLine}MOTD: {serverInfo.Motd}");
-
-        return playerInfo.ToString();
+        gameServer.Map = serverInfo.Map;
+        await gameService.UpdateGameServerInformationAsync(gameServer);
     }
 }
