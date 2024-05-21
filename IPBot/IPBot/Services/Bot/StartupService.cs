@@ -1,11 +1,10 @@
 ﻿using IPBot.Common.Services;
 using IPBot.Helpers;
 using Microsoft.AspNetCore.SignalR.Client;
-using Microsoft.Extensions.Logging;
 
 namespace IPBot.Services.Bot;
 
-public class StartupService(ILogger<StartupService> logger, IConfiguration configuration, IIPService ipService, DiscordSocketClient discord, InteractionService commands, IDiscordService discordService)
+public class StartupService(ILogger<StartupService> logger, IConfiguration configuration, IIPService ipService, DiscordSocketClient discord, InteractionService commands, IDiscordService discordService, MessageAnalyserService messageAnalyserService)
 {
     private readonly HubConnection _hubConnection = new HubConnectionBuilder()
             .WithUrl($"{configuration["APIEndpoint"]}/hubs/iphub")
@@ -31,7 +30,10 @@ public class StartupService(ILogger<StartupService> logger, IConfiguration confi
         discord.Ready += DiscordOnReadyAsync;
         discord.Connected += DiscordOnConnectedAsync;
         discord.Disconnected += DiscordOnDisconnectedAsync;
+        discord.MessageReceived += Discord_MessageReceived;
     }
+
+    private async Task Discord_MessageReceived(SocketMessage arg) => await messageAnalyserService.CheckMessageForAnimeAsync(arg);
 
     private Task DiscordOnDisconnectedAsync(Exception arg)
     {
