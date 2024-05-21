@@ -9,6 +9,7 @@ services:
       dockerfile: IPBot/Dockerfile
     depends_on:
       - ipbotapi
+    restart: always
 
   ipbotapi:
     container_name: ipbot-api
@@ -19,3 +20,4 @@ services:
     ports:
       - "57890:8080"
       - "57891:8081"
+    restart: always
