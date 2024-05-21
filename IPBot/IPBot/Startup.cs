@@ -1,4 +1,5 @@
-﻿using IPBot.Common.Services;
+﻿using Discord;
+using IPBot.Common.Services;
 using IPBot.Helpers;
 using IPBot.Interfaces;
 using IPBot.Services;
@@ -51,8 +52,9 @@ public class Startup
         services
             .AddSingleton(new DiscordSocketClient(new DiscordSocketConfig
             {
-                LogLevel = Discord.LogSeverity.Verbose,
-                MessageCacheSize = 1000
+                LogLevel = LogSeverity.Verbose,
+                MessageCacheSize = 1000,
+                GatewayIntents = GatewayIntents.All
             }))
             .AddSingleton(x => new InteractionService(x.GetRequiredService<DiscordSocketClient>()))
             .AddSingleton<CommandHandler>()

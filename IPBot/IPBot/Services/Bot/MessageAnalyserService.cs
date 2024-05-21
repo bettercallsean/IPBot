@@ -1,12 +1,11 @@
 ﻿using System.Text.RegularExpressions;
 using IPBot.Common.Services;
-using IPBot.Helpers;
 using IPBot.Interfaces;
 using Microsoft.IdentityModel.Tokens;
 
 namespace IPBot.Services;
 
-public partial class MessageAnalyserService(IAnimeAnalyserService animeAnalyserService, ITenorApiHelper tenorApiHelper)
+public partial class MessageAnalyserService(IAnimeAnalyserService animeAnalyserService, ITenorApiHelper tenorApiHelper, IConfiguration configuration)
 {
     private readonly List<string> _responseList = [.. Resources.Resources.ResponseGifs.Split(Environment.NewLine)];
     private readonly List<string> _imageFormats =
@@ -21,11 +20,10 @@ public partial class MessageAnalyserService(IAnimeAnalyserService animeAnalyserS
 
     public async Task CheckMessageForAnimeAsync(SocketMessage message)
     {
-        var channelNames = DebugHelper.IsDebug()
-            ? new List<string> { "anti-anime-test" }
-            : new List<string> { "anti-anime-test", "the-gospel" };
+        var user = message.Author as SocketGuildUser;
+        var channelNames = configuration.GetSection("ChannelsToAnalyse").Get<Dictionary<ulong, List<ulong>>>();
 
-        if (channelNames.Contains(message.Channel.Name) && !message.Author.IsBot)
+        if (channelNames.ContainsKey(user.Guild.Id) && channelNames[message.Channel.Id].Contains(message.Channel.Id) && !message.Author.IsBot)
         {
             if (await MessageContainsAnimeAsync(message))
             {
