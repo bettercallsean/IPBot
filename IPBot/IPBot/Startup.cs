@@ -4,7 +4,6 @@ using IPBot.Interfaces;
 using IPBot.Services;
 using IPBot.Services.API;
 using IPBot.Services.Bot;
-using Microsoft.Extensions.DependencyInjection;
 using RestSharp;
 using Serilog;
 
@@ -28,7 +27,7 @@ public class Startup
         Log.Logger = new LoggerConfiguration().ReadFrom.Configuration(_config).CreateLogger();
     }
 
-    public static async Task RunAsync()
+    public static async void Configure()
     {
         var startup = new Startup();
         await startup.ConfigureBotAsync();
