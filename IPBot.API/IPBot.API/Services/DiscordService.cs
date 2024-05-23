@@ -19,6 +19,6 @@ public class DiscordService(IMapper mapper, IDiscordChannelRepository discordCha
         var discordChannel = await discordChannelRepository.GetWhereAsync(x => x.GuildId == guildId
                                                                                 && x.Id == channelId);
 
-        return discordChannel.AnalyseForAnime;
+        return discordChannel?.AnalyseForAnime == true;
     }
 }
