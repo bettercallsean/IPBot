@@ -5,7 +5,8 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace IPBot.Services;
 
-public partial class MessageAnalyserService(IAnimeAnalyserService animeAnalyserService, ITenorApiHelper tenorApiHelper, IConfiguration configuration, ILogger<MessageAnalyserService> logger)
+public partial class MessageAnalyserService(IAnimeAnalyserService animeAnalyserService, ITenorApiHelper tenorApiHelper,
+                                            ILogger<MessageAnalyserService> logger, IDiscordService discordService)
 {
     private readonly List<string> _responseList = [.. Resources.Resources.ResponseGifs.Split(Environment.NewLine)];
     private readonly List<string> _imageFormats =
@@ -21,9 +22,9 @@ public partial class MessageAnalyserService(IAnimeAnalyserService animeAnalyserS
     public async Task CheckMessageForAnimeAsync(SocketMessage message)
     {
         var user = message.Author as SocketGuildUser;
-        var guildIds = configuration.GetSection("ChannelsToAnalyse").Get<Dictionary<ulong, List<ulong>>>();
+        var channelIsBeingAnalysedForAnime = await discordService.ChannelIsBeingAnalysedForAnimeAsync(user.Guild.Id, message.Channel.Id);
 
-        if (guildIds.TryGetValue(user.Guild.Id, out var channelIds) && channelIds.Contains(message.Channel.Id) && !message.Author.IsBot)
+        if (channelIsBeingAnalysedForAnime && !message.Author.IsBot)
         {
             logger.LogInformation("Checking message from {User} in channel {ChannelName} for anime", user.Username, message.Channel.Name);
             if (await MessageContainsAnimeAsync(message))
@@ -50,28 +51,23 @@ public partial class MessageAnalyserService(IAnimeAnalyserService animeAnalyserS
                 else
                 {
                     var youtubeUrlModel = MessageContainsYouTubeLink(message.Content);
+                    string url;
                     if (youtubeUrlModel.ContainsMedia)
                     {
-                        var url = $"https://i3.ytimg.com/vi/{youtubeUrlModel.Url}/maxresdefault.jpg";
-
-                        animeScore = await GetAnimeScoreAsync(url);
+                        url = $"https://i3.ytimg.com/vi/{youtubeUrlModel.Url}/maxresdefault.jpg";
                     }
                     else
                     {
-                        var url = messageMediaModel.Url;
+                        url = messageMediaModel.Url;
                         if (message.Content.Contains("tenor.com") && !_imageFormats.Any(x => message.Content.Contains(x)))
-                        {
                             url = await tenorApiHelper.GetDirectTenorGifUrlAsync(url);
-                        }
-
-                        animeScore = await GetAnimeScoreAsync(url);
                     }
+
+                    animeScore = await GetAnimeScoreAsync(url);
                 }
 
                 if (animeScore > BotConstants.AnimeScoreTolerance)
-                {
                     return true;
-                }
             }
         }
 

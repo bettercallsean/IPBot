@@ -9,8 +9,16 @@ public class DiscordService(IMapper mapper, IDiscordChannelRepository discordCha
 {
     public async Task<List<DiscordChannelDto>> GetInUseDiscordChannelsAsync()
     {
-        var channels = await discordChannelRepository.GetAllWhereAsync(x => x.InUse);
+        var channels = await discordChannelRepository.GetAllWhereAsync(x => x.UseForBotMessages);
 
         return mapper.Map<List<DiscordChannelDto>>(channels);
+    }
+
+    public async Task<bool> ChannelIsBeingAnalysedForAnimeAsync(ulong guildId, ulong channelId)
+    {
+        var discordChannel = await discordChannelRepository.GetWhereAsync(x => x.GuildId == guildId
+                                                                                && x.Id == channelId);
+
+        return discordChannel?.AnalyseForAnime == true;
     }
 }

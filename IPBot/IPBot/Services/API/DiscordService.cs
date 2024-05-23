@@ -12,4 +12,9 @@ public class DiscordService(IRestClient client, IConfiguration configuration) : 
     {
         return await GetAsync<List<DiscordChannelDto>>($"{BaseUri}/GetInUseDiscordChannels");
     }
+
+    public async Task<bool> ChannelIsBeingAnalysedForAnimeAsync(ulong guildId, ulong channelId)
+    {
+        return await GetAsync<bool>($"{BaseUri}/ChannelIsBeingAnalysedForAnime?guildId={guildId}&channelId={channelId}");
+    }
 }
