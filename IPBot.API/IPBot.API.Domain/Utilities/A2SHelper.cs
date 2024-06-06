@@ -3,6 +3,7 @@ using System.Net.Sockets;
 using System.Text.RegularExpressions;
 using IPBot.API.Domain.Enums.ValveServerQueries;
 using IPBot.API.Domain.ExtensionMethods;
+using IPBot.API.Domain.Models;
 
 namespace IPBot.API.Domain.Utilities;
 

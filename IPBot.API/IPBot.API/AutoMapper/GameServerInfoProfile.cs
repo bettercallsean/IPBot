@@ -2,7 +2,7 @@
 using IPBot.API.Domain.Models;
 using IPBot.Common.Dtos;
 
-namespace IPBot.API;
+namespace IPBot.API.AutoMapper;
 
 public class GameServerInfoProfile : Profile
 {

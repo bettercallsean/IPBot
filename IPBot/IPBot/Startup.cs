@@ -73,6 +73,7 @@ public class Startup
             .AddSingleton<IRestClient>(new RestClient(new HttpClient
             {
                 BaseAddress = new Uri(_config["APIEndpoint"])
-            }));
+            }))
+            .AddHttpClient();
     }
 }
