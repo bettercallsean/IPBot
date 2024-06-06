@@ -1,7 +1,7 @@
 ﻿using System.Globalization;
 using System.Net;
 
-namespace IPBot.API.Domain;
+namespace IPBot.API.Domain.Utilities;
 
 public static class IPEndpointHelper
 {
