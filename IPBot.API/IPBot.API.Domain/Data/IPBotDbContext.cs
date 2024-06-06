@@ -9,6 +9,7 @@ public class IPBotDbContext(DbContextOptions<IPBotDbContext> options) : DbContex
     public virtual DbSet<GameServer> GameServers { get; set; }
     public virtual DbSet<Entities.Domain> Domains { get; set; }
     public virtual DbSet<DiscordChannel> DiscordChannels { get; set; }
+    public virtual DbSet<DiscordGuild> DiscordGuilds { get; set; }
     public new DbSet<T> Set<T>() where T : class => base.Set<T>();
 
     public Task<int> SaveChangesAsync() => base.SaveChangesAsync();
