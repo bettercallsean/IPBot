@@ -1,5 +1,4 @@
 ﻿using IPBot.Common.Services;
-using Microsoft.Extensions.Logging;
 
 namespace IPBot.Commands;
 
