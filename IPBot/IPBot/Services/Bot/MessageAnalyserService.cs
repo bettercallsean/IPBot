@@ -81,8 +81,8 @@ public partial class MessageAnalyserService(IAnimeAnalyserService animeAnalyserS
                     animeScore = await GetAnimeScoreAsync(url);
                 }
 
-                if (animeScore > BotConstants.AnimeScoreTolerance)
-                    return true;
+                logger.LogInformation("Anime score: {Score}", animeScore);
+                if (animeScore > BotConstants.AnimeScoreTolerance) return true;
             }
         }
 
@@ -91,6 +91,8 @@ public partial class MessageAnalyserService(IAnimeAnalyserService animeAnalyserS
             foreach (var attachment in message.Attachments)
             {
                 var animeScore = await GetAnimeScoreAsync(attachment.ProxyUrl);
+
+                logger.LogInformation("Anime score: {Score}", animeScore);
 
                 if (!(animeScore > BotConstants.AnimeScoreTolerance)) continue;
 
