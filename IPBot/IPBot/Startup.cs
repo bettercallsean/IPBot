@@ -54,7 +54,8 @@ public class Startup
             {
                 LogLevel = LogSeverity.Verbose,
                 MessageCacheSize = 1000,
-                GatewayIntents = GatewayIntents.All
+                GatewayIntents = GatewayIntents.All,
+                AlwaysDownloadUsers = true
             }))
             .AddSingleton(x => new InteractionService(x.GetRequiredService<DiscordSocketClient>()))
             .AddSingleton<CommandHandler>()
