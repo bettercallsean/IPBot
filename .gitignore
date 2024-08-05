@@ -747,7 +747,6 @@ credentials.env
 
 # Entity Framework Stuff
 *.db
-Migrations
 *.db-wal
 *.db-shm
 appsettings.Development.json
