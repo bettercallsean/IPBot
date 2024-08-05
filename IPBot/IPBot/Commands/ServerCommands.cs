@@ -1,7 +1,6 @@
 ﻿using IPBot.Common.Dtos;
 using IPBot.Common.Services;
 using IPBot.Helpers;
-using Microsoft.Extensions.Logging;
 
 namespace IPBot.Commands;
 

@@ -1,6 +1,6 @@
 ﻿using IPBot.API.Domain.Enums.ValveServerQueries;
 
-namespace IPBot.API;
+namespace IPBot.API.Domain.Models;
 
 public record SteamServerInfo
 {

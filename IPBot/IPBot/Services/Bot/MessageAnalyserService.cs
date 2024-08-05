@@ -7,7 +7,7 @@ using Microsoft.IdentityModel.Tokens;
 namespace IPBot.Services;
 
 public partial class MessageAnalyserService(IAnimeAnalyserService animeAnalyserService, ITenorApiHelper tenorApiHelper,
-                                            ILogger<MessageAnalyserService> logger, IDiscordService discordService)
+                                            ILogger<MessageAnalyserService> logger, IDiscordService discordService, HttpClient httpClient)
 {
     private readonly List<string> _responseList = [.. Resources.Resources.ResponseGifs.Split(Environment.NewLine)];
     private readonly List<string> _imageFormats =
@@ -18,6 +18,14 @@ public partial class MessageAnalyserService(IAnimeAnalyserService animeAnalyserS
         ".tiff",
         ".mp4",
         ".gif"
+    ];
+
+    private readonly List<string> _httpImageContentTypes =
+    [
+        "image/gif",
+        "image/jpeg",
+        "image/png",
+        "image/tiff"
     ];
 
     public async Task CheckMessageForAnimeAsync(SocketMessage message)
@@ -60,8 +68,15 @@ public partial class MessageAnalyserService(IAnimeAnalyserService animeAnalyserS
                     else
                     {
                         url = messageMediaModel.Url;
-                        if (message.Content.Contains("tenor.com") && !_imageFormats.Any(x => message.Content.Contains(x)))
+
+                        if (message.Content.Contains("tenor.com") && !_imageFormats.Any(message.Content.Contains))
                             url = await tenorApiHelper.GetDirectTenorGifUrlAsync(url);
+                        else
+                        {
+                            var result = await httpClient.SendAsync(new HttpRequestMessage(HttpMethod.Head, url));
+                            if (!_httpImageContentTypes.Contains(result.Content.Headers.ContentType.MediaType))
+                                return false;
+                        }
                     }
 
                     animeScore = await GetAnimeScoreAsync(url);
@@ -79,6 +94,7 @@ public partial class MessageAnalyserService(IAnimeAnalyserService animeAnalyserS
                 animeScore = await GetAnimeScoreAsync(attachment.ProxyUrl);
 
                 logger.LogInformation("Anime score: {Score}", animeScore);
+
                 if (!(animeScore > BotConstants.AnimeScoreTolerance)) continue;
 
                 return true;
@@ -106,7 +122,7 @@ public partial class MessageAnalyserService(IAnimeAnalyserService animeAnalyserS
             return new MessageMediaModel
             {
                 ContainsMedia = true,
-                Url = urlMatch.Success ? urlMatch.Value : string.Empty,
+                Url = urlMatch.Value,
                 EmojiId = emojiMatch.Success ? emojiMatch.Groups.Values.ToArray()[1].ToString() : string.Empty
             };
         }

@@ -1,6 +1,5 @@
 ﻿using System.Reflection;
 using Discord;
-using Microsoft.Extensions.Logging;
 
 namespace IPBot.Services.Bot;
 
