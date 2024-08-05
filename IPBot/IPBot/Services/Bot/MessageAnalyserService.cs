@@ -1,4 +1,5 @@
 ﻿using System.Text.RegularExpressions;
+using Discord;
 using IPBot.Common.Services;
 using IPBot.Interfaces;
 using Microsoft.IdentityModel.Tokens;
@@ -21,7 +22,7 @@ public partial class MessageAnalyserService(IAnimeAnalyserService animeAnalyserS
 
     public async Task CheckMessageForAnimeAsync(SocketMessage message)
     {
-        var user = message.Author as SocketGuildUser;
+        var user = message.Author as IGuildUser;
         var channelIsBeingAnalysedForAnime = await discordService.ChannelIsBeingAnalysedForAnimeAsync(user.Guild.Id, message.Channel.Id);
 
         if (channelIsBeingAnalysedForAnime && !message.Author.IsBot)
@@ -37,12 +38,12 @@ public partial class MessageAnalyserService(IAnimeAnalyserService animeAnalyserS
 
     private async Task<bool> MessageContainsAnimeAsync(SocketMessage message)
     {
+        double animeScore;
         if (!string.IsNullOrEmpty(message.Content))
         {
             var messageMediaModel = MessageContainsMedia(message.Content);
             if (messageMediaModel.ContainsMedia)
             {
-                double animeScore;
                 if (!string.IsNullOrEmpty(messageMediaModel.EmojiId))
                 {
                     var emojiUrl = $"https://cdn.discordapp.com/emojis/{messageMediaModel.EmojiId}.png";
@@ -66,8 +67,8 @@ public partial class MessageAnalyserService(IAnimeAnalyserService animeAnalyserS
                     animeScore = await GetAnimeScoreAsync(url);
                 }
 
-                if (animeScore > BotConstants.AnimeScoreTolerance)
-                    return true;
+                logger.LogInformation("Anime score: {Score}", animeScore);
+                if (animeScore > BotConstants.AnimeScoreTolerance) return true;
             }
         }
 
@@ -75,8 +76,9 @@ public partial class MessageAnalyserService(IAnimeAnalyserService animeAnalyserS
         {
             foreach (var attachment in message.Attachments)
             {
-                var animeScore = await GetAnimeScoreAsync(attachment.ProxyUrl);
+                animeScore = await GetAnimeScoreAsync(attachment.ProxyUrl);
 
+                logger.LogInformation("Anime score: {Score}", animeScore);
                 if (!(animeScore > BotConstants.AnimeScoreTolerance)) continue;
 
                 return true;
