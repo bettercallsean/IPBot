@@ -5,9 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 namespace IPBot.API.Controllers;
 
 [Authorize]
-[ApiController]
-[Route("api/[controller]/[action]")]
-public class GameServerController(IGameService gameService) : ControllerBase
+public class GameServerController(IGameService gameService) : MainController
 {
     [HttpGet("{portNumber:int}")]
     [ResponseCache(Duration = 60, Location = ResponseCacheLocation.Any, NoStore = false)]

@@ -4,9 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 namespace IPBot.API.Controllers;
 
 [Authorize]
-[ApiController]
-[Route("api/[controller]/[action]")]
-public class IPController(IIPService ipService) : ControllerBase
+public class IPController(IIPService ipService) : MainController
 {
     [HttpGet]
     public async Task<ActionResult<string>> GetCurrentServerDomainAsync()

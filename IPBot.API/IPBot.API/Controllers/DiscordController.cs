@@ -4,9 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 namespace IPBot.API.Controllers;
 
 [Authorize]
-[ApiController]
-[Route("api/[controller]/[action]")]
-public class DiscordController(IDiscordService discordService) : ControllerBase
+public class DiscordController(IDiscordService discordService) : MainController
 {
     [HttpGet]
     public async Task<ActionResult<string>> GetInUseDiscordChannelsAsync()

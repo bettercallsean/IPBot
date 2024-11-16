@@ -4,9 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace IPBot.API.Controllers;
 
-[Route("api/[controller]/[action]")]
-[ApiController]
-public class UserController(IUserService userService) : ControllerBase
+public class UserController(IUserService userService) : MainController
 {
     [Authorize]
     [HttpPost]
