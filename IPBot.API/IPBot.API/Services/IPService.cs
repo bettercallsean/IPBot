@@ -66,7 +66,7 @@ public class IPService(IDomainRepository domainRepository, IHubContext<IPHub> hu
 
         _serverIP = ip;
 
-        await hubContext.Clients.All.SendAsync(SignalRHubConstants.UpdateIPMethod, _serverIP);
+        await hubContext.Clients.All.SendAsync(SignalRHubMethods.UpdateIP, _serverIP);
 
         return true;
     }
