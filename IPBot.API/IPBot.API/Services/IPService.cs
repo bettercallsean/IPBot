@@ -2,6 +2,7 @@ using System.Net;
 using IPBot.API.Constants;
 using IPBot.API.Domain.Interfaces;
 using IPBot.API.Hubs;
+using IPBot.Common.Constants;
 using IPBot.Common.Services;
 using Microsoft.AspNetCore.SignalR;
 
@@ -65,7 +66,7 @@ public class IPService(IDomainRepository domainRepository, IHubContext<IPHub> hu
 
         _serverIP = ip;
 
-        await hubContext.Clients.All.SendAsync("UpdateIP", _serverIP);
+        await hubContext.Clients.All.SendAsync(SignalRHubConstants.UpdateIPMethod, _serverIP);
 
         return true;
     }

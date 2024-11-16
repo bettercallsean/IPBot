@@ -1,4 +1,5 @@
-﻿using IPBot.Common.Services;
+﻿using IPBot.Common.Constants;
+using IPBot.Common.Services;
 using IPBot.Helpers;
 using Microsoft.AspNetCore.SignalR.Client;
 
@@ -22,7 +23,7 @@ public class StartupService(ILogger<StartupService> logger, IConfiguration confi
         await discord.LoginAsync(Discord.TokenType.Bot, token);
         await discord.StartAsync();
 
-        _hubConnection.On("UpdateIP", async (string ip) =>
+        _hubConnection.On(SignalRHubMethods.UpdateIP, async (string ip) =>
             { await PostUpdatedIPAsync(ip); });
 
         await _hubConnection.StartAsync();
