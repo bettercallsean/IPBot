@@ -31,10 +31,10 @@ public class StartupService(ILogger<StartupService> logger, IConfiguration confi
         discord.Ready += DiscordOnReadyAsync;
         discord.Connected += DiscordOnConnectedAsync;
         discord.Disconnected += DiscordOnDisconnectedAsync;
-        discord.MessageReceived += OnMessageRecivedAsync;
+        discord.MessageReceived += OnMessageReceivedAsync;
     }
 
-    private async Task OnMessageRecivedAsync(SocketMessage arg) => await messageAnalyserService.CheckMessageForAnimeAsync(arg);
+    private async Task OnMessageReceivedAsync(SocketMessage arg) => await messageAnalyserService.CheckMessageForAnimeAsync(arg);
 
     private Task DiscordOnDisconnectedAsync(Exception arg)
     {
