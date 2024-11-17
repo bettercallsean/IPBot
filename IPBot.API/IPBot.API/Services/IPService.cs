@@ -10,8 +10,8 @@ namespace IPBot.API.Services;
 
 public class IPService(IDomainRepository domainRepository, IHubContext<IPHub> hubContext, IHttpClientFactory httpClientFactory) : IIPService
 {
-    private static readonly string LatestIPFilePath = Path.Combine(AppContext.BaseDirectory, @"../latest_ip.txt");
-    private static readonly string IPChangedFilePath = Path.Combine(AppContext.BaseDirectory, @"../ip_changed");
+    private static readonly string LatestIPFilePath = Path.Combine(AppContext.BaseDirectory, "../latest_ip.txt");
+    private static readonly string IPChangedFilePath = Path.Combine(AppContext.BaseDirectory, "../ip_changed");
     private static string _localIp = string.Empty;
     private static string _serverIP = string.Empty;
 
