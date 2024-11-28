@@ -3,12 +3,10 @@ using IPBot.Common.Services;
 using IPBot.Configuration;
 using IPBot.Helpers;
 using IPBot.Interfaces;
-using IPBot.Services;
 using IPBot.Services.API;
 using IPBot.Services.Bot;
 using RestSharp;
 using Serilog;
-using MessageAnalyserService = IPBot.Services.Bot.MessageAnalyserService;
 
 namespace IPBot;
 
