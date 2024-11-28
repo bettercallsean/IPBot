@@ -4,7 +4,7 @@ using IPBot.Common.Services;
 using IPBot.Interfaces;
 using Microsoft.IdentityModel.Tokens;
 
-namespace IPBot.Services;
+namespace IPBot.Services.Bot;
 
 public partial class MessageAnalyserService(IAnimeAnalyserService animeAnalyserService, ITenorApiHelper tenorApiHelper,
                                             ILogger<MessageAnalyserService> logger, IDiscordService discordService, HttpClient httpClient)

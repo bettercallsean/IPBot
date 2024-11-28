@@ -1,8 +1,8 @@
 ﻿using Discord;
 using IPBot.Common.Services;
+using IPBot.Configuration;
 using IPBot.Helpers;
 using IPBot.Interfaces;
-using IPBot.Services;
 using IPBot.Services.API;
 using IPBot.Services.Bot;
 using RestSharp;
@@ -66,14 +66,14 @@ public class Startup
             .AddSingleton<IAnimeAnalyserService, AnimeAnalyserService>()
             .AddSingleton<IDiscordService, DiscordService>()
             .AddSingleton<ITenorApiHelper, TenorApiHelper>()
-            .AddSingleton<IConfiguration>(_config)
+            .AddSingleton(_config.Get<BotConfiguration>())
             .AddLogging(config =>
             {
                 config.AddSerilog();
             })
             .AddSingleton<IRestClient>(new RestClient(new HttpClient
             {
-                BaseAddress = new Uri(_config["APIEndpoint"])
+                BaseAddress = new Uri(_config.GetValue<string>("APIEndpoint") ?? throw new Exception("APIEndpoint is empty"))
             }))
             .AddHttpClient();
     }

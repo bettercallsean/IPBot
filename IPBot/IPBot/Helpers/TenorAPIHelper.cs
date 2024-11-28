@@ -1,11 +1,12 @@
 using System.Net.Http.Headers;
 using System.Web;
+using IPBot.Configuration;
 using IPBot.Interfaces;
 using IPBot.Models.TenorModels;
 
 namespace IPBot.Helpers;
 
-public class TenorApiHelper(IConfiguration configuration) : ITenorApiHelper
+public class TenorApiHelper(BotConfiguration botConfiguration) : ITenorApiHelper
 {
     private const string TenorGifEndpoint = "https://g.tenor.com/v1/gifs?";
 
@@ -14,7 +15,7 @@ public class TenorApiHelper(IConfiguration configuration) : ITenorApiHelper
         var tenorGifId = GetTenorGifIdFromUrl(tenorUrl);
         var apiUrl = CreateApiUrl(new Dictionary<string, string>
         {
-            { "key", configuration["TenorAPIKey"] },
+            { "key", botConfiguration.TenorAPIKey },
             { "media_filter", "minimal" },
             { "ids", tenorGifId }
         });

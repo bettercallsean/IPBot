@@ -1,5 +1,6 @@
 ﻿using IPBot.Common.Dtos;
 using IPBot.Common.Helpers;
+using IPBot.Configuration;
 using RestSharp;
 using RestSharp.Authenticators;
 
@@ -8,18 +9,14 @@ namespace IPBot.Services.API;
 public class ServiceBase
 {
     private readonly IRestClient _client;
-    private readonly string _username;
-    private readonly string _password;
+    private readonly APILogin _apiLogin;
 
     private string _jwt;
 
-    protected ServiceBase(IRestClient client, IConfiguration configuration)
+    protected ServiceBase(IRestClient client, APILogin apiLogin)
     {
         _client = client;
-
-        var apiLogin = configuration.GetSection("APILogin");
-        _username = apiLogin.GetValue<string>("Username");
-        _password = apiLogin.GetValue<string>("Password");
+        _apiLogin = apiLogin;
     }
 
     protected async Task<T> GetAsync<T>(string url)
@@ -52,8 +49,8 @@ public class ServiceBase
             RequestFormat = DataFormat.Json
         }.AddBody(new UserDto
         {
-            Username = _username,
-            Password = _password
+            Username = _apiLogin.Username,
+            Password = _apiLogin.Password
         }));
 
     }

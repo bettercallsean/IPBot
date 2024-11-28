@@ -1,14 +1,17 @@
 ﻿using IPBot.Common.Constants;
 using IPBot.Common.Services;
+using IPBot.Configuration;
 using IPBot.Helpers;
 using Microsoft.AspNetCore.SignalR.Client;
 
 namespace IPBot.Services.Bot;
 
-public class StartupService(ILogger<StartupService> logger, IConfiguration configuration, IIPService ipService, DiscordSocketClient discord, InteractionService commands, IDiscordService discordService, MessageAnalyserService messageAnalyserService)
+public class StartupService(ILogger<StartupService> logger, BotConfiguration botConfiguration, IIPService ipService, 
+    DiscordSocketClient discord, InteractionService commands, IDiscordService discordService, 
+    MessageAnalyserService messageAnalyserService)
 {
     private readonly HubConnection _hubConnection = new HubConnectionBuilder()
-            .WithUrl($"{configuration["APIEndpoint"]}/hubs/iphub")
+            .WithUrl($"{botConfiguration.APIEndpoint}/hubs/iphub")
             .WithAutomaticReconnect()
             .Build();
 
@@ -18,9 +21,7 @@ public class StartupService(ILogger<StartupService> logger, IConfiguration confi
     {
         logger.LogInformation("Starting...");
 
-        var token = configuration["BotToken"];
-
-        await discord.LoginAsync(Discord.TokenType.Bot, token);
+        await discord.LoginAsync(Discord.TokenType.Bot, botConfiguration.BotToken);
         await discord.StartAsync();
 
         _hubConnection.On(SignalRHubMethods.UpdateIP, async (string ip) =>
@@ -57,7 +58,7 @@ public class StartupService(ILogger<StartupService> logger, IConfiguration confi
     {
         if (DebugHelper.IsDebug())
         {
-            var guildId = ulong.Parse(configuration["TestGuild"]);
+            var guildId = ulong.Parse(botConfiguration.TestGuild);
             await commands.RegisterCommandsToGuildAsync(guildId);
         }
         else
