@@ -6,7 +6,9 @@ using Microsoft.AspNetCore.SignalR.Client;
 
 namespace IPBot.Services.Bot;
 
-public class StartupService(ILogger<StartupService> logger, BotConfiguration botConfiguration, IIPService ipService, DiscordSocketClient discord, InteractionService commands, IDiscordService discordService, MessageAnalyserService messageAnalyserService)
+public class StartupService(ILogger<StartupService> logger, BotConfiguration botConfiguration, IIPService ipService, 
+    DiscordSocketClient discord, InteractionService commands, IDiscordService discordService, 
+    MessageAnalyserService messageAnalyserService)
 {
     private readonly HubConnection _hubConnection = new HubConnectionBuilder()
             .WithUrl($"{botConfiguration.APIEndpoint}/hubs/iphub")
@@ -19,9 +21,7 @@ public class StartupService(ILogger<StartupService> logger, BotConfiguration bot
     {
         logger.LogInformation("Starting...");
 
-        var token = botConfiguration.BotToken;
-
-        await discord.LoginAsync(Discord.TokenType.Bot, token);
+        await discord.LoginAsync(Discord.TokenType.Bot, botConfiguration.BotToken);
         await discord.StartAsync();
 
         _hubConnection.On(SignalRHubMethods.UpdateIP, async (string ip) =>
