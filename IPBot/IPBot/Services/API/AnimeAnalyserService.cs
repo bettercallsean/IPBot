@@ -1,9 +1,10 @@
 ﻿using IPBot.Common.Services;
+using IPBot.Configuration;
 using RestSharp;
 
 namespace IPBot.Services.API;
 
-public class AnimeAnalyserService(IRestClient client, IConfiguration configuration) : ServiceBase(client, configuration), IAnimeAnalyserService
+public class AnimeAnalyserService(IRestClient client, BotConfiguration botConfiguration) : ServiceBase(client, botConfiguration.APILogin), IAnimeAnalyserService
 {
     private const string BaseUri = "/AnimeAnalyser";
 

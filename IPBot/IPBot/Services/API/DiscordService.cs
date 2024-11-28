@@ -1,10 +1,11 @@
 using IPBot.Common.Dtos;
 using IPBot.Common.Services;
+using IPBot.Configuration;
 using RestSharp;
 
 namespace IPBot.Services.API;
 
-public class DiscordService(IRestClient client, IConfiguration configuration) : ServiceBase(client, configuration), IDiscordService
+public class DiscordService(IRestClient client, BotConfiguration botConfiguration) : ServiceBase(client, botConfiguration.APILogin), IDiscordService
 {
     private const string BaseUri = "/Discord";
 

@@ -1,5 +1,7 @@
 using System.Net;
 using System.Text;
+using IPBot.API;
+using IPBot.API.Configuration;
 using IPBot.API.Domain.Data;
 using IPBot.API.Extensions;
 using IPBot.API.Hubs;
@@ -31,6 +33,8 @@ builder.Services.AddResponseCompression(opts =>
         ["application/octet-stream"]);
 });
 
+builder.Services.AddSingleton(builder.Configuration.GetRequiredSection("AzureSettings").Get<AzureSettings>());
+
 builder.Services.RegisterServices();
 
 builder.Services.RegisterHttpClients();
@@ -55,7 +59,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         {
             ValidateIssuerSigningKey = true,
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8
-                .GetBytes(builder.Configuration["SecurityKeyToken"])),
+                .GetBytes(builder.Configuration.GetValue<string>("SecurityKeyToken"))),
             ValidateIssuer = false,
             ValidateAudience = false
         };
