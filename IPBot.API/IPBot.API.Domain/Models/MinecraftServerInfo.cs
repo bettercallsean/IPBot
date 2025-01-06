@@ -1,4 +1,6 @@
-﻿namespace IPBot.API.Domain.Models;
+﻿using System.Text.Json.Serialization;
+
+namespace IPBot.API.Domain.Models;
 
 public class MinecraftServerInfo
 {
@@ -18,8 +20,11 @@ public class Players
 public class List
 {
     public string Uuid { get; set; }
+    [JsonPropertyName("name_raw")]
     public string NameRaw { get; set; }
+    [JsonPropertyName("name_clean")]
     public string NameClean { get; set; }
+    [JsonPropertyName("name_html")]
     public string NameHtml { get; set; }
 }
 
