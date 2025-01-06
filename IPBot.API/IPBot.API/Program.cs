@@ -1,6 +1,5 @@
 using System.Net;
 using System.Text;
-using IPBot.API;
 using IPBot.API.Configuration;
 using IPBot.API.Domain.Data;
 using IPBot.API.Extensions;
