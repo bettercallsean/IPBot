@@ -15,6 +15,6 @@ public class GameServerInfoProfile : Profile
         CreateMap<MinecraftServerInfo, ServerInfoDto>()
             .ForMember(x => x.Motd, y => y.MapFrom(z => z.Motd.Clean.Trim()))
             .ForMember(x => x.PlayerCount, y => y.MapFrom(z => z.Players.Online))
-            .ForMember(x => x.PlayerNames, y => y.MapFrom(z => z.Players.List.Select(p => p.NameClean)));
+            .ForMember(x => x.PlayerNames, y => y.MapFrom(z => z.Players.List.Where(x => x.Uuid != Guid.Empty.ToString()).Select(p => p.NameClean)));
     }
 }
