@@ -62,7 +62,7 @@ public class IPService(IDomainRepository domainRepository, IHubContext<IPHub> hu
 
     public async Task<bool> UpdateServerIPAsync(string ip)
     {
-        if (!IPAddress.TryParse(ip, out _) || ip.Equals(_serverIP)) return false;
+        if (ip != null && (!IPAddress.TryParse(ip, out _) || ip.Equals(_serverIP))) return false;
 
         _serverIP = ip;
 
