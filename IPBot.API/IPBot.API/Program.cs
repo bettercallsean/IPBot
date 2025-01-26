@@ -121,6 +121,6 @@ if (app.Environment.IsDevelopment())
 else
     app.MapControllers();
 
-app.MapHub<IPHub>("/api/hubs/iphub");
+app.MapHub<IPHub>("/hubs/iphub");
 
 app.Run();
