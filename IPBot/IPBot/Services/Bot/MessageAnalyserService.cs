@@ -83,7 +83,7 @@ public partial class MessageAnalyserService(IAnimeAnalyserService animeAnalyserS
                 }
 
                 logger.LogInformation("Anime score: {Score}", animeScore);
-                if (animeScore > BotConstants.AnimeScoreTolerance) return true;
+                if (animeScore >= BotConstants.AnimeScoreTolerance) return true;
             }
         }
 
@@ -95,7 +95,7 @@ public partial class MessageAnalyserService(IAnimeAnalyserService animeAnalyserS
 
                 logger.LogInformation("Anime score: {Score}", animeScore);
 
-                if (!(animeScore > BotConstants.AnimeScoreTolerance)) continue;
+                if (animeScore < BotConstants.AnimeScoreTolerance) continue;
 
                 return true;
             }
@@ -119,7 +119,7 @@ public partial class MessageAnalyserService(IAnimeAnalyserService animeAnalyserS
 
             if (!urlMatch.Success && !emojiMatch.Success) continue;
 
-            return new MessageMediaModel
+            return new()
             {
                 ContainsMedia = true,
                 Url = urlMatch.Value,
@@ -127,7 +127,7 @@ public partial class MessageAnalyserService(IAnimeAnalyserService animeAnalyserS
             };
         }
 
-        return new MessageMediaModel
+        return new()
         {
             ContainsMedia = false
         };
@@ -137,7 +137,7 @@ public partial class MessageAnalyserService(IAnimeAnalyserService animeAnalyserS
     {
         var youtubeUrlMatch = YouTubeUrlRegex().Match(messageContent);
 
-        return new MessageMediaModel
+        return new()
         {
             ContainsMedia = youtubeUrlMatch.Success,
             Url = youtubeUrlMatch.Success ? youtubeUrlMatch.Groups.Values.ToList()[6].ToString() : string.Empty

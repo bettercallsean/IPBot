@@ -30,7 +30,7 @@ public class AnimeAnalyserService(AzureSettings azureSettings) : IAnimeAnalyserS
 
     private static ComputerVisionClient Authenticate(AzureSettings azureSettings)
     {
-        return new ComputerVisionClient(new ApiKeyServiceClientCredentials(azureSettings.SubscriptionKey))
+        return new(new ApiKeyServiceClientCredentials(azureSettings.SubscriptionKey))
         {
             Endpoint = azureSettings.Endpoint
         };
