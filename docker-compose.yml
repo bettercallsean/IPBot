@@ -1,5 +1,3 @@
-version: '3.4'
-
 services:
   ipbot:
     container_name: ipbot
