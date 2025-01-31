@@ -1,38 +1,32 @@
-﻿using IPBot.API.Configuration;
+﻿using Azure;
+using Azure.AI.Vision.ImageAnalysis;
+using IPBot.API.Configuration;
 using IPBot.Common.Helpers;
 using IPBot.Common.Services;
-using Microsoft.Azure.CognitiveServices.Vision.ComputerVision;
-using Microsoft.Azure.CognitiveServices.Vision.ComputerVision.Models;
 
 namespace IPBot.API.Services;
 
 public class AnimeAnalyserService(AzureSettings azureSettings) : IAnimeAnalyserService
 {
-    private readonly ComputerVisionClient _computerVisionClient = Authenticate(azureSettings);
+    private readonly ImageAnalysisClient _imageAnalysisClient = Authenticate(azureSettings);
 
     public async Task<double> GetAnimeScoreAsync(string url)
     {
-        TagResult imageTags;
+        Response<ImageAnalysisResult> imageTags;
 
         try
         {
-            imageTags = await _computerVisionClient.TagImageAsync(url);
+            imageTags  = await _imageAnalysisClient.AnalyzeAsync(new Uri(url), VisualFeatures.Tags);
         }
-        catch (ComputerVisionErrorResponseException)
+        catch (RequestFailedException)
         {
             var compressedImage = await ImageCompressorHelper.CompressImageFromUrlAsync(url);
 
-            imageTags = await _computerVisionClient.TagImageInStreamAsync(compressedImage);
+            imageTags  = await _imageAnalysisClient.AnalyzeAsync(new BinaryData(compressedImage), VisualFeatures.Tags);
         }
 
-        return imageTags.Tags.Where(x => x.Name == "anime").Select(x => x.Confidence).FirstOrDefault();
+        return imageTags.Value.Tags.Values.Where(x => x.Name == "anime").Select(x => x.Confidence).FirstOrDefault();
     }
 
-    private static ComputerVisionClient Authenticate(AzureSettings azureSettings)
-    {
-        return new(new ApiKeyServiceClientCredentials(azureSettings.SubscriptionKey))
-        {
-            Endpoint = azureSettings.Endpoint
-        };
-    }
+    private static ImageAnalysisClient Authenticate(AzureSettings azureSettings) => new(new Uri(azureSettings.Endpoint), new AzureKeyCredential(azureSettings.SubscriptionKey));
 }
