@@ -8,7 +8,7 @@ using IPBot.Common.Services;
 
 namespace IPBot.API.Services;
 
-public class ImageAnalyserService(AzureSettings azureSettings) : IImageAnalyserService
+public class ImageAnalyserService(ILogger<ImageAnalyserService> logger, AzureSettings azureSettings) : IImageAnalyserService
 {
     private readonly ImageAnalysisClient _imageAnalysisClient = CreateImageAnalysisClient(azureSettings.ImageAnalysisSettings);
     private readonly ContentSafetyClient _contentSafetyClient = CreateContentSafetyClient(azureSettings.ContentSafetyAnalysisSettings);
@@ -32,9 +32,9 @@ public class ImageAnalyserService(AzureSettings azureSettings) : IImageAnalyserS
         return imageTags.Value.Tags.Values.Where(x => x.Name == "anime").Select(x => x.Confidence).FirstOrDefault();
     }
 
-    public async Task<List<CategoryAnalysisDto>> GetContentSafetyScoreAsync(string url)
+    public async Task<List<CategoryAnalysisDto>> GetContentSafetyAnalysisAsync(string imageUrl)
     {
-        var image = new ContentSafetyImageData(new Uri(url));
+        var image = new ContentSafetyImageData(new Uri(imageUrl));
         var request = new AnalyzeImageOptions(image);
 
         Response<AnalyzeImageResult> response;
@@ -44,7 +44,7 @@ public class ImageAnalyserService(AzureSettings azureSettings) : IImageAnalyserS
         }
         catch (RequestFailedException ex)
         {
-            Console.WriteLine("Analyze image failed.\nStatus code: {0}, Error code: {1}, Error message: {2}", ex.Status, ex.ErrorCode, ex.Message);
+            logger.LogError("Analyze image failed. Status code: {Status}, Error code: {ErrorCode}, Error message: {Message}", ex.Status, ex.ErrorCode, ex.Message);
             throw;
         }
 
