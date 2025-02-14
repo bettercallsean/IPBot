@@ -18,4 +18,14 @@ public class DiscordService(IRestClient client, BotConfiguration botConfiguratio
     {
         return await GetAsync<bool>($"{BaseUri}/ChannelIsBeingAnalysedForAnime?guildId={guildId}&channelId={channelId}");
     }
+
+    public async Task<bool> UserIsFlaggedAsync(ulong userId)
+    {
+        return await GetAsync<bool>($"{BaseUri}/UserIsFlagged?userId={userId}");
+    }
+
+    public async Task<bool> UpdateUserFlaggedCountAsync(ulong userId)
+    {
+        return await GetAsync<bool>($"{BaseUri}/UpdateUserFlaggedCount?userId={userId}");
+    }
 }

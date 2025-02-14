@@ -63,7 +63,7 @@ public class Startup
             .AddScoped<MessageAnalyserService>()
             .AddSingleton<IGameService, GameService>()
             .AddSingleton<IIPService, IPService>()
-            .AddSingleton<IAnimeAnalyserService, AnimeAnalyserService>()
+            .AddSingleton<IImageAnalyserService, ImageAnalyserService>()
             .AddSingleton<IDiscordService, DiscordService>()
             .AddSingleton<ITenorApiHelper, TenorApiHelper>()
             .AddSingleton(_config.Get<BotConfiguration>())

@@ -6,7 +6,7 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace IPBot.Services.Bot;
 
-public partial class MessageAnalyserService(IAnimeAnalyserService animeAnalyserService, ITenorApiHelper tenorApiHelper,
+public partial class MessageAnalyserService(IImageAnalyserService imageAnalyserService, ITenorApiHelper tenorApiHelper,
                                             ILogger<MessageAnalyserService> logger, IDiscordService discordService, HttpClient httpClient)
 {
     private readonly List<string> _responseList = [.. Resources.Resources.ResponseGifs.Split(Environment.NewLine)];
@@ -25,7 +25,8 @@ public partial class MessageAnalyserService(IAnimeAnalyserService animeAnalyserS
         "image/gif",
         "image/jpeg",
         "image/png",
-        "image/tiff"
+        "image/tiff",
+        "video/mp4"
     ];
 
     public async Task CheckMessageForAnimeAsync(SocketMessage message)
@@ -44,47 +45,83 @@ public partial class MessageAnalyserService(IAnimeAnalyserService animeAnalyserS
         }
     }
 
+    public async Task CheckMessageForHatefulContentAsync(SocketMessage message)
+    {
+        var user = message.Author as IGuildUser;
+
+        var userIsBeingCheckedForHatefulContent = await discordService.UserIsFlaggedAsync(user.Id);
+        var userJoined = DateTimeOffset.Now - user.JoinedAt;
+
+        if (!userIsBeingCheckedForHatefulContent && userJoined?.Days > 90) return;
+
+        logger.LogInformation("Checking message from {User} in channel {GuildName}:{ChannelName} for hateful content", user.Username, user.Guild.Name, message.Channel.Name);
+
+        var messageMediaModel = GetMessageMediaModel(message.Content);
+        if (!messageMediaModel.ContainsMedia) return;
+
+        var url = await GetMediaUrlAsync(messageMediaModel, message);
+        var encodedUrl = Base64UrlEncoder.Encode(url);
+        var hatefulContentAnalysis = await imageAnalyserService.GetContentSafetyAnalysisAsync(encodedUrl);
+
+        if (hatefulContentAnalysis is null)
+        {
+            logger.LogInformation("Message from {User} in channel {GuildName}:{ChannelName} failed to be analysed for hateful content", user.Username, user.Guild.Name, message.Channel.Name);
+            return;
+        }
+
+        var flaggedContentCategories = hatefulContentAnalysis.Where(x => x.Severity > 0).ToList();
+
+        if (flaggedContentCategories.Count > 0)
+        {
+            logger.LogInformation("Message from {User} in channel {GuildName}:{ChannelName} deleted for {Category}", user.Username, user.Guild.Name, message.Channel.Name, string.Join(", ", flaggedContentCategories.Select(x => x.Category)));
+
+            await message.DeleteAsync();
+            await discordService.UpdateUserFlaggedCountAsync(user.Id);
+        }
+    }
+
+    private async Task<string> GetMediaUrlAsync(MessageMediaModel messageMediaModel, SocketMessage message)
+    {
+        if (!string.IsNullOrEmpty(messageMediaModel.EmojiId))
+            return $"https://cdn.discordapp.com/emojis/{messageMediaModel.EmojiId}.png";
+        else
+        {
+            var youtubeUrlModel = MessageContainsYouTubeLink(message.Content);
+            if (youtubeUrlModel.ContainsMedia)
+                return $"https://i3.ytimg.com/vi/{youtubeUrlModel.Url}/maxresdefault.jpg";
+            else
+            {
+                var url = messageMediaModel.Url;
+
+                if (message.Content.Contains("tenor.com") && !_imageFormats.Any(message.Content.Contains))
+                    return await tenorApiHelper.GetDirectTenorGifUrlAsync(url);
+
+                var result = await httpClient.SendAsync(new HttpRequestMessage(HttpMethod.Head, url));
+                if (!_httpImageContentTypes.Contains(result.Content.Headers.ContentType.MediaType))
+                    return string.Empty;
+
+                return url;
+            }
+        }
+    }
+
     private async Task<bool> MessageContainsAnimeAsync(SocketMessage message)
     {
         double animeScore;
         if (!string.IsNullOrEmpty(message.Content))
         {
-            var messageMediaModel = MessageContainsMedia(message.Content);
-            if (messageMediaModel.ContainsMedia)
-            {
-                if (!string.IsNullOrEmpty(messageMediaModel.EmojiId))
-                {
-                    var emojiUrl = $"https://cdn.discordapp.com/emojis/{messageMediaModel.EmojiId}.png";
-                    animeScore = await GetAnimeScoreAsync(emojiUrl);
-                }
-                else
-                {
-                    var youtubeUrlModel = MessageContainsYouTubeLink(message.Content);
-                    string url;
-                    if (youtubeUrlModel.ContainsMedia)
-                    {
-                        url = $"https://i3.ytimg.com/vi/{youtubeUrlModel.Url}/maxresdefault.jpg";
-                    }
-                    else
-                    {
-                        url = messageMediaModel.Url;
+            var messageMediaModel = GetMessageMediaModel(message.Content);
+            if (!messageMediaModel.ContainsMedia) return false;
 
-                        if (message.Content.Contains("tenor.com") && !_imageFormats.Any(message.Content.Contains))
-                            url = await tenorApiHelper.GetDirectTenorGifUrlAsync(url);
-                        else
-                        {
-                            var result = await httpClient.SendAsync(new HttpRequestMessage(HttpMethod.Head, url));
-                            if (!_httpImageContentTypes.Contains(result.Content.Headers.ContentType.MediaType))
-                                return false;
-                        }
-                    }
+            var url = await GetMediaUrlAsync(messageMediaModel, message);
 
-                    animeScore = await GetAnimeScoreAsync(url);
-                }
+            if (string.IsNullOrEmpty(url)) return false;
 
-                logger.LogInformation("Anime score: {Score}", animeScore);
-                if (animeScore >= BotConstants.AnimeScoreTolerance) return true;
-            }
+            animeScore = await GetAnimeScoreAsync(url);
+
+            logger.LogInformation("Anime score: {Score}", animeScore);
+
+            if (animeScore >= BotConstants.AnimeScoreTolerance) return true;
         }
 
         if (message.Attachments.Count <= 0) return false;
@@ -107,10 +144,10 @@ public partial class MessageAnalyserService(IAnimeAnalyserService animeAnalyserS
     private async Task<double> GetAnimeScoreAsync(string url)
     {
         var encodedUrl = Base64UrlEncoder.Encode(url);
-        return await animeAnalyserService.GetAnimeScoreAsync(encodedUrl);
+        return await imageAnalyserService.GetAnimeScoreAsync(encodedUrl);
     }
 
-    private static MessageMediaModel MessageContainsMedia(string messageContent)
+    private static MessageMediaModel GetMessageMediaModel(string messageContent)
     {
         foreach (var word in messageContent.Split())
         {
@@ -122,7 +159,7 @@ public partial class MessageAnalyserService(IAnimeAnalyserService animeAnalyserS
             return new()
             {
                 ContainsMedia = true,
-                Url = urlMatch.Value,
+                Url = word,
                 EmojiId = emojiMatch.Success ? emojiMatch.Groups.Values.ToArray()[1].ToString() : string.Empty
             };
         }
@@ -144,7 +181,7 @@ public partial class MessageAnalyserService(IAnimeAnalyserService animeAnalyserS
         };
     }
 
-    [GeneratedRegex("^https?:\\/\\/(?:www\\\\.)?[-a-zA-Z0-9@:%._\\+~#=]{1,256}\\.[a-zA-Z0-9()]{1,6}\\b(?:[-a-zA-Z0-9()@:%_\\+.~#?&\\/=]*)$")]
+    [GeneratedRegex("(https:\\/\\/www\\.|http:\\/\\/www\\.|https:\\/\\/|http:\\/\\/)?[a-zA-Z]{2,}(\\.[a-zA-Z]{2,})(\\.[a-zA-Z]{2,})?\\/[a-zA-Z0-9]{2,}|((https:\\/\\/www\\.|http:\\/\\/www\\.|https:\\/\\/|http:\\/\\/)?[a-zA-Z]{2,}(\\.[a-zA-Z]{2,})(\\.[a-zA-Z]{2,})?)|(https:\\/\\/www\\.|http:\\/\\/www\\.|https:\\/\\/|http:\\/\\/)?[a-zA-Z0-9]{2,}\\.[a-zA-Z0-9]{2,}\\.[a-zA-Z0-9]{2,}(\\.[a-zA-Z0-9]{2,})?")]
     private static partial Regex UrlRegex();
 
     [GeneratedRegex("<:[a-zA-Z0-9]+:([0-9]+)>")]

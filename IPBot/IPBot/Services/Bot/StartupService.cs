@@ -6,8 +6,8 @@ using Microsoft.AspNetCore.SignalR.Client;
 
 namespace IPBot.Services.Bot;
 
-public class StartupService(ILogger<StartupService> logger, BotConfiguration botConfiguration, IIPService ipService, 
-    DiscordSocketClient discord, InteractionService commands, IDiscordService discordService, 
+public class StartupService(ILogger<StartupService> logger, BotConfiguration botConfiguration, IIPService ipService,
+    DiscordSocketClient discord, InteractionService commands, IDiscordService discordService,
     MessageAnalyserService messageAnalyserService)
 {
     private readonly HubConnection _hubConnection = new HubConnectionBuilder()
@@ -35,7 +35,11 @@ public class StartupService(ILogger<StartupService> logger, BotConfiguration bot
         discord.MessageReceived += OnMessageReceivedAsync;
     }
 
-    private async Task OnMessageReceivedAsync(SocketMessage arg) => await messageAnalyserService.CheckMessageForAnimeAsync(arg);
+    private async Task OnMessageReceivedAsync(SocketMessage arg)
+    {
+        await messageAnalyserService.CheckMessageForAnimeAsync(arg);
+        await messageAnalyserService.CheckMessageForHatefulContentAsync(arg);
+    }
 
     private Task DiscordOnDisconnectedAsync(Exception arg)
     {
