@@ -56,16 +56,18 @@ public partial class MessageAnalyserService(IImageAnalyserService imageAnalyserS
 
         if (flaggedUser is null && userJoined?.Days > 90) return;
 
+        logger.LogInformation("Checking message from {User} in {GuildName}:{ChannelName} for hateful content", user.Username, user.Guild.Name, message.Channel.Name);
+
         var hatefulContentAnalysis = await GetHatefulImageAnalysisAsync(imageAnalyserService, logger, message, user);
 
         var flaggedContentCategories = hatefulContentAnalysis.Where(x => x.Severity > 0).ToList();
 
         if (flaggedContentCategories.Count > 0)
         {
-            logger.LogInformation("Message from {User} in channel {GuildName}:{ChannelName} deleted for {Category}", user.Username, user.Guild.Name, message.Channel.Name, string.Join(", ", flaggedContentCategories.Select(x => x.Category)));
+            logger.LogInformation("Message from {User} in {GuildName}:{ChannelName} deleted for {Category}", user.Username, user.Guild.Name, message.Channel.Name, string.Join(", ", flaggedContentCategories.Select(x => x.Category)));
 
             var guildOwner = await user.Guild.GetOwnerAsync();
-            await guildOwner.SendMessageAsync($"Message from {user.Username} in channel {user.Guild.Name}:{message.Channel.Name} deleted for {string.Join(", ", flaggedContentCategories.Select(x => x.Category))}");
+            await guildOwner.SendMessageAsync($"Message from {user.Username} in {user.Guild.Name}:{message.Channel.Name} deleted for {string.Join(", ", flaggedContentCategories.Select(x => x.Category))}");
             await message.DeleteAsync();
 
             if (flaggedUser is not null)
