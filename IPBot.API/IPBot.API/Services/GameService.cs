@@ -28,7 +28,6 @@ public class GameService(IMapper mapper, IIPService ipService, IGameRepository g
     public async Task<List<GameServerDto>> GetActiveServersAsync(string gameName)
     {
         var game = await gameRepository.GetWhereAsync(x => x.ShortName == gameName, x => x.GameServers);
-
         var gameServers = game.GameServers.Where(x => x.Active);
 
         return mapper.Map<List<GameServerDto>>(gameServers);

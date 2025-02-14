@@ -57,13 +57,13 @@ public class ImageAnalyserService(ILogger<ImageAnalyserService> logger, AzureSet
 
     private static ContentSafetyClient CreateContentSafetyClient(ContentSafetyAnalysisSettings contentSafetyAnalysisSettings)
     {
-        return new ContentSafetyClient(new Uri(contentSafetyAnalysisSettings.Endpoint),
+        return new(new(contentSafetyAnalysisSettings.Endpoint),
             new AzureKeyCredential(contentSafetyAnalysisSettings.SubscriptionKey));
     }
 
     private static ImageAnalysisClient CreateImageAnalysisClient(ImageAnalysisSettings imageAnalysisSettings)
     {
-        return new ImageAnalysisClient(new Uri(imageAnalysisSettings.Endpoint),
+        return new(new(imageAnalysisSettings.Endpoint),
             new AzureKeyCredential(imageAnalysisSettings.SubscriptionKey));
     }
 }

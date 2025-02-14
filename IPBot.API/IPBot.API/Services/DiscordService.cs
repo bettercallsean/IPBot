@@ -42,6 +42,8 @@ public class DiscordService(IMapper mapper, IDiscordChannelRepository discordCha
     public async Task<bool> CreateFlaggedUserAsync(FlaggedUserDto dto)
     {
         var flaggedUser = mapper.Map<FlaggedUser>(dto);
+        
+        flaggedUser.FlaggedCount = 1;
 
         return await flaggedUserRepository.AddAsync(flaggedUser);
     }

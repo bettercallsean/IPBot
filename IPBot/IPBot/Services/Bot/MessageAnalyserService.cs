@@ -27,8 +27,7 @@ public partial class MessageAnalyserService(IImageAnalyserService imageAnalyserS
         "image/gif",
         "image/jpeg",
         "image/png",
-        "image/tiff",
-        "video/mp4"
+        "image/tiff"
     ];
 
     public async Task CheckMessageForAnimeAsync(SocketMessage message)
@@ -54,20 +53,21 @@ public partial class MessageAnalyserService(IImageAnalyserService imageAnalyserS
         var flaggedUser = await discordService.GetFlaggedUserAsync(user.Id);
         var userJoined = DateTimeOffset.Now - user.JoinedAt;
 
-        if (flaggedUser is null && userJoined?.Days > 90) return;
+        if (flaggedUser is null && userJoined?.Days > BotConstants.NewUserDaysSinceJoinedLimit) return;
 
         logger.LogInformation("Checking message from {User} in {GuildName}:{ChannelName} for hateful content", user.Username, user.Guild.Name, message.Channel.Name);
 
-        var hatefulContentAnalysis = await GetHatefulImageAnalysisAsync(imageAnalyserService, logger, message, user);
-
+        var hatefulContentAnalysis = await GetHatefulImageAnalysisAsync(message, user);
         var flaggedContentCategories = hatefulContentAnalysis.Where(x => x.Severity > 0).ToList();
 
         if (flaggedContentCategories.Count > 0)
         {
-            logger.LogInformation("Message from {User} in {GuildName}:{ChannelName} deleted for {Category}", user.Username, user.Guild.Name, message.Channel.Name, string.Join(", ", flaggedContentCategories.Select(x => x.Category)));
+            logger.LogInformation("Message from {User} in {GuildName}:{ChannelName} deleted for {Category}. They are on strike {StrikeCount}", 
+                user.Username, user.Guild.Name, message.Channel.Name, string.Join(", ", flaggedContentCategories.Select(x => x.Category)), flaggedUser?.FlaggedCount);
 
             var guildOwner = await user.Guild.GetOwnerAsync();
-            await guildOwner.SendMessageAsync($"Message from {user.Username} in {user.Guild.Name}:{message.Channel.Name} deleted for {string.Join(", ", flaggedContentCategories.Select(x => x.Category))}");
+            await guildOwner.SendMessageAsync($"Message from {user.Username} in {user.Guild.Name}:{message.Channel.Name} deleted for {string.Join(", ", flaggedContentCategories.Select(x => x.Category))}. " +
+                                              $"They are on strike {flaggedUser?.FlaggedCount}");
             await message.DeleteAsync();
 
             if (flaggedUser is not null)
@@ -83,33 +83,29 @@ public partial class MessageAnalyserService(IImageAnalyserService imageAnalyserS
             }
             else
             {
-                await discordService.CreateFlaggedUserAsync(new FlaggedUserDto
+                await discordService.CreateFlaggedUserAsync(new()
                 {
                     UserId = user.Id,
-                    Username = user.Username,
-                    FlaggedCount = 1
+                    Username = user.Username
                 });
             }
         }
     }
 
-    private async Task<List<CategoryAnalysisDto>> GetHatefulImageAnalysisAsync(IImageAnalyserService imageAnalyserService, ILogger<MessageAnalyserService> logger, SocketMessage message, IGuildUser user)
+    private async Task<List<CategoryAnalysisDto>> GetHatefulImageAnalysisAsync(SocketMessage message, IGuildUser user)
     {
-        logger.LogInformation("Checking message from {User} in channel {GuildName}:{ChannelName} for hateful content", user.Username, user.Guild.Name, message.Channel.Name);
-
         var messageMediaModel = GetMessageMediaModel(message.Content);
+
         if (!messageMediaModel.ContainsMedia) return [];
 
         var url = await GetMediaUrlAsync(messageMediaModel, message);
         var encodedUrl = Base64UrlEncoder.Encode(url);
         var hatefulContentAnalysis = await imageAnalyserService.GetContentSafetyAnalysisAsync(encodedUrl);
-        if (hatefulContentAnalysis is null)
-        {
-            logger.LogInformation("Message from {User} in channel {GuildName}:{ChannelName} failed to be analysed for hateful content", user.Username, user.Guild.Name, message.Channel.Name);
-            return [];
-        }
 
-        return hatefulContentAnalysis;
+        if (hatefulContentAnalysis is not null) return hatefulContentAnalysis;
+        
+        logger.LogInformation("Message from {User} in {GuildName}:{ChannelName} failed to be analysed for hateful content", user.Username, user.Guild.Name, message.Channel.Name);
+        return [];
     }
 
     private async Task<string> GetMediaUrlAsync(MessageMediaModel messageMediaModel, SocketMessage message)
@@ -128,11 +124,9 @@ public partial class MessageAnalyserService(IImageAnalyserService imageAnalyserS
                 if (message.Content.Contains("tenor.com") && !_imageFormats.Any(message.Content.Contains))
                     return await tenorApiHelper.GetDirectTenorGifUrlAsync(url);
 
-                var result = await httpClient.SendAsync(new HttpRequestMessage(HttpMethod.Head, url));
-                if (!_httpImageContentTypes.Contains(result.Content.Headers.ContentType.MediaType))
-                    return string.Empty;
-
-                return url;
+                var result = await httpClient.SendAsync(new(HttpMethod.Head, url));
+                
+                return !_httpImageContentTypes.Contains(result.Content.Headers.ContentType.MediaType) ? string.Empty : url;
             }
         }
     }
