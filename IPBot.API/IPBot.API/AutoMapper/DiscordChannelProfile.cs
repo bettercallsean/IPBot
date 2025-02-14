@@ -9,5 +9,7 @@ public class DiscordChannelProfile : Profile
     public DiscordChannelProfile()
     {
         CreateMap<DiscordChannel, DiscordChannelDto>();
+        CreateMap<FlaggedUser, FlaggedUserDto>();
+        CreateMap<FlaggedUserDto, FlaggedUser>();
     }
 }

@@ -19,13 +19,18 @@ public class DiscordService(IRestClient client, BotConfiguration botConfiguratio
         return await GetAsync<bool>($"{BaseUri}/ChannelIsBeingAnalysedForAnime?guildId={guildId}&channelId={channelId}");
     }
 
-    public async Task<bool> UserIsFlaggedAsync(ulong userId)
+    public async Task<FlaggedUserDto> GetFlaggedUserAsync(ulong userId)
     {
-        return await GetAsync<bool>($"{BaseUri}/UserIsFlagged?userId={userId}");
+        return await GetAsync<FlaggedUserDto>($"{BaseUri}/GetFlaggedUser?userId={userId}");
     }
 
     public async Task<bool> UpdateUserFlaggedCountAsync(ulong userId)
     {
         return await GetAsync<bool>($"{BaseUri}/UpdateUserFlaggedCount?userId={userId}");
+    }
+
+    public async Task<bool> CreateFlaggedUserAsync(FlaggedUserDto dto)
+    {
+        return await PostAsync<bool>($"{BaseUri}/CreateFlaggedUser", dto);
     }
 }
