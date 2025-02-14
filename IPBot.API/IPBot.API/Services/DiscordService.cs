@@ -5,7 +5,7 @@ using IPBot.Common.Services;
 
 namespace IPBot.API.Services;
 
-public class DiscordService(IMapper mapper, IDiscordChannelRepository discordChannelRepository) : IDiscordService
+public class DiscordService(IMapper mapper, IDiscordChannelRepository discordChannelRepository, IFlaggedUserRepository flaggedUserRepository) : IDiscordService
 {
     public async Task<List<DiscordChannelDto>> GetInUseDiscordChannelsAsync()
     {
@@ -20,5 +20,21 @@ public class DiscordService(IMapper mapper, IDiscordChannelRepository discordCha
                                                                                 && x.Id == channelId);
 
         return discordChannel?.AnalyseForAnime == true;
+    }
+
+    public async Task<bool> UserIsFlaggedAsync(ulong userId)
+    {
+        var user = await flaggedUserRepository.GetByIdAsync(userId);
+
+        return user is not null;
+    }
+
+    public async Task<bool> UpdateUserFlaggedCountAsync(ulong userId)
+    {
+        var user = await flaggedUserRepository.GetByIdAsync(userId);
+
+        user.FlaggedCount++;
+
+        return await flaggedUserRepository.UpdateAsync(user);
     }
 }

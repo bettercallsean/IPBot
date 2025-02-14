@@ -3,6 +3,7 @@ using IPBot.API.Domain.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace IPBot.API.Domain.Migrations
 {
     [DbContext(typeof(IPBotDbContext))]
-    partial class IPBotDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250214190313_FlaggedUser")]
+    partial class FlaggedUser
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -81,25 +84,6 @@ namespace IPBot.API.Domain.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Domains");
-                });
-
-            modelBuilder.Entity("IPBot.API.Domain.Entities.FlaggedUser", b =>
-                {
-                    b.Property<ulong>("UserId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint unsigned");
-
-                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<ulong>("UserId"));
-
-                    b.Property<uint>("FlaggedCount")
-                        .HasColumnType("int unsigned");
-
-                    b.Property<string>("Username")
-                        .HasColumnType("longtext");
-
-                    b.HasKey("UserId");
-
-                    b.ToTable("FlaggedUsers");
                 });
 
             modelBuilder.Entity("IPBot.API.Domain.Entities.Game", b =>

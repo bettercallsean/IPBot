@@ -40,6 +40,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IGameRepository, GameRepository>();
         services.AddScoped<IDomainRepository, DomainRepository>();
         services.AddScoped<IDiscordChannelRepository, DiscordChannelRepository>();
+        services.AddScoped<IFlaggedUserRepository, FlaggedUserRepository>();
     }
 
     private static void RegisterControllerServices(IServiceCollection services)
