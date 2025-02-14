@@ -2,6 +2,7 @@
 using Discord;
 using IPBot.Common.Dtos;
 using IPBot.Common.Services;
+using IPBot.Helpers;
 using IPBot.Interfaces;
 using Microsoft.IdentityModel.Tokens;
 
@@ -50,12 +51,12 @@ public partial class MessageAnalyserService(IImageAnalyserService imageAnalyserS
     {
         var user = message.Author as IGuildUser;
 
-        var userIsBeingCheckedForHatefulContent = await discordService.UserIsFlaggedAsync(user.Id);
+        var flaggedUser = await discordService.GetFlaggedUserAsync(user.Id);
         var userJoined = DateTimeOffset.Now - user.JoinedAt;
 
-        if (!userIsBeingCheckedForHatefulContent && userJoined?.Days > 90) return;
+        if (flaggedUser is null && userJoined?.Days > 90) return;
 
-        var hatefulContentAnalysis = await GetHatefulImageAnalysis(imageAnalyserService, logger, message, user);
+        var hatefulContentAnalysis = await GetHatefulImageAnalysisAsync(imageAnalyserService, logger, message, user);
 
         var flaggedContentCategories = hatefulContentAnalysis.Where(x => x.Severity > 0).ToList();
 
@@ -66,11 +67,31 @@ public partial class MessageAnalyserService(IImageAnalyserService imageAnalyserS
             var guildOwner = await user.Guild.GetOwnerAsync();
             await guildOwner.SendMessageAsync($"Message from {user.Username} in channel {user.Guild.Name}:{message.Channel.Name} deleted for {string.Join(", ", flaggedContentCategories.Select(x => x.Category))}");
             await message.DeleteAsync();
-            await discordService.UpdateUserFlaggedCountAsync(user.Id);
+
+            if (flaggedUser is not null)
+            {
+                if (flaggedUser.FlaggedCount >= BotConstants.MaxHatefulImageFlaggedCount)
+                {
+                    if (DebugHelper.IsDebug()) return;
+
+                    await user.BanAsync();
+                }
+                else
+                    await discordService.UpdateUserFlaggedCountAsync(user.Id);
+            }
+            else
+            {
+                await discordService.CreateFlaggedUserAsync(new FlaggedUserDto
+                {
+                    UserId = user.Id,
+                    Username = user.Username,
+                    FlaggedCount = 1
+                });
+            }
         }
     }
 
-    private async Task<List<CategoryAnalysisDto>> GetHatefulImageAnalysis(IImageAnalyserService imageAnalyserService, ILogger<MessageAnalyserService> logger, SocketMessage message, IGuildUser user)
+    private async Task<List<CategoryAnalysisDto>> GetHatefulImageAnalysisAsync(IImageAnalyserService imageAnalyserService, ILogger<MessageAnalyserService> logger, SocketMessage message, IGuildUser user)
     {
         logger.LogInformation("Checking message from {User} in channel {GuildName}:{ChannelName} for hateful content", user.Username, user.Guild.Name, message.Channel.Name);
 
