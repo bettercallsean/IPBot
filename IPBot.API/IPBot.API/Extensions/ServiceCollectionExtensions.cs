@@ -48,7 +48,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IGameService, GameService>();
         services.AddScoped<IIPService, IPService>();
         services.AddScoped<IDiscordService, DiscordService>();
-        services.AddScoped<IAnimeAnalyserService, AnimeAnalyserService>();
+        services.AddScoped<IImageAnalyserService, ImageAnalyserService>();
     }
 
     private static void RegisterAutoMapperProfiles(IServiceCollection services)
