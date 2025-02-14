@@ -37,6 +37,8 @@ public class StartupService(ILogger<StartupService> logger, BotConfiguration bot
 
     private async Task OnMessageReceivedAsync(SocketMessage arg)
     {
+        if (arg.Author.IsBot) return;
+
         await messageAnalyserService.CheckMessageForAnimeAsync(arg);
         await messageAnalyserService.CheckMessageForHatefulContentAsync(arg);
     }

@@ -1,5 +1,6 @@
 ﻿using System.Text.RegularExpressions;
 using Discord;
+using IPBot.Common.Dtos;
 using IPBot.Common.Services;
 using IPBot.Interfaces;
 using Microsoft.IdentityModel.Tokens;
@@ -34,7 +35,7 @@ public partial class MessageAnalyserService(IImageAnalyserService imageAnalyserS
         var user = message.Author as IGuildUser;
         var channelIsBeingAnalysedForAnime = await discordService.ChannelIsBeingAnalysedForAnimeAsync(user.Guild.Id, message.Channel.Id);
 
-        if (channelIsBeingAnalysedForAnime && !message.Author.IsBot)
+        if (channelIsBeingAnalysedForAnime)
         {
             logger.LogInformation("Checking message from {User} in channel {ChannelName} for anime", user.Username, message.Channel.Name);
             if (await MessageContainsAnimeAsync(message))
@@ -54,20 +55,7 @@ public partial class MessageAnalyserService(IImageAnalyserService imageAnalyserS
 
         if (!userIsBeingCheckedForHatefulContent && userJoined?.Days > 90) return;
 
-        logger.LogInformation("Checking message from {User} in channel {GuildName}:{ChannelName} for hateful content", user.Username, user.Guild.Name, message.Channel.Name);
-
-        var messageMediaModel = GetMessageMediaModel(message.Content);
-        if (!messageMediaModel.ContainsMedia) return;
-
-        var url = await GetMediaUrlAsync(messageMediaModel, message);
-        var encodedUrl = Base64UrlEncoder.Encode(url);
-        var hatefulContentAnalysis = await imageAnalyserService.GetContentSafetyAnalysisAsync(encodedUrl);
-
-        if (hatefulContentAnalysis is null)
-        {
-            logger.LogInformation("Message from {User} in channel {GuildName}:{ChannelName} failed to be analysed for hateful content", user.Username, user.Guild.Name, message.Channel.Name);
-            return;
-        }
+        var hatefulContentAnalysis = await GetHatefulImageAnalysis(imageAnalyserService, logger, message, user);
 
         var flaggedContentCategories = hatefulContentAnalysis.Where(x => x.Severity > 0).ToList();
 
@@ -75,9 +63,30 @@ public partial class MessageAnalyserService(IImageAnalyserService imageAnalyserS
         {
             logger.LogInformation("Message from {User} in channel {GuildName}:{ChannelName} deleted for {Category}", user.Username, user.Guild.Name, message.Channel.Name, string.Join(", ", flaggedContentCategories.Select(x => x.Category)));
 
+            var guildOwner = await user.Guild.GetOwnerAsync();
+            await guildOwner.SendMessageAsync($"Message from {user.Username} in channel {user.Guild.Name}:{message.Channel.Name} deleted for {string.Join(", ", flaggedContentCategories.Select(x => x.Category))}");
             await message.DeleteAsync();
             await discordService.UpdateUserFlaggedCountAsync(user.Id);
         }
+    }
+
+    private async Task<List<CategoryAnalysisDto>> GetHatefulImageAnalysis(IImageAnalyserService imageAnalyserService, ILogger<MessageAnalyserService> logger, SocketMessage message, IGuildUser user)
+    {
+        logger.LogInformation("Checking message from {User} in channel {GuildName}:{ChannelName} for hateful content", user.Username, user.Guild.Name, message.Channel.Name);
+
+        var messageMediaModel = GetMessageMediaModel(message.Content);
+        if (!messageMediaModel.ContainsMedia) return [];
+
+        var url = await GetMediaUrlAsync(messageMediaModel, message);
+        var encodedUrl = Base64UrlEncoder.Encode(url);
+        var hatefulContentAnalysis = await imageAnalyserService.GetContentSafetyAnalysisAsync(encodedUrl);
+        if (hatefulContentAnalysis is null)
+        {
+            logger.LogInformation("Message from {User} in channel {GuildName}:{ChannelName} failed to be analysed for hateful content", user.Username, user.Guild.Name, message.Channel.Name);
+            return [];
+        }
+
+        return hatefulContentAnalysis;
     }
 
     private async Task<string> GetMediaUrlAsync(MessageMediaModel messageMediaModel, SocketMessage message)
