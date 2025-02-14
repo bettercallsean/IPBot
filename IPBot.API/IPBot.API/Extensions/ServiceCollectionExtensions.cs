@@ -40,6 +40,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IGameRepository, GameRepository>();
         services.AddScoped<IDomainRepository, DomainRepository>();
         services.AddScoped<IDiscordChannelRepository, DiscordChannelRepository>();
+        services.AddScoped<IFlaggedUserRepository, FlaggedUserRepository>();
     }
 
     private static void RegisterControllerServices(IServiceCollection services)
@@ -48,7 +49,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IGameService, GameService>();
         services.AddScoped<IIPService, IPService>();
         services.AddScoped<IDiscordService, DiscordService>();
-        services.AddScoped<IAnimeAnalyserService, AnimeAnalyserService>();
+        services.AddScoped<IImageAnalyserService, ImageAnalyserService>();
     }
 
     private static void RegisterAutoMapperProfiles(IServiceCollection services)

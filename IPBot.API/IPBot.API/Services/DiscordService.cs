@@ -1,11 +1,12 @@
 using AutoMapper;
+using IPBot.API.Domain.Entities;
 using IPBot.API.Domain.Interfaces;
 using IPBot.Common.Dtos;
 using IPBot.Common.Services;
 
 namespace IPBot.API.Services;
 
-public class DiscordService(IMapper mapper, IDiscordChannelRepository discordChannelRepository) : IDiscordService
+public class DiscordService(IMapper mapper, IDiscordChannelRepository discordChannelRepository, IFlaggedUserRepository flaggedUserRepository) : IDiscordService
 {
     public async Task<List<DiscordChannelDto>> GetInUseDiscordChannelsAsync()
     {
@@ -20,5 +21,28 @@ public class DiscordService(IMapper mapper, IDiscordChannelRepository discordCha
                                                                                 && x.Id == channelId);
 
         return discordChannel?.AnalyseForAnime == true;
+    }
+
+    public async Task<FlaggedUserDto> GetFlaggedUserAsync(ulong userId)
+    {
+        var user = await flaggedUserRepository.GetByIdAsync(userId);
+
+        return mapper.Map<FlaggedUserDto>(user);
+    }
+
+    public async Task<bool> UpdateUserFlaggedCountAsync(ulong userId)
+    {
+        var user = await flaggedUserRepository.GetByIdAsync(userId);
+
+        user.FlaggedCount++;
+
+        return await flaggedUserRepository.UpdateAsync(user);
+    }
+
+    public async Task<bool> CreateFlaggedUserAsync(FlaggedUserDto dto)
+    {
+        var flaggedUser = mapper.Map<FlaggedUser>(dto);
+
+        return await flaggedUserRepository.AddAsync(flaggedUser);
     }
 }
