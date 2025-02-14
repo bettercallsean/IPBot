@@ -8,7 +8,8 @@ namespace IPBot.API.Controllers;
 [Authorize]
 public class ImageAnalyserController(IImageAnalyserService animeAnalyserService) : MainController
 {
-    [HttpGet("/Anime/{encodedUrl}")]
+    [HttpGet("{encodedUrl}")]
+    [ResponseCache(Duration = 60, Location = ResponseCacheLocation.Any, NoStore = false)]
     public async Task<ActionResult<double>> GetAnimeScoreAsync(string encodedUrl)
     {
         try
@@ -22,13 +23,14 @@ public class ImageAnalyserController(IImageAnalyserService animeAnalyserService)
         }
     }
 
-    [HttpGet("/ContentSafety/{encodedUrl}")]
-    public async Task<ActionResult<List<CategoryAnalysisDto>>> GetContentSafetyScoreAsync(string encodedUrl)
+    [HttpGet("{encodedUrl}")]
+    [ResponseCache(Duration = 60, Location = ResponseCacheLocation.Any, NoStore = false)]
+    public async Task<ActionResult<List<CategoryAnalysisDto>>> GetContentSafetyAnalysisAsync(string encodedUrl)
     {
         try
         {
             var decodedUrl = Base64UrlEncoder.Decode(encodedUrl);
-            return Ok(await animeAnalyserService.GetContentSafetyScoreAsync(decodedUrl));
+            return Ok(await animeAnalyserService.GetContentSafetyAnalysisAsync(decodedUrl));
         }
         catch (Exception ex)
         {
