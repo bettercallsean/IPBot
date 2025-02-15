@@ -62,7 +62,7 @@ public partial class MessageAnalyserService(IImageAnalyserService imageAnalyserS
 
         if (flaggedContentCategories.Count > 0)
         {
-            logger.LogInformation("Message from {User} in {GuildName}:{ChannelName} deleted for {Category}. They are on strike {StrikeCount}", 
+            logger.LogInformation("Message from {User} in {GuildName}:{ChannelName} deleted for {Category}. They are on strike {StrikeCount}",
                 user.Username, user.Guild.Name, message.Channel.Name, string.Join(", ", flaggedContentCategories.Select(x => x.Category)), flaggedUser?.FlaggedCount);
 
             var guildOwner = await user.Guild.GetOwnerAsync();
@@ -76,7 +76,7 @@ public partial class MessageAnalyserService(IImageAnalyserService imageAnalyserS
                 {
                     if (DebugHelper.IsDebug()) return;
 
-                    await user.BanAsync();
+                    await user.BanAsync(reason: $"Banned for posting hateful content. Categories: {string.Join(", ", flaggedContentCategories.Select(x => x.Category))}");
                 }
                 else
                     await discordService.UpdateUserFlaggedCountAsync(user.Id);
@@ -103,7 +103,7 @@ public partial class MessageAnalyserService(IImageAnalyserService imageAnalyserS
         var hatefulContentAnalysis = await imageAnalyserService.GetContentSafetyAnalysisAsync(encodedUrl);
 
         if (hatefulContentAnalysis is not null) return hatefulContentAnalysis;
-        
+
         logger.LogInformation("Message from {User} in {GuildName}:{ChannelName} failed to be analysed for hateful content", user.Username, user.Guild.Name, message.Channel.Name);
         return [];
     }
@@ -125,7 +125,7 @@ public partial class MessageAnalyserService(IImageAnalyserService imageAnalyserS
                     return await tenorApiHelper.GetDirectTenorGifUrlAsync(url);
 
                 var result = await httpClient.SendAsync(new(HttpMethod.Head, url));
-                
+
                 return !_httpImageContentTypes.Contains(result.Content.Headers.ContentType.MediaType) ? string.Empty : url;
             }
         }
