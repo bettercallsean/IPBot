@@ -42,9 +42,22 @@ public class DiscordService(IMapper mapper, IDiscordChannelRepository discordCha
     public async Task<bool> CreateFlaggedUserAsync(FlaggedUserDto dto)
     {
         var flaggedUser = mapper.Map<FlaggedUser>(dto);
-        
+
         flaggedUser.FlaggedCount = 1;
 
         return await flaggedUserRepository.AddAsync(flaggedUser);
+    }
+
+    public async Task<List<FlaggedUserDto>> GetFlaggedUsersAsync()
+    {
+        var users = await flaggedUserRepository.GetAllAsync();
+
+        return mapper.Map<List<FlaggedUserDto>>(users);
+    }
+
+    public async Task<bool> DeleteFlaggedUserAsync(ulong userId)
+    {
+        var user = await flaggedUserRepository.GetByIdAsync(userId);
+        return await flaggedUserRepository.DeleteAsync(user);
     }
 }

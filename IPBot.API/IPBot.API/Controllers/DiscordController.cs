@@ -50,7 +50,6 @@ public class DiscordController(IDiscordService discordService) : MainController
     }
 
     [HttpGet]
-    [ResponseCache(Duration = 300, Location = ResponseCacheLocation.Any, NoStore = false)]
     public async Task<ActionResult<bool>> UpdateUserFlaggedCountAsync(ulong userId)
     {
         try
@@ -64,12 +63,38 @@ public class DiscordController(IDiscordService discordService) : MainController
     }
 
     [HttpPost]
-    [ResponseCache(Duration = 300, Location = ResponseCacheLocation.Any, NoStore = false)]
     public async Task<ActionResult<bool>> CreateFlaggedUserAsync(FlaggedUserDto dto)
     {
         try
         {
             return Ok(await discordService.CreateFlaggedUserAsync(dto));
+        }
+        catch (Exception ex)
+        {
+            return Problem("500", ex.Message);
+        }
+    }
+
+    [HttpGet]
+    [ResponseCache(Duration = 300, Location = ResponseCacheLocation.Any, NoStore = false)]
+    public async Task<ActionResult<bool>> GetFlaggedUsersAsync()
+    {
+        try
+        {
+            return Ok(await discordService.GetFlaggedUsersAsync());
+        }
+        catch (Exception ex)
+        {
+            return Problem("500", ex.Message);
+        }
+    }
+
+    [HttpGet]
+    public async Task<ActionResult<bool>> DeleteFlaggedUserAsync(ulong userId)
+    {
+        try
+        {
+            return Ok(await discordService.DeleteFlaggedUserAsync(userId));
         }
         catch (Exception ex)
         {

@@ -42,14 +42,17 @@ public class BaseRepository<T> : IBaseRepository<T> where T : class
     }
 
     public async Task<bool> AddAsync(T entity)
-    { 
+    {
+        if (await _ipBotDataContext.Set<T>().ContainsAsync(entity))
+            return false;
+
         await _ipBotDataContext.Set<T>().AddAsync(entity);
         return await _ipBotDataContext.SaveChangesAsync() > 0;
     }
 
     public async Task<bool> UpdateAsync(T entity)
     {
-        _ipBotDataContext.Set<T>().Attach(entity).State = EntityState.Modified; 
+        _ipBotDataContext.Set<T>().Attach(entity).State = EntityState.Modified;
         return await _ipBotDataContext.SaveChangesAsync() > 0;
     }
 
