@@ -58,6 +58,7 @@ public class DiscordService(IMapper mapper, IDiscordChannelRepository discordCha
     public async Task<bool> DeleteFlaggedUserAsync(ulong userId)
     {
         var user = await flaggedUserRepository.GetByIdAsync(userId);
+
         return await flaggedUserRepository.DeleteAsync(user);
     }
 }
