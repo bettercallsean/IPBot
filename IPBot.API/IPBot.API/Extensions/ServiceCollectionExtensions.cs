@@ -9,28 +9,24 @@ namespace IPBot.API.Extensions;
 
 public static class ServiceCollectionExtensions
 {
-    public static IServiceCollection RegisterServices(this IServiceCollection services)
+    public static void RegisterServices(this IServiceCollection services)
     {
         RegisterDataServices(services);
         RegisterControllerServices(services);
         RegisterAutoMapperProfiles(services);
-
-        return services;
     }
 
-    public static IServiceCollection RegisterHttpClients(this IServiceCollection services)
+    public static void RegisterHttpClients(this IServiceCollection services)
     {
         services.AddHttpClient(KeyedHttpClientNames.LocalIPClient, c =>
         {
-            c.BaseAddress = new Uri("https://api.ipify.org");
+            c.BaseAddress = new("https://api.ipify.org");
         });
 
         services.AddHttpClient(KeyedHttpClientNames.MinecraftServerClient, c =>
         {
-            c.BaseAddress = new Uri("https://api.mcstatus.io/v2");
+            c.BaseAddress = new("https://api.mcstatus.io/v2");
         });
-
-        return services;
     }
 
     private static void RegisterDataServices(IServiceCollection services)
@@ -60,6 +56,7 @@ public static class ServiceCollectionExtensions
             config.AddProfile<GameServerProfile>();
             config.AddProfile<DiscordChannelProfile>();
             config.AddProfile<GameServerInfoProfile>();
+            config.AddProfile<FlaggedUserProfile>();
         });
     }
 }

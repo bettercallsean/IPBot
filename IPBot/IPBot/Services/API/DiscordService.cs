@@ -33,4 +33,14 @@ public class DiscordService(IRestClient client, BotConfiguration botConfiguratio
     {
         return await PostAsync<bool>($"{BaseUri}/CreateFlaggedUser", dto);
     }
+
+    public async Task<List<FlaggedUserDto>> GetFlaggedUsersAsync()
+    {
+        return await GetAsync<List<FlaggedUserDto>>($"{BaseUri}/GetFlaggedUsers");
+    }
+
+    public async Task<bool> DeleteFlaggedUserAsync(ulong userId)
+    {
+        return await GetAsync<bool>($"{BaseUri}/DeleteFlaggedUser?userId={userId}");
+    }
 }

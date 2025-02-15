@@ -9,4 +9,6 @@ public interface IDiscordService
     Task<FlaggedUserDto> GetFlaggedUserAsync(ulong userId);
     Task<bool> UpdateUserFlaggedCountAsync(ulong userId);
     Task<bool> CreateFlaggedUserAsync(FlaggedUserDto dto);
+    Task<List<FlaggedUserDto>> GetFlaggedUsersAsync();
+    Task<bool> DeleteFlaggedUserAsync(ulong userId);
 }
