@@ -58,18 +58,14 @@ public partial class MessageAnalyserService(IImageAnalyserService imageAnalyserS
 
         if (flaggedContentCategories.Count == 0) return;
 
-        logger.LogInformation("Message from {User} in {GuildName}:{ChannelName} deleted for {Category}. They are on strike {StrikeCount}",
-            user.Username, user.Guild.Name, message.Channel.Name, string.Join(", ", flaggedContentCategories.Select(x => x.Category)), flaggedUser?.FlaggedCount);
+        var hateCategories = string.Join(", ", flaggedContentCategories.Select(x => x.Category).Distinct());
 
-        var guildOwner = await user.Guild.GetOwnerAsync();
-        await guildOwner.SendMessageAsync($"Message from {user.Username} in {user.Guild.Name}:{message.Channel.Name} deleted for {string.Join(", ", flaggedContentCategories.Select(x => x.Category))}. " +
-                                          $"They are on strike {flaggedUser?.FlaggedCount}");
         await message.DeleteAsync();
 
         if (flaggedUser is not null)
         {
             if (flaggedUser.FlaggedCount >= BotConstants.MaxHatefulImageFlaggedCount && !DebugHelper.IsDebug())
-                await user.BanAsync(reason: $"Banned for posting hateful content. Categories: {string.Join(", ", flaggedContentCategories.Select(x => x.Category))}");
+                await user.BanAsync(reason: $"Banned for posting hateful content. Categories: {hateCategories}");
             else
                 await discordService.UpdateUserFlaggedCountAsync(user.Id);
         }
@@ -81,6 +77,15 @@ public partial class MessageAnalyserService(IImageAnalyserService imageAnalyserS
                 Username = user.Username
             });
         }
+
+        flaggedUser = await discordService.GetFlaggedUserAsync(user.Id);
+
+        var guildOwner = await user.Guild.GetOwnerAsync();
+        await guildOwner.SendMessageAsync($"Message from {user.Username} in {user.Guild.Name}:{message.Channel.Name} deleted for {hateCategories}. " +
+                                          $"They are on strike {flaggedUser?.FlaggedCount}");
+
+        logger.LogInformation("Message from {User} in {GuildName}:{ChannelName} deleted for {Category}. They are on strike {StrikeCount}",
+            user.Username, user.Guild.Name, message.Channel.Name, hateCategories, flaggedUser?.FlaggedCount);
     }
 
     private async Task<List<CategoryAnalysisDto>> GetHatefulImageAnalysisAsync(SocketMessage message)
@@ -99,7 +104,10 @@ public partial class MessageAnalyserService(IImageAnalyserService imageAnalyserS
             var analysisDtos = await imageAnalyserService.GetContentSafetyAnalysisAsync(encodedUrl);
 
             if (analysisDtos is not null)
+            {
+                logger.LogInformation("{ContentUrl} analysed", url);
                 hatefulContentAnalysis.AddRange(analysisDtos);
+            }
             else
                 logger.LogError("{ContentUrl} in {GuildName}:{ChannelName} failed to be analysed for hateful content", url, user.Guild.Name, message.Channel.Name);
         }
