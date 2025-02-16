@@ -60,8 +60,8 @@ public partial class MessageAnalyserService(IImageAnalyserService imageAnalyserS
         var hatefulContentAnalysis = await GetHatefulImageAnalysisAsync(message, user);
         var flaggedContentCategories = hatefulContentAnalysis.Where(x => x.Severity > 0).ToList();
 
-        if (flaggedContentCategories.Count > 0)
-        {
+        if (flaggedContentCategories.Count == 0) return;
+
             logger.LogInformation("Message from {User} in {GuildName}:{ChannelName} deleted for {Category}. They are on strike {StrikeCount}",
                 user.Username, user.Guild.Name, message.Channel.Name, string.Join(", ", flaggedContentCategories.Select(x => x.Category)), flaggedUser?.FlaggedCount);
 
@@ -72,10 +72,7 @@ public partial class MessageAnalyserService(IImageAnalyserService imageAnalyserS
 
             if (flaggedUser is not null)
             {
-                if (flaggedUser.FlaggedCount >= BotConstants.MaxHatefulImageFlaggedCount)
-                {
-                    if (DebugHelper.IsDebug()) return;
-
+            if (flaggedUser.FlaggedCount >= BotConstants.MaxHatefulImageFlaggedCount && !DebugHelper.IsDebug())
                     await user.BanAsync(reason: $"Banned for posting hateful content. Categories: {string.Join(", ", flaggedContentCategories.Select(x => x.Category))}");
                 }
                 else
@@ -98,13 +95,17 @@ public partial class MessageAnalyserService(IImageAnalyserService imageAnalyserS
 
         if (!messageMediaModel.ContainsMedia) return [];
 
+        logger.LogInformation("Checking message from {User} in {GuildName}:{ChannelName} for hateful content", user.Username, user.Guild.Name, message.Channel.Name);
+
         var url = await GetMediaUrlAsync(messageMediaModel, message);
         var encodedUrl = Base64UrlEncoder.Encode(url);
+
         var hatefulContentAnalysis = await imageAnalyserService.GetContentSafetyAnalysisAsync(encodedUrl);
 
         if (hatefulContentAnalysis is not null) return hatefulContentAnalysis;
 
-        logger.LogInformation("Message from {User} in {GuildName}:{ChannelName} failed to be analysed for hateful content", user.Username, user.Guild.Name, message.Channel.Name);
+        logger.LogError("Message from {User} in {GuildName}:{ChannelName} failed to be analysed for hateful content", user.Username, user.Guild.Name, message.Channel.Name);
+
         return [];
     }
 
@@ -126,7 +127,7 @@ public partial class MessageAnalyserService(IImageAnalyserService imageAnalyserS
 
                 var result = await httpClient.SendAsync(new(HttpMethod.Head, url));
 
-                return !_httpImageContentTypes.Contains(result.Content.Headers.ContentType.MediaType) ? string.Empty : url;
+                return _httpImageContentTypes.Contains(result.Content.Headers.ContentType.MediaType) ? url : string.Empty;
             }
         }
     }
