@@ -35,14 +35,12 @@ public partial class MessageAnalyserService(IImageAnalyserService imageAnalyserS
         var user = message.Author as IGuildUser;
         var channelIsBeingAnalysedForAnime = await discordService.ChannelIsBeingAnalysedForAnimeAsync(user.Guild.Id, message.Channel.Id);
 
-        if (channelIsBeingAnalysedForAnime)
+        if (!channelIsBeingAnalysedForAnime) return;
+
+        if (await MessageContainsAnimeAsync(message))
         {
-            logger.LogInformation("Checking message from {User} in channel {ChannelName} for anime", user.Username, message.Channel.Name);
-            if (await MessageContainsAnimeAsync(message))
-            {
-                await message.DeleteAsync();
-                await message.Channel.SendMessageAsync(_responseList[Random.Shared.Next(_responseList.Count)]);
-            }
+            await message.DeleteAsync();
+            await message.Channel.SendMessageAsync(_responseList[Random.Shared.Next(_responseList.Count)]);
         }
     }
 
@@ -55,37 +53,33 @@ public partial class MessageAnalyserService(IImageAnalyserService imageAnalyserS
 
         if (flaggedUser is null && userJoined?.Days > BotConstants.NewUserDaysSinceJoinedLimit) return;
 
-        logger.LogInformation("Checking message from {User} in {GuildName}:{ChannelName} for hateful content", user.Username, user.Guild.Name, message.Channel.Name);
-
         var hatefulContentAnalysis = await GetHatefulImageAnalysisAsync(message, user);
         var flaggedContentCategories = hatefulContentAnalysis.Where(x => x.Severity > 0).ToList();
 
         if (flaggedContentCategories.Count == 0) return;
 
-            logger.LogInformation("Message from {User} in {GuildName}:{ChannelName} deleted for {Category}. They are on strike {StrikeCount}",
-                user.Username, user.Guild.Name, message.Channel.Name, string.Join(", ", flaggedContentCategories.Select(x => x.Category)), flaggedUser?.FlaggedCount);
+        logger.LogInformation("Message from {User} in {GuildName}:{ChannelName} deleted for {Category}. They are on strike {StrikeCount}",
+            user.Username, user.Guild.Name, message.Channel.Name, string.Join(", ", flaggedContentCategories.Select(x => x.Category)), flaggedUser?.FlaggedCount);
 
-            var guildOwner = await user.Guild.GetOwnerAsync();
-            await guildOwner.SendMessageAsync($"Message from {user.Username} in {user.Guild.Name}:{message.Channel.Name} deleted for {string.Join(", ", flaggedContentCategories.Select(x => x.Category))}. " +
-                                              $"They are on strike {flaggedUser?.FlaggedCount}");
-            await message.DeleteAsync();
+        var guildOwner = await user.Guild.GetOwnerAsync();
+        await guildOwner.SendMessageAsync($"Message from {user.Username} in {user.Guild.Name}:{message.Channel.Name} deleted for {string.Join(", ", flaggedContentCategories.Select(x => x.Category))}. " +
+                                          $"They are on strike {flaggedUser?.FlaggedCount}");
+        await message.DeleteAsync();
 
-            if (flaggedUser is not null)
-            {
+        if (flaggedUser is not null)
+        {
             if (flaggedUser.FlaggedCount >= BotConstants.MaxHatefulImageFlaggedCount && !DebugHelper.IsDebug())
-                    await user.BanAsync(reason: $"Banned for posting hateful content. Categories: {string.Join(", ", flaggedContentCategories.Select(x => x.Category))}");
-                }
-                else
-                    await discordService.UpdateUserFlaggedCountAsync(user.Id);
-            }
+                await user.BanAsync(reason: $"Banned for posting hateful content. Categories: {string.Join(", ", flaggedContentCategories.Select(x => x.Category))}");
             else
+                await discordService.UpdateUserFlaggedCountAsync(user.Id);
+        }
+        else
+        {
+            await discordService.CreateFlaggedUserAsync(new()
             {
-                await discordService.CreateFlaggedUserAsync(new()
-                {
-                    UserId = user.Id,
-                    Username = user.Username
-                });
-            }
+                UserId = user.Id,
+                Username = user.Username
+            });
         }
     }
 
@@ -134,35 +128,37 @@ public partial class MessageAnalyserService(IImageAnalyserService imageAnalyserS
 
     private async Task<bool> MessageContainsAnimeAsync(SocketMessage message)
     {
-        double animeScore;
+        var contentUrls = new List<string>();
+
         if (!string.IsNullOrEmpty(message.Content))
         {
             var messageMediaModel = GetMessageMediaModel(message.Content);
-            if (!messageMediaModel.ContainsMedia) return false;
+            if (messageMediaModel.ContainsMedia)
+            {
+                var url = await GetMediaUrlAsync(messageMediaModel, message);
 
-            var url = await GetMediaUrlAsync(messageMediaModel, message);
+                if (!string.IsNullOrEmpty(url))
+                    contentUrls.Add(url);
+            }
+        }
 
-            if (string.IsNullOrEmpty(url)) return false;
+        if (message.Attachments.Count > 0)
+            contentUrls.AddRange(message.Attachments.Select(x => x.ProxyUrl));
 
-            animeScore = await GetAnimeScoreAsync(url);
+        if (contentUrls.Count == 0) return false;
+
+        var user = message.Author as IGuildUser;
+        logger.LogInformation("Checking message from {User} in {GuildName}:{ChannelName} for anime", user.Username, user.Guild.Name, message.Channel.Name);
+
+        foreach (var url in contentUrls)
+        {
+            var animeScore = await GetAnimeScoreAsync(url);
 
             logger.LogInformation("Anime score: {Score}", animeScore);
 
-            if (animeScore >= BotConstants.AnimeScoreTolerance) return true;
-        }
+            if (animeScore < BotConstants.AnimeScoreTolerance) continue;
 
-        if (message.Attachments.Count <= 0) return false;
-        {
-            foreach (var attachment in message.Attachments)
-            {
-                animeScore = await GetAnimeScoreAsync(attachment.ProxyUrl);
-
-                logger.LogInformation("Anime score: {Score}", animeScore);
-
-                if (animeScore < BotConstants.AnimeScoreTolerance) continue;
-
-                return true;
-            }
+            return true;
         }
 
         return false;
