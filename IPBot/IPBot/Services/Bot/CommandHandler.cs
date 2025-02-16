@@ -18,8 +18,8 @@ public class CommandHandler(ILogger<CommandHandler> logger, IServiceProvider ser
     private Task ButtonExecuted(SocketMessageComponent arg)
     {
         var user = arg.User as SocketGuildUser;
-        logger.LogInformation("{UserName}:{Discriminator} ({UserId}) clicked button {ButtonName} in {GuildId} - {ChannelId}",
-            user.Username, user.DiscriminatorValue, user.Id, arg.Data.CustomId, user.Guild.Name, arg.Channel.Name);
+        logger.LogInformation("{UserName} ({UserId}) clicked button {ButtonName} in {GuildName}:{ChannelName}",
+            user.Username, user.Id, arg.Data.CustomId, user.Guild.Name, arg.Channel.Name);
 
         return Task.CompletedTask;
     }
@@ -27,8 +27,8 @@ public class CommandHandler(ILogger<CommandHandler> logger, IServiceProvider ser
     private Task SelectMenuExecuted(SocketMessageComponent arg)
     {
         var user = arg.User as SocketGuildUser;
-        logger.LogInformation("{UserName}:{Discriminator} ({UserId}) clicked menu {MenuName} in {GuildId} - {ChannelId}. Selected Values: {Selection}",
-            user.Username, user.DiscriminatorValue, user.Id, arg.Data.CustomId, user.Guild.Name, arg.Channel.Name, string.Join(",", arg.Data.Values));
+        logger.LogInformation("{UserName} ({UserId}) clicked menu {MenuName} in {GuildName}:{ChannelName}. Selected Values: {Selection}",
+            user.Username, user.Id, arg.Data.CustomId, user.Guild.Name, arg.Channel.Name, string.Join(",", arg.Data.Values));
 
         return Task.CompletedTask;
     }
@@ -36,8 +36,8 @@ public class CommandHandler(ILogger<CommandHandler> logger, IServiceProvider ser
     private Task SlashCommandExecuted(SocketSlashCommand arg)
     {
         var user = arg.User as SocketGuildUser;
-        logger.LogInformation("{UserName}:{Discriminator} ({UserId}) called command '{CommandName}' in {GuildId} - {ChannelId}",
-            user.Username, user.DiscriminatorValue, user.Id, arg.CommandName, user.Guild.Name, arg.Channel.Name);
+        logger.LogInformation("{UserName} ({UserId}) called command '{CommandName}' in {GuildName}:{ChannelName}",
+            user.Username, user.Id, arg.CommandName, user.Guild.Name, arg.Channel.Name);
 
         return Task.CompletedTask;
     }
