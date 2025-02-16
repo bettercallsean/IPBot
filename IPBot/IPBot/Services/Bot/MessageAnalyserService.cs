@@ -53,7 +53,7 @@ public partial class MessageAnalyserService(IImageAnalyserService imageAnalyserS
 
         if (flaggedUser is null && userJoined?.Days > BotConstants.NewUserDaysSinceJoinedLimit) return;
 
-        var hatefulContentAnalysis = await GetHatefulImageAnalysisAsync(message, user);
+        var hatefulContentAnalysis = await GetHatefulImageAnalysisAsync(message);
         var flaggedContentCategories = hatefulContentAnalysis.Where(x => x.Severity > 0).ToList();
 
         if (flaggedContentCategories.Count == 0) return;
@@ -83,24 +83,28 @@ public partial class MessageAnalyserService(IImageAnalyserService imageAnalyserS
         }
     }
 
-    private async Task<List<CategoryAnalysisDto>> GetHatefulImageAnalysisAsync(SocketMessage message, IGuildUser user)
+    private async Task<List<CategoryAnalysisDto>> GetHatefulImageAnalysisAsync(SocketMessage message)
     {
-        var messageMediaModel = GetMessageMediaModel(message.Content);
+        var contentUrls = await GetContentUrlsAsync(message);
+        if (contentUrls.Count == 0) return [];
 
-        if (!messageMediaModel.ContainsMedia) return [];
-
+        var user = message.Author as IGuildUser;
         logger.LogInformation("Checking message from {User} in {GuildName}:{ChannelName} for hateful content", user.Username, user.Guild.Name, message.Channel.Name);
 
-        var url = await GetMediaUrlAsync(messageMediaModel, message);
-        var encodedUrl = Base64UrlEncoder.Encode(url);
+        var hatefulContentAnalysis = new List<CategoryAnalysisDto>();
+        foreach (var url in contentUrls)
+        {
+            var encodedUrl = Base64UrlEncoder.Encode(url);
 
-        var hatefulContentAnalysis = await imageAnalyserService.GetContentSafetyAnalysisAsync(encodedUrl);
+            var analysisDtos = await imageAnalyserService.GetContentSafetyAnalysisAsync(encodedUrl);
 
-        if (hatefulContentAnalysis is not null) return hatefulContentAnalysis;
+            if (analysisDtos is not null)
+                hatefulContentAnalysis.AddRange(analysisDtos);
+            else
+                logger.LogError("{ContentUrl} in {GuildName}:{ChannelName} failed to be analysed for hateful content", url, user.Guild.Name, message.Channel.Name);
+        }
 
-        logger.LogError("Message from {User} in {GuildName}:{ChannelName} failed to be analysed for hateful content", user.Username, user.Guild.Name, message.Channel.Name);
-
-        return [];
+        return hatefulContentAnalysis;
     }
 
     private async Task<string> GetMediaUrlAsync(MessageMediaModel messageMediaModel, SocketMessage message)
@@ -126,7 +130,7 @@ public partial class MessageAnalyserService(IImageAnalyserService imageAnalyserS
         }
     }
 
-    private async Task<bool> MessageContainsAnimeAsync(SocketMessage message)
+    private async Task<List<string>> GetContentUrlsAsync(SocketMessage message)
     {
         var contentUrls = new List<string>();
 
@@ -144,6 +148,13 @@ public partial class MessageAnalyserService(IImageAnalyserService imageAnalyserS
 
         if (message.Attachments.Count > 0)
             contentUrls.AddRange(message.Attachments.Select(x => x.ProxyUrl));
+
+        return contentUrls;
+    }
+
+    private async Task<bool> MessageContainsAnimeAsync(SocketMessage message)
+    {
+        var contentUrls = await GetContentUrlsAsync(message);
 
         if (contentUrls.Count == 0) return false;
 
