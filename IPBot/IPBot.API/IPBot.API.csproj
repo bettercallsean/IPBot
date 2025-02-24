@@ -39,8 +39,9 @@
     <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.3.1" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\IPBot.Common\IPBot.Common.csproj" />
+    <ProjectReference Include="..\IPBot.Common\IPBot.Common.csproj" />
     <ProjectReference Include="..\IPBot.API.Domain\IPBot.API.Domain.csproj" />
+    <ProjectReference Include="..\IPBot.Common\IPBot.Common.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Content Update="appsettings.Production.json">
