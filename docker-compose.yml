@@ -2,11 +2,14 @@ services:
   ipbot:
     container_name: ipbot
     image: ${DOCKER_REGISTRY}/ipbot
-    build:
-      context: ./IPBot
-      dockerfile: IPBot/Dockerfile
     depends_on:
       - ipbotapi
+    environment:
+      - TenorAPIKey
+      - BotToken
+      - TestGuild
+      - APILogin__Username
+      - APILogin__Password
     volumes:
       - /etc/localtime:/etc/localtime:ro
     restart: always
@@ -14,12 +17,16 @@ services:
   ipbotapi:
     container_name: ipbot-api
     image: ${DOCKER_REGISTRY}/ipbot-api
-    build:
-      context: ./IPBot.API
-      dockerfile: IPBot.API/Dockerfile
     ports:
       - "57890:8080"
       - "57891:8081"
+    environment:
+      - ConnectionStrings__DefaultConnection
+      - SecurityKeyToken
+      - AzureSettings__ImageAnalysisSettings__SubscriptionKey
+      - AzureSettings__ImageAnalysisSettings__Endpoint
+      - AzureSettings__ContentSafetyAnalysisSettings__SubscriptionKey
+      - AzureSettings__ContentSafetyAnalysisSettings__Endpoint
     volumes:
       - /etc/localtime:/etc/localtime:ro
     restart: always

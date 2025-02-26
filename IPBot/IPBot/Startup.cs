@@ -21,7 +21,8 @@ public class Startup
 
         var environment = DebugHelper.IsDebug() ? "Development" : "Production";
         builder.AddJsonFile("appsettings.json")
-            .AddJsonFile($"appsettings.{environment}.json", optional: true);
+            .AddJsonFile($"appsettings.{environment}.json", optional: true)
+            .AddEnvironmentVariables();
 
         _config = builder.Build();
 
