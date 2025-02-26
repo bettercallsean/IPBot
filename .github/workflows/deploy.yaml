@@ -9,6 +9,8 @@ on:
 jobs:
   build-bot:
     runs-on: ubuntu-latest
+    env:
+      working-directory: IPBot/IPBot
     steps:
       - uses: actions/checkout@v4
 
@@ -18,11 +20,11 @@ jobs:
           dotnet-version: 9.0.x
 
       - name: Restore dependencies
-        working-directory: ./IPBot
+        working-directory: ${{ env.working-directory }}
         run: dotnet restore
 
       - name: Build
-        working-directory: ./IPBot
+        working-directory: ${{ env.working-directory }}
         run: dotnet publish /t:PublishContainer -c Release --os linux --arch x64
 
       - name: Log into Docker Hub
@@ -33,15 +35,17 @@ jobs:
           password: ${{ secrets.DOCKERHUB_PASSWORD }}
 
       - name: Tag container
-        working-directory: ./IPBot
+        working-directory: ${{ env.working-directory }}
         run: docker tag ipbot ${{ secrets.DOCKER_REGISTRY }}/ipbot
 
       - name: Push the image to Docker Hub
-        working-directory: ./IPBot
+        working-directory: ${{ env.working-directory }}
         run: docker push ${{ secrets.DOCKER_REGISTRY }}/ipbot
 
   build-api:
     runs-on: ubuntu-latest
+    env:
+      working-directory: IPBot/IPBot.API
     steps:
       - uses: actions/checkout@v4
 
@@ -51,11 +55,11 @@ jobs:
           dotnet-version: 9.0.x
 
       - name: Restore dependencies
-        working-directory: ./IPBot.API
+        working-directory: ${{ env.working-directory }}
         run: dotnet restore
 
       - name: Build
-        working-directory: ./IPBot.API
+        working-directory: ${{ env.working-directory }}
         run: dotnet publish /t:PublishContainer -c Release --os linux --arch x64
 
       - name: Log into Docker Hub
@@ -66,11 +70,11 @@ jobs:
           password: ${{ secrets.DOCKERHUB_PASSWORD }}
 
       - name: Tag container
-        working-directory: ./IPBot.API
+        working-directory: ${{ env.working-directory }}
         run: docker tag ipbot-api ${{ secrets.DOCKER_REGISTRY }}/ipbot-api
 
       - name: Push the image to Docker Hub
-        working-directory: ./IPBot.API
+        working-directory: ${{ env.working-directory }}
         run: docker push ${{ secrets.DOCKER_REGISTRY }}/ipbot-api
 
   start-containers:
