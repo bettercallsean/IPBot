@@ -131,6 +131,16 @@ public partial class MessageAnalyserService(IImageAnalyserService imageAnalyserS
                 if (message.Content.Contains("tenor.com") && !_imageFormats.Any(message.Content.Contains))
                     return await tenorApiHelper.GetDirectTenorGifUrlAsync(url);
 
+                if (url.Contains("x.com"))
+                {
+                    var stringBuilder = new StringBuilder(url.Replace("x.com", "fixupx.com"));
+                    stringBuilder.Append(".jpg"); 
+                    var response = await httpClient.GetAsync(stringBuilder.ToString());
+                    var imageUrl = response.RequestMessage.RequestUri?.ToString();
+                    
+                    return imageUrl.Contains("twimg.com") ? imageUrl : string.Empty;
+                }
+
                 var result = await httpClient.SendAsync(new(HttpMethod.Head, url));
 
                 return _httpImageContentTypes.Contains(result.Content.Headers.ContentType.MediaType) ? url : string.Empty;
@@ -223,7 +233,7 @@ public partial class MessageAnalyserService(IImageAnalyserService imageAnalyserS
         };
     }
 
-    [GeneratedRegex("(https:\\/\\/www\\.|http:\\/\\/www\\.|https:\\/\\/|http:\\/\\/)?[a-zA-Z]{2,}(\\.[a-zA-Z]{2,})(\\.[a-zA-Z]{2,})?\\/[a-zA-Z0-9]{2,}|((https:\\/\\/www\\.|http:\\/\\/www\\.|https:\\/\\/|http:\\/\\/)?[a-zA-Z]{2,}(\\.[a-zA-Z]{2,})(\\.[a-zA-Z]{2,})?)|(https:\\/\\/www\\.|http:\\/\\/www\\.|https:\\/\\/|http:\\/\\/)?[a-zA-Z0-9]{2,}\\.[a-zA-Z0-9]{2,}\\.[a-zA-Z0-9]{2,}(\\.[a-zA-Z0-9]{2,})?")]
+    [GeneratedRegex("(?<scheme>https):\\/\\/(?<host>(?:(?:xn--(?!-)|xn-(?=-)|[A-Za-z])(?:(?:-[A-Za-z\\d]+)*-[A-Za-z\\d]+|[A-Za-z\\d]*)?\\.)*(?:xn--(?!-)|xn-(?=-)|[A-Za-z])(?:(?:-[A-Za-z\\d]+)*-[A-Za-z\\d]+|[A-Za-z\\d]*)?)(?::(?<port>\\d+))?(?<path>(?:\\/(?:[-\\p{L}\\p{N}._~]|%[0-9A-Fa-f]{2}|[!$&'()*+,;=]|:|@)*)*)(?:\\?(?<query>(?:[-\\p{L}\\p{N}._~]|%[0-9A-Fa-f]{2}|[!$&'()*+,;=]|:|@|[?/])*))?(?:#(?<fragment>(?:[-\\p{L}\\p{N}._~]|%[0-9A-Fa-f]{2}|[!$&'()*+,;=]|:|@|[?/])*))?")]
     private static partial Regex UrlRegex();
 
     [GeneratedRegex("<:[a-zA-Z0-9]+:([0-9]+)>")]
