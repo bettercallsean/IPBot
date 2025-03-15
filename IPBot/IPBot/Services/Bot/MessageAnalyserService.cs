@@ -133,8 +133,10 @@ public partial class MessageAnalyserService(IImageAnalyserService imageAnalyserS
 
                 if (url.Contains("x.com"))
                 {
-                    var stringBuilder = new StringBuilder(url.Replace("x.com", "fixupx.com"));
+                    var splitUrl = url.Split('?');
+                    var stringBuilder = new StringBuilder(splitUrl[0].Replace("x.com", "fixupx.com"));
                     stringBuilder.Append(".jpg"); 
+                    
                     var response = await httpClient.GetAsync(stringBuilder.ToString());
                     var imageUrl = response.RequestMessage.RequestUri?.ToString();
                     
