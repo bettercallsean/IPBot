@@ -74,7 +74,8 @@ public partial class MessageAnalyserService(IImageAnalyserService imageAnalyserS
             await discordService.CreateFlaggedUserAsync(new()
             {
                 UserId = user.Id,
-                Username = user.Username
+                Username = user.Username,
+                FlaggedCount = 1
             });
         }
 
