@@ -138,14 +138,14 @@ public partial class MessageAnalyserService(IImageAnalyserService imageAnalyserS
                     stringBuilder.Append(".jpg"); 
                     
                     var response = await httpClient.GetAsync(stringBuilder.ToString());
-                    var imageUrl = response.RequestMessage.RequestUri?.ToString();
+                    var imageUrl = response.RequestMessage?.RequestUri?.ToString();
                     
-                    return imageUrl.Contains("twimg.com") ? imageUrl : string.Empty;
+                    return imageUrl != null && imageUrl.Contains("twimg.com") ? imageUrl : string.Empty;
                 }
 
                 var result = await httpClient.SendAsync(new(HttpMethod.Head, url));
 
-                return _httpImageContentTypes.Contains(result.Content.Headers.ContentType.MediaType) ? url : string.Empty;
+                return _httpImageContentTypes.Contains(result.Content.Headers.ContentType?.MediaType) ? url : string.Empty;
             }
         }
     }
