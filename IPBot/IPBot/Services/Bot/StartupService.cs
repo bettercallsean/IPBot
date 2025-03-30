@@ -16,6 +16,7 @@ public class StartupService(ILogger<StartupService> logger, BotConfiguration bot
             .Build();
 
     private string _serverDomain;
+    private bool _initialConnection = true;
 
     public async Task StartAsync()
     {
@@ -44,6 +45,12 @@ public class StartupService(ILogger<StartupService> logger, BotConfiguration bot
 
     private async Task DiscordOnConnectedAsync()
     {
+        if (_initialConnection)
+        {
+            logger.LogInformation("Connected");
+            _initialConnection = false;
+        } 
+        
         if (string.IsNullOrEmpty(_serverDomain))
             _serverDomain = await ipService.GetCurrentServerDomainAsync();
 
