@@ -31,7 +31,6 @@ public class StartupService(ILogger<StartupService> logger, BotConfiguration bot
 
         discord.Ready += DiscordOnReadyAsync;
         discord.Connected += DiscordOnConnectedAsync;
-        discord.Disconnected += DiscordOnDisconnectedAsync;
         discord.MessageReceived += OnMessageReceivedAsync;
     }
 
@@ -43,17 +42,8 @@ public class StartupService(ILogger<StartupService> logger, BotConfiguration bot
         await messageAnalyserService.CheckMessageForHatefulContentAsync(arg);
     }
 
-    private Task DiscordOnDisconnectedAsync(Exception arg)
-    {
-        logger.LogInformation("Disconnected");
-
-        return Task.CompletedTask;
-    }
-
     private async Task DiscordOnConnectedAsync()
     {
-        logger.LogInformation("Connected");
-
         if (string.IsNullOrEmpty(_serverDomain))
             _serverDomain = await ipService.GetCurrentServerDomainAsync();
 
