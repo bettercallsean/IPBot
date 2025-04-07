@@ -7,8 +7,7 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace IPBot.Services.Bot;
 
-public class MessageAnalyserService(IImageAnalyserService imageAnalyserService, ITenorApiHelper tenorApiHelper,
-                                            ILogger<MessageAnalyserService> logger, IDiscordService discordService, HttpClient httpClient, ITweetService tweetService)
+public class MessageAnalyserService
 {
     private readonly List<string> _responseList = [.. Resources.Resources.ResponseGifs.Split(Environment.NewLine)];
     private readonly List<string> _imageFormats =
@@ -29,10 +28,28 @@ public class MessageAnalyserService(IImageAnalyserService imageAnalyserService, 
         "image/tiff"
     ];
 
+    private readonly IImageAnalyserService _imageAnalyserService;
+    private readonly ITenorApiHelper _tenorApiHelper;
+    private readonly ILogger<MessageAnalyserService> _logger;
+    private readonly IDiscordService _discordService;
+    private readonly HttpClient _httpClient;
+    private readonly ITweetService _tweetService;
+
+    public MessageAnalyserService(IImageAnalyserService imageAnalyserService, ITenorApiHelper tenorApiHelper,
+        ILogger<MessageAnalyserService> logger, IDiscordService discordService, HttpClient httpClient, ITweetService tweetService)
+    {
+        _imageAnalyserService = imageAnalyserService;
+        _tenorApiHelper = tenorApiHelper;
+        _logger = logger;
+        _discordService = discordService;
+        _httpClient = httpClient;
+        _tweetService = tweetService;
+    }
+
     public async Task CheckMessageForAnimeAsync(SocketMessage message)
     {
         var user = message.Author as IGuildUser;
-        var channelIsBeingAnalysedForAnime = await discordService.ChannelIsBeingAnalysedForAnimeAsync(user.Guild.Id, message.Channel.Id);
+        var channelIsBeingAnalysedForAnime = await _discordService.ChannelIsBeingAnalysedForAnimeAsync(user.Guild.Id, message.Channel.Id);
 
         if (!channelIsBeingAnalysedForAnime) return;
 
@@ -47,7 +64,7 @@ public class MessageAnalyserService(IImageAnalyserService imageAnalyserService, 
     {
         var user = message.Author as IGuildUser;
 
-        var flaggedUser = await discordService.GetFlaggedUserAsync(user.Id);
+        var flaggedUser = await _discordService.GetFlaggedUserAsync(user.Id);
         var userJoined = DateTimeOffset.Now - user.JoinedAt;
 
         if (flaggedUser is null && userJoined?.Days > BotConstants.NewUserDaysSinceJoinedLimit) return;
@@ -66,11 +83,11 @@ public class MessageAnalyserService(IImageAnalyserService imageAnalyserService, 
             if (flaggedUser.FlaggedCount >= BotConstants.MaxHatefulImageFlaggedCount && !DebugHelper.IsDebug())
                 await user.BanAsync(reason: $"Banned for posting hateful content. Categories: {hateCategories}");
             else
-                await discordService.UpdateUserFlaggedCountAsync(user.Id);
+                await _discordService.UpdateUserFlaggedCountAsync(user.Id);
         }
         else
         {
-            await discordService.CreateFlaggedUserAsync(new()
+            await _discordService.CreateFlaggedUserAsync(new()
             {
                 UserId = user.Id,
                 Username = user.Username,
@@ -78,34 +95,34 @@ public class MessageAnalyserService(IImageAnalyserService imageAnalyserService, 
             });
         }
 
-        flaggedUser = await discordService.GetFlaggedUserAsync(user.Id);
+        flaggedUser = await _discordService.GetFlaggedUserAsync(user.Id);
 
         var guildOwner = await user.Guild.GetOwnerAsync();
         await guildOwner.SendMessageAsync($"Message from {user.Username} in {user.Guild.Name}:{message.Channel.Name} deleted for {hateCategories}. " +
                                           $"They are on strike {flaggedUser?.FlaggedCount}");
 
-        logger.LogInformation("Message from {User} in {GuildName}:{ChannelName} deleted for {Category}. They are on strike {StrikeCount}",
+        _logger.LogInformation("Message from {User} in {GuildName}:{ChannelName} deleted for {Category}. They are on strike {StrikeCount}",
             user.Username, user.Guild.Name, message.Channel.Name, hateCategories, flaggedUser?.FlaggedCount);
     }
 
     public async Task CheckForTwitterLinksAsync(SocketMessage message)
     {
-        logger.LogInformation("Checking message for twitter links");
+        _logger.LogInformation("Checking message for twitter links");
         
         var channel = message.Channel as SocketGuildChannel;
         var guildIsBeingCheckedForTwitterLinks =
-            await discordService.GuidIsBeingCheckedForTwitterLinksAsync(channel.Guild.Id);
+            await _discordService.GuidIsBeingCheckedForTwitterLinksAsync(channel.Guild.Id);
         
         if (!guildIsBeingCheckedForTwitterLinks) return;
 
-        if (tweetService.ContentContainsTweetLink(message.Content) && message is IUserMessage userMessage)
+        if (_tweetService.ContentContainsTweetLink(message.Content) && message is IUserMessage userMessage)
         {
-            var extractedLink = tweetService.GetFixUpXLink(message.Content);
-            var tweetImageLink = await tweetService.GetDirectTweetImageLinkAsync(message.Content);
+            var extractedLink = _tweetService.GetFixUpXLink(message.Content);
+            var tweetImageLink = await _tweetService.GetDirectTweetImageLinkAsync(message.Content);
 
             if (string.IsNullOrEmpty(tweetImageLink)) return;
             
-            logger.LogInformation("Responding to {Username} in {GuildName}:{ChannelName} with fixed link {Url}", message.Author.Username, channel.Guild.Name, channel.Name, extractedLink);
+            _logger.LogInformation("Responding to {Username} in {GuildName}:{ChannelName} with fixed link {Url}", message.Author.Username, channel.Guild.Name, channel.Name, extractedLink);
             
             await userMessage.ReplyAsync(extractedLink);
         }
@@ -117,22 +134,22 @@ public class MessageAnalyserService(IImageAnalyserService imageAnalyserService, 
         if (contentUrls.Count == 0) return [];
 
         var user = message.Author as IGuildUser;
-        logger.LogInformation("Checking message from {User} in {GuildName}:{ChannelName} for hateful content", user.Username, user.Guild.Name, message.Channel.Name);
+        _logger.LogInformation("Checking message from {User} in {GuildName}:{ChannelName} for hateful content", user.Username, user.Guild.Name, message.Channel.Name);
 
         var hatefulContentAnalysis = new List<CategoryAnalysisDto>();
         foreach (var url in contentUrls)
         {
             var encodedUrl = Base64UrlEncoder.Encode(url);
 
-            var analysisDtos = await imageAnalyserService.GetContentSafetyAnalysisAsync(encodedUrl);
+            var analysisDtos = await _imageAnalyserService.GetContentSafetyAnalysisAsync(encodedUrl);
 
             if (analysisDtos is not null)
             {
-                logger.LogInformation("{ContentUrl} analysed", url);
+                _logger.LogInformation("{ContentUrl} analysed", url);
                 hatefulContentAnalysis.AddRange(analysisDtos);
             }
             else
-                logger.LogError("{ContentUrl} in {GuildName}:{ChannelName} failed to be analysed for hateful content", url, user.Guild.Name, message.Channel.Name);
+                _logger.LogError("{ContentUrl} in {GuildName}:{ChannelName} failed to be analysed for hateful content", url, user.Guild.Name, message.Channel.Name);
         }
 
         return hatefulContentAnalysis;
@@ -150,12 +167,12 @@ public class MessageAnalyserService(IImageAnalyserService imageAnalyserService, 
         var url = messageMediaModel.Url;
 
         if (message.Content.Contains("tenor.com") && !_imageFormats.Any(message.Content.Contains))
-            return await tenorApiHelper.GetDirectTenorGifUrlAsync(url);
+            return await _tenorApiHelper.GetDirectTenorGifUrlAsync(url);
 
         if (url.Contains("https://x.com"))
-            return await tweetService.GetDirectTweetImageLinkAsync(url);
+            return await _tweetService.GetDirectTweetImageLinkAsync(url);
 
-        var result = await httpClient.SendAsync(new(HttpMethod.Head, url));
+        var result = await _httpClient.SendAsync(new(HttpMethod.Head, url));
 
         return _httpImageContentTypes.Contains(result.Content.Headers.ContentType?.MediaType) ? url : string.Empty;
     }
@@ -189,13 +206,13 @@ public class MessageAnalyserService(IImageAnalyserService imageAnalyserService, 
         if (contentUrls.Count == 0) return false;
 
         var user = message.Author as IGuildUser;
-        logger.LogInformation("Checking message from {User} in {GuildName}:{ChannelName} for anime", user.Username, user.Guild.Name, message.Channel.Name);
+        _logger.LogInformation("Checking message from {User} in {GuildName}:{ChannelName} for anime", user.Username, user.Guild.Name, message.Channel.Name);
 
         foreach (var url in contentUrls)
         {
             var animeScore = await GetAnimeScoreAsync(url);
 
-            logger.LogInformation("Anime score: {Score}", animeScore);
+            _logger.LogInformation("Anime score: {Score}", animeScore);
 
             if (animeScore < BotConstants.AnimeScoreTolerance) continue;
 
@@ -208,7 +225,7 @@ public class MessageAnalyserService(IImageAnalyserService imageAnalyserService, 
     private async Task<double> GetAnimeScoreAsync(string url)
     {
         var encodedUrl = Base64UrlEncoder.Encode(url);
-        return await imageAnalyserService.GetAnimeScoreAsync(encodedUrl);
+        return await _imageAnalyserService.GetAnimeScoreAsync(encodedUrl);
     }
 
     private static MessageMediaModel GetMessageMediaModel(string messageContent)

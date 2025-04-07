@@ -5,15 +5,22 @@ using Microsoft.AspNetCore.Authorization;
 namespace IPBot.API.Controllers;
 
 [Authorize]
-public class DiscordController(IDiscordService discordService) : MainController
+public class DiscordController : MainController
 {
+    private readonly IDiscordService _discordService;
+
+    public DiscordController(IDiscordService discordService)
+    {
+        _discordService = discordService;
+    }
+
     [HttpGet]
     [ResponseCache(Duration = 60, Location = ResponseCacheLocation.Any, NoStore = false)]
     public async Task<ActionResult<string>> GetInUseDiscordChannelsAsync()
     {
         try
         {
-            return Ok(await discordService.GetInUseDiscordChannelsAsync());
+            return Ok(await _discordService.GetInUseDiscordChannelsAsync());
         }
         catch (Exception ex)
         {
@@ -27,7 +34,7 @@ public class DiscordController(IDiscordService discordService) : MainController
     {
         try
         {
-            return Ok(await discordService.ChannelIsBeingAnalysedForAnimeAsync(guildId, channelId));
+            return Ok(await _discordService.ChannelIsBeingAnalysedForAnimeAsync(guildId, channelId));
         }
         catch (Exception ex)
         {
@@ -41,7 +48,7 @@ public class DiscordController(IDiscordService discordService) : MainController
     {
         try
         {
-            return Ok(await discordService.GetFlaggedUserAsync(userId));
+            return Ok(await _discordService.GetFlaggedUserAsync(userId));
         }
         catch (Exception ex)
         {
@@ -54,7 +61,7 @@ public class DiscordController(IDiscordService discordService) : MainController
     {
         try
         {
-            return Ok(await discordService.UpdateUserFlaggedCountAsync(userId));
+            return Ok(await _discordService.UpdateUserFlaggedCountAsync(userId));
         }
         catch (Exception ex)
         {
@@ -67,7 +74,7 @@ public class DiscordController(IDiscordService discordService) : MainController
     {
         try
         {
-            return Ok(await discordService.CreateFlaggedUserAsync(dto));
+            return Ok(await _discordService.CreateFlaggedUserAsync(dto));
         }
         catch (Exception ex)
         {
@@ -81,7 +88,7 @@ public class DiscordController(IDiscordService discordService) : MainController
     {
         try
         {
-            return Ok(await discordService.GetFlaggedUsersAsync());
+            return Ok(await _discordService.GetFlaggedUsersAsync());
         }
         catch (Exception ex)
         {
@@ -94,7 +101,7 @@ public class DiscordController(IDiscordService discordService) : MainController
     {
         try
         {
-            return Ok(await discordService.DeleteFlaggedUserAsync(userId));
+            return Ok(await _discordService.DeleteFlaggedUserAsync(userId));
         }
         catch (Exception ex)
         {
@@ -107,7 +114,7 @@ public class DiscordController(IDiscordService discordService) : MainController
     {
         try
         {
-            return Ok(await discordService.GuidIsBeingCheckedForTwitterLinksAsync(guildId));
+            return Ok(await _discordService.GuidIsBeingCheckedForTwitterLinksAsync(guildId));
         }
         catch (Exception ex)
         {

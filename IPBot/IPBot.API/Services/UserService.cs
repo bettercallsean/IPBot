@@ -9,8 +9,17 @@ using IPBot.Common.Services;
 using Microsoft.IdentityModel.Tokens;
 
 namespace IPBot.API.Services;
-public class UserService(IConfiguration configuration, IUserRepository userRepository) : IUserService
+public class UserService : IUserService
 {
+    private readonly IConfiguration _configuration;
+    private readonly IUserRepository _userRepository;
+
+    public UserService(IConfiguration configuration, IUserRepository userRepository)
+    {
+        _configuration = configuration;
+        _userRepository = userRepository;
+    }
+
     public async Task<bool> RegisterUserAsync(UserDto dto)
     {
         PasswordUtility.CreatePasswordHash(dto.Password, out var passwordHash, out var passwordSalt);
@@ -22,12 +31,12 @@ public class UserService(IConfiguration configuration, IUserRepository userRepos
             PasswordSalt = passwordSalt
         };
 
-        return await userRepository.AddAsync(user);
+        return await _userRepository.AddAsync(user);
     }
 
     public async Task<string> LoginUserAsync(UserDto dto)
     {
-        var user = await userRepository.GetWhereAsync(x => x.Username == dto.Username);
+        var user = await _userRepository.GetWhereAsync(x => x.Username == dto.Username);
 
         return user == null || !VerifyPasswordHash(dto.Password, user.PasswordHash, user.PasswordSalt)
             ? string.Empty
@@ -50,7 +59,7 @@ public class UserService(IConfiguration configuration, IUserRepository userRepos
             new Claim(ClaimTypes.Name, user.Username)
         };
 
-        var key = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(configuration["SecurityKeyToken"]));
+        var key = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(_configuration["SecurityKeyToken"]));
         var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
 
         var token = new JwtSecurityToken(

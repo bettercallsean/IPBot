@@ -6,8 +6,15 @@ using Microsoft.IdentityModel.Tokens;
 namespace IPBot.API.Controllers;
 
 [Authorize]
-public class ImageAnalyserController(IImageAnalyserService animeAnalyserService) : MainController
+public class ImageAnalyserController : MainController
 {
+    private readonly IImageAnalyserService _animeAnalyserService;
+
+    public ImageAnalyserController(IImageAnalyserService animeAnalyserService)
+    {
+        _animeAnalyserService = animeAnalyserService;
+    }
+
     [HttpGet("{encodedUrl}")]
     [ResponseCache(Duration = 60, Location = ResponseCacheLocation.Any, NoStore = false)]
     public async Task<ActionResult<double>> GetAnimeScoreAsync(string encodedUrl)
@@ -15,7 +22,7 @@ public class ImageAnalyserController(IImageAnalyserService animeAnalyserService)
         try
         {
             var decodedUrl = Base64UrlEncoder.Decode(encodedUrl);
-            return Ok(await animeAnalyserService.GetAnimeScoreAsync(decodedUrl));
+            return Ok(await _animeAnalyserService.GetAnimeScoreAsync(decodedUrl));
         }
         catch (Exception ex)
         {
@@ -30,7 +37,7 @@ public class ImageAnalyserController(IImageAnalyserService animeAnalyserService)
         try
         {
             var decodedUrl = Base64UrlEncoder.Decode(encodedUrl);
-            return Ok(await animeAnalyserService.GetContentSafetyAnalysisAsync(decodedUrl));
+            return Ok(await _animeAnalyserService.GetContentSafetyAnalysisAsync(decodedUrl));
         }
         catch (Exception ex)
         {
