@@ -1,5 +1,4 @@
-﻿using System.Text.RegularExpressions;
-using Discord;
+﻿using Discord;
 using IPBot.Common.Dtos;
 using IPBot.Common.Services;
 using IPBot.Helpers;
@@ -8,7 +7,7 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace IPBot.Services.Bot;
 
-public partial class MessageAnalyserService(IImageAnalyserService imageAnalyserService, ITenorApiHelper tenorApiHelper,
+public class MessageAnalyserService(IImageAnalyserService imageAnalyserService, ITenorApiHelper tenorApiHelper,
                                             ILogger<MessageAnalyserService> logger, IDiscordService discordService, HttpClient httpClient)
 {
     private readonly List<string> _responseList = [.. Resources.Resources.ResponseGifs.Split(Environment.NewLine)];
@@ -89,14 +88,24 @@ public partial class MessageAnalyserService(IImageAnalyserService imageAnalyserS
             user.Username, user.Guild.Name, message.Channel.Name, hateCategories, flaggedUser?.FlaggedCount);
     }
 
-    public void CheckForTwitterLinks(SocketMessage message)
+    public async Task CheckForTwitterLinksAsync(SocketMessage message)
     {
         const string XUrl = "https://x.com";
+        const string FixUpXUrl = "https://fixupx.com";
+        
+        var channel = message.Channel as SocketGuildChannel;
+        if (channel != null && channel.Guild.Name != "BetterCallSean's Bot Junkyard") return;
 
-        if (!message.Content.Contains(XUrl)) return;
-
-        var userMessage = message as SocketUserMessage;
-        userMessage.ModifyAsync(x => x.Content = message.Content.Replace(XUrl, "fixupx.com"));
+        var twitterLink = RegexHelper.TwitterLinkRegex().Match(message.Content);
+        if (!twitterLink.Success) return;
+        
+        if (message is IUserMessage userMessage)
+        {
+            var extractedLink = twitterLink.Value.Replace(XUrl, FixUpXUrl);
+            logger.LogInformation("Responding to {Username} in {GuildName}:{ChannelName} with fixed link {Url}", message.Author.Username, channel.Guild.Name, channel.Name, extractedLink);
+            
+            await userMessage.ReplyAsync(extractedLink);
+        }
     }
 
     private async Task<List<CategoryAnalysisDto>> GetHatefulImageAnalysisAsync(SocketMessage message)
@@ -143,25 +152,13 @@ public partial class MessageAnalyserService(IImageAnalyserService imageAnalyserS
                     return await tenorApiHelper.GetDirectTenorGifUrlAsync(url);
 
                 if (url.Contains("x.com"))
-                    return await GetEmbeddableTwitterLinkAsync(url);
+                    return await GetDirectTwitterImageLinkAsync(url);
 
                 var result = await httpClient.SendAsync(new(HttpMethod.Head, url));
 
                 return _httpImageContentTypes.Contains(result.Content.Headers.ContentType?.MediaType) ? url : string.Empty;
             }
         }
-    }
-
-    private async Task<string> GetEmbeddableTwitterLinkAsync(string twitterUrl)
-    {
-        var splitUrl = twitterUrl.Split('?');
-        var stringBuilder = new StringBuilder(splitUrl[0].Replace("x.com", "fixupx.com"));
-        stringBuilder.Append(".jpg");
-
-        var response = await httpClient.GetAsync(stringBuilder.ToString());
-        var imageUrl = response.RequestMessage?.RequestUri?.ToString();
-
-        return imageUrl != null && imageUrl.Contains("twimg.com") ? imageUrl : string.Empty;
     }
 
     private async Task<List<string>> GetContentUrlsAsync(SocketMessage message)
@@ -219,8 +216,8 @@ public partial class MessageAnalyserService(IImageAnalyserService imageAnalyserS
     {
         foreach (var word in messageContent.Split())
         {
-            var urlMatch = UrlRegex().Match(word);
-            var emojiMatch = DiscordEmojiRegex().Match(word);
+            var urlMatch = RegexHelper.UrlRegex().Match(word);
+            var emojiMatch = RegexHelper.DiscordEmojiRegex().Match(word);
 
             if (!urlMatch.Success && !emojiMatch.Success) continue;
 
@@ -240,7 +237,7 @@ public partial class MessageAnalyserService(IImageAnalyserService imageAnalyserS
 
     private static MessageMediaModel MessageContainsYouTubeLink(string messageContent)
     {
-        var youtubeUrlMatch = YouTubeUrlRegex().Match(messageContent);
+        var youtubeUrlMatch = RegexHelper.YouTubeUrlRegex().Match(messageContent);
 
         return new()
         {
@@ -249,12 +246,15 @@ public partial class MessageAnalyserService(IImageAnalyserService imageAnalyserS
         };
     }
 
-    [GeneratedRegex("(?<scheme>https):\\/\\/(?<host>(?:(?:xn--(?!-)|xn-(?=-)|[A-Za-z])(?:(?:-[A-Za-z\\d]+)*-[A-Za-z\\d]+|[A-Za-z\\d]*)?\\.)*(?:xn--(?!-)|xn-(?=-)|[A-Za-z])(?:(?:-[A-Za-z\\d]+)*-[A-Za-z\\d]+|[A-Za-z\\d]*)?)(?::(?<port>\\d+))?(?<path>(?:\\/(?:[-\\p{L}\\p{N}._~]|%[0-9A-Fa-f]{2}|[!$&'()*+,;=]|:|@)*)*)(?:\\?(?<query>(?:[-\\p{L}\\p{N}._~]|%[0-9A-Fa-f]{2}|[!$&'()*+,;=]|:|@|[?/])*))?(?:#(?<fragment>(?:[-\\p{L}\\p{N}._~]|%[0-9A-Fa-f]{2}|[!$&'()*+,;=]|:|@|[?/])*))?")]
-    private static partial Regex UrlRegex();
+    private async Task<string> GetDirectTwitterImageLinkAsync(string twitterUrl)
+    {
+        var splitUrl = twitterUrl.Split('?');
+        var stringBuilder = new StringBuilder(splitUrl[0].Replace("x.com", "fixupx.com"));
+        stringBuilder.Append(".jpg");
 
-    [GeneratedRegex("<:[a-zA-Z0-9]+:([0-9]+)>")]
-    private static partial Regex DiscordEmojiRegex();
+        var response = await httpClient.GetAsync(stringBuilder.ToString());
+        var imageUrl = response.RequestMessage?.RequestUri?.ToString();
 
-    [GeneratedRegex("^((?:https?:)?\\/\\/)?((?:www|m)\\.)?((?:youtube(-nocookie)?\\.com|youtu.be))(\\/(?:[\\w\\-]+\\?v=|embed\\/|v\\/)?)([\\w\\-]+)(\\S+)?$")]
-    private static partial Regex YouTubeUrlRegex();
+        return imageUrl != null && imageUrl.Contains("twimg.com") ? imageUrl : string.Empty;
+    }
 }
