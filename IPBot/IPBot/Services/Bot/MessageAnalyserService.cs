@@ -107,13 +107,13 @@ public class MessageAnalyserService
 
     public async Task CheckForTwitterLinksAsync(SocketMessage message)
     {
-        _logger.LogInformation("Checking message for twitter links");
-        
         var channel = message.Channel as SocketGuildChannel;
         var guildIsBeingCheckedForTwitterLinks =
             await _discordService.GuidIsBeingCheckedForTwitterLinksAsync(channel.Guild.Id);
         
         if (!guildIsBeingCheckedForTwitterLinks) return;
+        
+        _logger.LogInformation("Checking message from {User} in {GuildName}:{ChannelName} for twitter links", message.Author.Username, channel.Guild.Name, channel.Name);
 
         await ReplyWithFixUpXLinkAsync(message, channel);
     }
