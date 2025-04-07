@@ -2,6 +2,6 @@
 
 namespace IPBot.API.Domain.Interfaces;
 
-internal interface IDiscordGuildRepository : IBaseRepository<DiscordGuild>
+public interface IDiscordGuildRepository : IBaseRepository<DiscordGuild>
 {
 }

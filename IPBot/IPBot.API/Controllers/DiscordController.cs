@@ -101,4 +101,17 @@ public class DiscordController(IDiscordService discordService) : MainController
             return Problem("500", ex.Message);
         }
     }
+    
+    [HttpGet]
+    public async Task<ActionResult<bool>> GuidIsBeingCheckedForTwitterLinksAsync(ulong guildId)
+    {
+        try
+        {
+            return Ok(await discordService.GuidIsBeingCheckedForTwitterLinksAsync(guildId));
+        }
+        catch (Exception ex)
+        {
+            return Problem("500", ex.Message);
+        }
+    }
 }

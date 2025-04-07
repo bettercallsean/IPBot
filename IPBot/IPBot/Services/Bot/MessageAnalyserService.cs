@@ -93,7 +93,10 @@ public class MessageAnalyserService(IImageAnalyserService imageAnalyserService, 
         logger.LogInformation("Checking message for twitter links");
         
         var channel = message.Channel as SocketGuildChannel;
-        if (channel != null && channel.Guild.Name != "BetterCallSean's Bot Junkyard") return;
+        var guildIsBeingCheckedForTwitterLinks =
+            await discordService.GuidIsBeingCheckedForTwitterLinksAsync(channel.Guild.Id);
+        
+        if (!guildIsBeingCheckedForTwitterLinks) return;
 
         if (tweetService.ContentContainsTweetLink(message.Content) && message is IUserMessage userMessage)
         {

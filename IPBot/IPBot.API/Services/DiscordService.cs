@@ -1,12 +1,13 @@
 using AutoMapper;
 using IPBot.API.Domain.Entities;
 using IPBot.API.Domain.Interfaces;
+using IPBot.API.Domain.Repositories;
 using IPBot.Common.Dtos;
 using IPBot.Common.Services;
 
 namespace IPBot.API.Services;
 
-public class DiscordService(IMapper mapper, IDiscordChannelRepository discordChannelRepository, IFlaggedUserRepository flaggedUserRepository) : IDiscordService
+public class DiscordService(IMapper mapper, IDiscordChannelRepository discordChannelRepository, IFlaggedUserRepository flaggedUserRepository, IDiscordGuildRepository discordGuildRepository) : IDiscordService
 {
     public async Task<List<DiscordChannelDto>> GetInUseDiscordChannelsAsync()
     {
@@ -58,5 +59,12 @@ public class DiscordService(IMapper mapper, IDiscordChannelRepository discordCha
         var user = await flaggedUserRepository.GetByIdAsync(userId);
 
         return await flaggedUserRepository.DeleteAsync(user);
+    }
+
+    public async Task<bool> GuidIsBeingCheckedForTwitterLinksAsync(ulong guildId)
+    {
+        var guild = await discordGuildRepository.GetByIdAsync(guildId);
+
+        return guild.CheckForTwitterLinks;
     }
 }

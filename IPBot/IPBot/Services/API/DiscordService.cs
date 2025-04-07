@@ -43,4 +43,9 @@ public class DiscordService(IRestClient client, BotConfiguration botConfiguratio
     {
         return await GetAsync<bool>($"{BaseUri}/DeleteFlaggedUser?userId={userId}");
     }
+
+    public async Task<bool> GuidIsBeingCheckedForTwitterLinksAsync(ulong guildId)
+    {
+        return await GetAsync<bool>($"{BaseUri}/GuidIsBeingCheckedForTwitterLinks?guildId={guildId}");
+    }
 }
