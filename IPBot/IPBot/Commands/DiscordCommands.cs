@@ -4,8 +4,15 @@ using IPBot.Common.Services;
 
 namespace IPBot.Commands;
 
-public class DiscordCommands(ILogger<IPCommands> logger, IDiscordService discordService) : InteractionModuleBase<SocketInteractionContext>
+public class DiscordCommands : InteractionModuleBase<SocketInteractionContext>
 {
+    private readonly ILogger<IPCommands> _logger;
+    private readonly IDiscordService _discordService;
+    public DiscordCommands(ILogger<IPCommands> logger, IDiscordService discordService)
+    {
+        _logger = logger;
+        _discordService = discordService;
+    }
 #if DEBUG
     [SlashCommand("flag_user_debug", "flag user for hateful content analysis")]
     [DefaultMemberPermissions(GuildPermission.Administrator)]
@@ -17,9 +24,9 @@ public class DiscordCommands(ILogger<IPCommands> logger, IDiscordService discord
     {
         await DeferAsync(ephemeral: true);
 
-        logger.LogInformation("FlagUserAsync executed");
+        _logger.LogInformation("FlagUserAsync executed");
 
-        var userAdded = await discordService.CreateFlaggedUserAsync(new FlaggedUserDto
+        var userAdded = await _discordService.CreateFlaggedUserAsync(new FlaggedUserDto
         {
             UserId = user.Id,
             Username = user.Username
@@ -42,9 +49,9 @@ public class DiscordCommands(ILogger<IPCommands> logger, IDiscordService discord
     {
         await DeferAsync(ephemeral: true);
 
-        logger.LogInformation("DeleteFlaggedUserAsync executed");
+        _logger.LogInformation("DeleteFlaggedUserAsync executed");
 
-        var userDeleted = await discordService.DeleteFlaggedUserAsync(user.Id);
+        var userDeleted = await _discordService.DeleteFlaggedUserAsync(user.Id);
 
         if (userDeleted)
             await FollowupAsync($"User {user.Username} removed from flagged user list", ephemeral: true);
@@ -63,9 +70,9 @@ public class DiscordCommands(ILogger<IPCommands> logger, IDiscordService discord
     {
         await DeferAsync(ephemeral: true);
 
-        logger.LogInformation("GetFlaggedUsersAsync executed");
+        _logger.LogInformation("GetFlaggedUsersAsync executed");
 
-        var flaggedUsers = await discordService.GetFlaggedUsersAsync();
+        var flaggedUsers = await _discordService.GetFlaggedUsersAsync();
 
         await FollowupAsync(string.Join($"{Environment.NewLine}", flaggedUsers.Select(x => $"User: {x.Username} | Flagged Count: {x.FlaggedCount}")));
     }

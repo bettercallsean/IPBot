@@ -4,24 +4,31 @@ using Microsoft.AspNetCore.Authorization;
 namespace IPBot.API.Controllers;
 
 [Authorize]
-public class IPController(IIPService ipService) : MainController
+public class IPController : MainController
 {
+    private readonly IIPService _ipService;
+
+    public IPController(IIPService ipService)
+    {
+        _ipService = ipService;
+    }
+
     [HttpGet]
     public async Task<ActionResult<string>> GetCurrentServerDomainAsync()
     {
-        return Ok(await ipService.GetCurrentServerDomainAsync());
+        return Ok(await _ipService.GetCurrentServerDomainAsync());
     }
 
     [HttpGet]
     public async Task<ActionResult<string>> GetLocalIPAsync()
     {
-        return Ok(await ipService.GetLocalIPAsync());
+        return Ok(await _ipService.GetLocalIPAsync());
     }
 
     [HttpGet]
     public async Task<ActionResult<string>> GetServerIPAsync()
     {
-        return Ok(await ipService.GetServerIPAsync());
+        return Ok(await _ipService.GetServerIPAsync());
     }
     
     [HttpGet("{ip}")]
@@ -29,7 +36,7 @@ public class IPController(IIPService ipService) : MainController
     {
         try
         {
-            return Ok(await ipService.UpdateServerIPAsync(ip));
+            return Ok(await _ipService.UpdateServerIPAsync(ip));
         }
         catch (Exception ex)
         {

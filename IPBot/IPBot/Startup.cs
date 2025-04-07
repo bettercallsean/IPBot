@@ -67,6 +67,7 @@ public class Startup
             .AddSingleton<IImageAnalyserService, ImageAnalyserService>()
             .AddSingleton<IDiscordService, DiscordService>()
             .AddSingleton<ITenorApiHelper, TenorApiHelper>()
+            .AddSingleton<ITweetService, TweetService>()
             .AddSingleton(_config.Get<BotConfiguration>())
             .AddLogging(config =>
             {

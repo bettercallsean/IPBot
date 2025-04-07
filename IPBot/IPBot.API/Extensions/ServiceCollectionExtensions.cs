@@ -36,6 +36,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IGameRepository, GameRepository>();
         services.AddScoped<IDomainRepository, DomainRepository>();
         services.AddScoped<IDiscordChannelRepository, DiscordChannelRepository>();
+        services.AddScoped<IDiscordGuildRepository, DiscordGuildRepository>();
         services.AddScoped<IFlaggedUserRepository, FlaggedUserRepository>();
     }
 

@@ -4,8 +4,15 @@ using IPBot.Helpers;
 
 namespace IPBot.Commands;
 
-public class ServerCommands(ILogger<ServerCommands> logger, IGameService gameService) : InteractionModuleBase<SocketInteractionContext>
+public class ServerCommands : InteractionModuleBase<SocketInteractionContext>
 {
+    private readonly ILogger<ServerCommands> _logger;
+    private readonly IGameService _gameService;
+    public ServerCommands(ILogger<ServerCommands> logger, IGameService gameService)
+    {
+        _logger = logger;
+        _gameService = gameService;
+    }
 #if DEBUG
     [SlashCommand("mc_debug", "get the status of the minecraft server")]
 #else
@@ -13,13 +20,13 @@ public class ServerCommands(ILogger<ServerCommands> logger, IGameService gameSer
 #endif
     public async Task GetMinecraftServerStatusAsync()
     {
-        logger.LogInformation("GetMinecraftServerStatusAsync executed");
+        _logger.LogInformation("GetMinecraftServerStatusAsync executed");
 
         await DeferAsync();
 
         var serverStatus = await GetMinecraftServerStatusStringAsync();
 
-        logger.LogInformation("{ServerStatus}", serverStatus.ToString());
+        _logger.LogInformation("{ServerStatus}", serverStatus.ToString());
 
         await FollowupAsync(serverStatus.ToString());
     }
@@ -33,7 +40,7 @@ public class ServerCommands(ILogger<ServerCommands> logger, IGameService gameSer
     {
         const string ArkShortName = "ark";
 
-        logger.LogInformation("GetArkServerStatusAsync executed");
+        _logger.LogInformation("GetArkServerStatusAsync executed");
 
         await DeferAsync();
 
@@ -42,7 +49,7 @@ public class ServerCommands(ILogger<ServerCommands> logger, IGameService gameSer
         if (serverStatus.Split(Environment.NewLine).Length >= 3)
             serverStatus = $"{serverStatus}{Environment.NewLine}Bloody hell, that's a lot of servers 🦖";
 
-        logger.LogInformation("{ServerStatus}", serverStatus.ToString());
+        _logger.LogInformation("{ServerStatus}", serverStatus.ToString());
         await FollowupAsync(serverStatus);
     }
 
@@ -55,32 +62,32 @@ public class ServerCommands(ILogger<ServerCommands> logger, IGameService gameSer
     {
         const string ProjectZomboidShortName = "zomboid";
 
-        logger.LogInformation("GetProjectZomboidServerStatusAsync executed");
+        _logger.LogInformation("GetProjectZomboidServerStatusAsync executed");
 
         await DeferAsync();
 
         var serverStatus = await GetSteamGameServerStatusStringAsync(ProjectZomboidShortName);
 
-        logger.LogInformation("{ServerStatus}", serverStatus);
+        _logger.LogInformation("{ServerStatus}", serverStatus);
         await FollowupAsync(serverStatus);
     }
 
     private async Task<string> GetSteamGameServerStatusStringAsync(string gameShortName)
     {
-        logger.LogInformation("Getting list of active servers for {GameShortName}", gameShortName);
-        var gameServers = await gameService.GetActiveServersAsync(gameShortName);
+        _logger.LogInformation("Getting list of active servers for {GameShortName}", gameShortName);
+        var gameServers = await _gameService.GetActiveServersAsync(gameShortName);
 
         var serverStatus = new StringBuilder();
 
         foreach (var gameServer in gameServers)
         {
-            logger.LogInformation("Getting server info for port {Port}", gameServer.Port);
+            _logger.LogInformation("Getting server info for port {Port}", gameServer.Port);
 
-            var serverInfo = await gameService.GetSteamServerStatusAsync(gameServer.Port);
+            var serverInfo = await _gameService.GetSteamServerStatusAsync(gameServer.Port);
             var playerCountStatus = ServerInfoHelper.GetServerStatus(serverInfo);
             var serverMapHasValue = !string.IsNullOrWhiteSpace(serverInfo.Map);
 
-            logger.LogInformation("{Map} - {Port} online: {Online}", gameServer.Map, gameServer.Port, serverInfo.Online);
+            _logger.LogInformation("{Map} - {Port} online: {Online}", gameServer.Map, gameServer.Port, serverInfo.Online);
 
             serverStatus.AppendLine(serverMapHasValue
                     ? $"Map: {serverInfo.Map} - {playerCountStatus} | Port: {gameServer.Port}"
@@ -97,18 +104,18 @@ public class ServerCommands(ILogger<ServerCommands> logger, IGameService gameSer
     {
         const string MinecraftShortName = "mc";
 
-        logger.LogInformation("Getting list of active servers for {ShortName}", MinecraftShortName);
-        var gameServers = await gameService.GetActiveServersAsync(MinecraftShortName);
+        _logger.LogInformation("Getting list of active servers for {ShortName}", MinecraftShortName);
+        var gameServers = await _gameService.GetActiveServersAsync(MinecraftShortName);
         var serverStatus = new StringBuilder();
 
         foreach (var gameServer in gameServers)
         {
-            logger.LogInformation("Getting server info for port {Port}", gameServer.Port);
+            _logger.LogInformation("Getting server info for port {Port}", gameServer.Port);
 
-            var serverInfo = await gameService.GetMinecraftServerStatusAsync(gameServer.Port);
+            var serverInfo = await _gameService.GetMinecraftServerStatusAsync(gameServer.Port);
             var playerCountStatus = ServerInfoHelper.GetServerStatus(serverInfo);
 
-            logger.LogInformation("{Port} online: {Online}", gameServer.Port, serverInfo.Online);
+            _logger.LogInformation("{Port} online: {Online}", gameServer.Port, serverInfo.Online);
 
             serverStatus.AppendLine($"{playerCountStatus} | Port: {gameServer.Port}");
         }
@@ -118,9 +125,9 @@ public class ServerCommands(ILogger<ServerCommands> logger, IGameService gameSer
 
     private async Task UpdateServerMapAsync(ServerInfoDto serverInfo, GameServerDto gameServer)
     {
-        logger.LogInformation("Updating map information for {Port}. Map updating from {SavedMap} to {NewMap}", gameServer.Port, gameServer.Map, serverInfo.Map);
+        _logger.LogInformation("Updating map information for {Port}. Map updating from {SavedMap} to {NewMap}", gameServer.Port, gameServer.Map, serverInfo.Map);
 
         gameServer.Map = serverInfo.Map;
-        await gameService.UpdateGameServerInformationAsync(gameServer);
+        await _gameService.UpdateGameServerInformationAsync(gameServer);
     }
 }

@@ -11,4 +11,5 @@ public interface IDiscordService
     Task<bool> CreateFlaggedUserAsync(FlaggedUserDto dto);
     Task<List<FlaggedUserDto>> GetFlaggedUsersAsync();
     Task<bool> DeleteFlaggedUserAsync(ulong userId);
+    Task<bool> GuidIsBeingCheckedForTwitterLinksAsync(ulong guildId);
 }
