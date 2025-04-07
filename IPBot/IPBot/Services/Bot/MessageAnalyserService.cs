@@ -120,17 +120,18 @@ public class MessageAnalyserService
 
     private async Task ReplyWithFixUpXLinkAsync(SocketMessage message, SocketGuildChannel channel)
     {
-        if (!_tweetService.ContentContainsTweetLink(message.Content) || message is not IUserMessage userMessage) return;
-        
-        var extractedLink = _tweetService.GetFixUpXLink(message.Content);
-        var tweetImageLink = await _tweetService.GetDirectTweetImageLinkAsync(message.Content);
+        if (_tweetService.ContentContainsTweetLink(message.Content) && message is IUserMessage userMessage)
+        {
+            var extractedLink = _tweetService.GetFixUpXLink(message.Content);
+            var tweetImageLink = await _tweetService.GetDirectTweetImageLinkAsync(message.Content);
 
-        if (string.IsNullOrEmpty(tweetImageLink)) return;
+            if (string.IsNullOrEmpty(tweetImageLink)) return;
 
-        _logger.LogInformation("Responding to {Username} in {GuildName}:{ChannelName} with fixed link {Url}",
-            message.Author.Username, channel.Guild.Name, channel.Name, extractedLink);
+            _logger.LogInformation("Responding to {Username} in {GuildName}:{ChannelName} with fixed link {Url}",
+                message.Author.Username, channel.Guild.Name, channel.Name, extractedLink);
 
-        await userMessage.ReplyAsync(extractedLink);
+            await userMessage.ReplyAsync(extractedLink);
+        }
     }
 
     private async Task<List<CategoryAnalysisDto>> GetHatefulImageAnalysisAsync(SocketMessage message)
