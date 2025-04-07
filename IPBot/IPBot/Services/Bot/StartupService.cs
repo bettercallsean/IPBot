@@ -41,6 +41,7 @@ public class StartupService(ILogger<StartupService> logger, BotConfiguration bot
 
         await messageAnalyserService.CheckMessageForAnimeAsync(arg);
         await messageAnalyserService.CheckMessageForHatefulContentAsync(arg);
+        messageAnalyserService.CheckForTwitterLinks(arg);
     }
 
     private async Task DiscordOnConnectedAsync()
@@ -49,8 +50,8 @@ public class StartupService(ILogger<StartupService> logger, BotConfiguration bot
         {
             logger.LogInformation("Connected");
             _initialConnection = false;
-        } 
-        
+        }
+
         if (string.IsNullOrEmpty(_serverDomain))
             _serverDomain = await ipService.GetCurrentServerDomainAsync();
 

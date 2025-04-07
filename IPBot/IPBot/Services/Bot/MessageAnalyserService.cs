@@ -89,6 +89,16 @@ public partial class MessageAnalyserService(IImageAnalyserService imageAnalyserS
             user.Username, user.Guild.Name, message.Channel.Name, hateCategories, flaggedUser?.FlaggedCount);
     }
 
+    public void CheckForTwitterLinks(SocketMessage message)
+    {
+        const string XUrl = "https://x.com";
+
+        if (!message.Content.Contains(XUrl)) return;
+
+        var userMessage = message as SocketUserMessage;
+        userMessage.ModifyAsync(x => x.Content = message.Content.Replace(XUrl, "fixupx.com"));
+    }
+
     private async Task<List<CategoryAnalysisDto>> GetHatefulImageAnalysisAsync(SocketMessage message)
     {
         var contentUrls = await GetContentUrlsAsync(message);
@@ -133,22 +143,25 @@ public partial class MessageAnalyserService(IImageAnalyserService imageAnalyserS
                     return await tenorApiHelper.GetDirectTenorGifUrlAsync(url);
 
                 if (url.Contains("x.com"))
-                {
-                    var splitUrl = url.Split('?');
-                    var stringBuilder = new StringBuilder(splitUrl[0].Replace("x.com", "fixupx.com"));
-                    stringBuilder.Append(".jpg"); 
-                    
-                    var response = await httpClient.GetAsync(stringBuilder.ToString());
-                    var imageUrl = response.RequestMessage?.RequestUri?.ToString();
-                    
-                    return imageUrl != null && imageUrl.Contains("twimg.com") ? imageUrl : string.Empty;
-                }
+                    return await GetEmbeddableTwitterLinkAsync(url);
 
                 var result = await httpClient.SendAsync(new(HttpMethod.Head, url));
 
                 return _httpImageContentTypes.Contains(result.Content.Headers.ContentType?.MediaType) ? url : string.Empty;
             }
         }
+    }
+
+    private async Task<string> GetEmbeddableTwitterLinkAsync(string twitterUrl)
+    {
+        var splitUrl = twitterUrl.Split('?');
+        var stringBuilder = new StringBuilder(splitUrl[0].Replace("x.com", "fixupx.com"));
+        stringBuilder.Append(".jpg");
+
+        var response = await httpClient.GetAsync(stringBuilder.ToString());
+        var imageUrl = response.RequestMessage?.RequestUri?.ToString();
+
+        return imageUrl != null && imageUrl.Contains("twimg.com") ? imageUrl : string.Empty;
     }
 
     private async Task<List<string>> GetContentUrlsAsync(SocketMessage message)
