@@ -8,7 +8,7 @@ using Microsoft.IdentityModel.Tokens;
 namespace IPBot.Services.Bot;
 
 public class MessageAnalyserService(IImageAnalyserService imageAnalyserService, ITenorApiHelper tenorApiHelper,
-                                            ILogger<MessageAnalyserService> logger, IDiscordService discordService, HttpClient httpClient)
+                                            ILogger<MessageAnalyserService> logger, IDiscordService discordService, HttpClient httpClient, ITweetService tweetService)
 {
     private readonly List<string> _responseList = [.. Resources.Resources.ResponseGifs.Split(Environment.NewLine)];
     private readonly List<string> _imageFormats =
@@ -90,18 +90,18 @@ public class MessageAnalyserService(IImageAnalyserService imageAnalyserService, 
 
     public async Task CheckForTwitterLinksAsync(SocketMessage message)
     {
-        const string XUrl = "https://x.com";
-        const string FixUpXUrl = "https://fixupx.com";
+        logger.LogInformation("Checking message for twitter links");
         
         var channel = message.Channel as SocketGuildChannel;
         if (channel != null && channel.Guild.Name != "BetterCallSean's Bot Junkyard") return;
 
-        var twitterLink = RegexHelper.TwitterLinkRegex().Match(message.Content);
-        if (!twitterLink.Success) return;
-        
-        if (message is IUserMessage userMessage)
+        if (tweetService.ContentContainsTweetLink(message.Content) && message is IUserMessage userMessage)
         {
-            var extractedLink = twitterLink.Value.Replace(XUrl, FixUpXUrl);
+            var extractedLink = tweetService.GetFixUpXLink(message.Content);
+            var tweetImageLink = await tweetService.GetDirectTweetImageLinkAsync(message.Content);
+
+            if (string.IsNullOrEmpty(tweetImageLink)) return;
+            
             logger.LogInformation("Responding to {Username} in {GuildName}:{ChannelName} with fixed link {Url}", message.Author.Username, channel.Guild.Name, channel.Name, extractedLink);
             
             await userMessage.ReplyAsync(extractedLink);
@@ -139,26 +139,22 @@ public class MessageAnalyserService(IImageAnalyserService imageAnalyserService, 
     {
         if (!string.IsNullOrEmpty(messageMediaModel.EmojiId))
             return $"https://cdn.discordapp.com/emojis/{messageMediaModel.EmojiId}.png";
-        else
-        {
-            var youtubeUrlModel = MessageContainsYouTubeLink(message.Content);
-            if (youtubeUrlModel.ContainsMedia)
-                return $"https://i3.ytimg.com/vi/{youtubeUrlModel.Url}/maxresdefault.jpg";
-            else
-            {
-                var url = messageMediaModel.Url;
+        
+        var youtubeUrlModel = MessageContainsYouTubeLink(message.Content);
+        if (youtubeUrlModel.ContainsMedia)
+            return $"https://i3.ytimg.com/vi/{youtubeUrlModel.Url}/maxresdefault.jpg";
+            
+        var url = messageMediaModel.Url;
 
-                if (message.Content.Contains("tenor.com") && !_imageFormats.Any(message.Content.Contains))
-                    return await tenorApiHelper.GetDirectTenorGifUrlAsync(url);
+        if (message.Content.Contains("tenor.com") && !_imageFormats.Any(message.Content.Contains))
+            return await tenorApiHelper.GetDirectTenorGifUrlAsync(url);
 
-                if (url.Contains("x.com"))
-                    return await GetDirectTwitterImageLinkAsync(url);
+        if (url.Contains("https://x.com"))
+            return await tweetService.GetDirectTweetImageLinkAsync(url);
 
-                var result = await httpClient.SendAsync(new(HttpMethod.Head, url));
+        var result = await httpClient.SendAsync(new(HttpMethod.Head, url));
 
-                return _httpImageContentTypes.Contains(result.Content.Headers.ContentType?.MediaType) ? url : string.Empty;
-            }
-        }
+        return _httpImageContentTypes.Contains(result.Content.Headers.ContentType?.MediaType) ? url : string.Empty;
     }
 
     private async Task<List<string>> GetContentUrlsAsync(SocketMessage message)
@@ -246,15 +242,5 @@ public class MessageAnalyserService(IImageAnalyserService imageAnalyserService, 
         };
     }
 
-    private async Task<string> GetDirectTwitterImageLinkAsync(string twitterUrl)
-    {
-        var splitUrl = twitterUrl.Split('?');
-        var stringBuilder = new StringBuilder(splitUrl[0].Replace("x.com", "fixupx.com"));
-        stringBuilder.Append(".jpg");
 
-        var response = await httpClient.GetAsync(stringBuilder.ToString());
-        var imageUrl = response.RequestMessage?.RequestUri?.ToString();
-
-        return imageUrl != null && imageUrl.Contains("twimg.com") ? imageUrl : string.Empty;
-    }
 }
