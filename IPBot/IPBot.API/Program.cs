@@ -33,7 +33,9 @@ builder.Services.AddResponseCompression(opts =>
         ["application/octet-stream"]);
 });
 
-builder.Services.AddSingleton(builder.Configuration.GetRequiredSection("AzureSettings").Get<AzureSettings>());
+var azureSettings = builder.Configuration.GetRequiredSection("AzureSettings").Get<AzureSettings>()
+    ?? throw new Exception("SecurityKeyToken is empty. Check that a value is set in appsettings or in environment variables");
+builder.Services.AddSingleton(azureSettings);
 
 builder.Services.RegisterServices();
 
@@ -52,6 +54,8 @@ builder.Services.AddSwaggerGen(options =>
     options.OperationFilter<SecurityRequirementsOperationFilter>();
 });
 
+var securityKeyToken = builder.Configuration.GetValue<string>("SecurityKeyToken")
+    ?? throw new Exception("SecurityKeyToken is empty. Check that a value is set in appsettings or in environment variables");
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
@@ -59,13 +63,14 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         {
             ValidateIssuerSigningKey = true,
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8
-                .GetBytes(builder.Configuration.GetValue<string>("SecurityKeyToken"))),
+                .GetBytes(securityKeyToken)),
             ValidateIssuer = false,
             ValidateAudience = false
         };
     });
 
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
+    ?? throw new Exception("DefaultConnection is empty. Check that a value is set in appsettings or in environment variables");
 builder.Services.AddDbContext<IIPBotDataContext, IPBotDbContext>(
     options => options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
 
