@@ -1,4 +1,4 @@
-﻿namespace IPBot;
+﻿namespace IPBot.Constants;
 
 public static class BotConstants
 {

@@ -8,15 +8,15 @@ namespace IPBot.Helpers;
 
 public class TenorApiHelper : ITenorApiHelper
 {
+    private const string TenorGifEndpoint = "https://g.tenor.com/v1/gifs?";
+
     private readonly BotConfiguration _botConfiguration;
 
     public TenorApiHelper(BotConfiguration botConfiguration)
     {
         _botConfiguration = botConfiguration;
     }
-
-    private const string TenorGifEndpoint = "https://g.tenor.com/v1/gifs?";
-
+    
     public async Task<string> GetDirectTenorGifUrlAsync(string tenorUrl)
     {
         var tenorGifId = GetTenorGifIdFromUrl(tenorUrl);

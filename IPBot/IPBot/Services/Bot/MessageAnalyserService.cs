@@ -1,6 +1,7 @@
 ﻿using Discord;
 using IPBot.Common.Dtos;
 using IPBot.Common.Services;
+using IPBot.Constants;
 using IPBot.Helpers;
 using IPBot.Interfaces;
 using Microsoft.IdentityModel.Tokens;
@@ -122,15 +123,15 @@ public class MessageAnalyserService
     {
         if (_tweetService.ContentContainsTweetLink(message.Content) && message is IUserMessage userMessage)
         {
-            var extractedLink = _tweetService.GetFixUpXLink(message.Content);
-            var tweetImageLink = await _tweetService.GetDirectTweetImageLinkAsync(message.Content);
+            var tweetDetails = _tweetService.GetTweetDetails(userMessage.Content);
+            var tweetVideoLinks = await _tweetService.GetTweetVideoLinksAsync(tweetDetails);
 
-            if (string.IsNullOrEmpty(tweetImageLink)) return;
+            if (tweetVideoLinks.Count == 0) return;
 
             _logger.LogInformation("Responding to {Username} in {GuildName}:{ChannelName} with fixed link {Url}",
-                message.Author.Username, channel.Guild.Name, channel.Name, extractedLink);
+                message.Author.Username, channel.Guild.Name, channel.Name, string.Join(", ", tweetVideoLinks));
 
-            await userMessage.ReplyAsync(extractedLink);
+            await userMessage.ReplyAsync(string.Join(" ", tweetVideoLinks));
         }
     }
 
@@ -174,9 +175,6 @@ public class MessageAnalyserService
 
         if (message.Content.Contains("tenor.com") && !_imageFormats.Any(message.Content.Contains))
             return await _tenorApiHelper.GetDirectTenorGifUrlAsync(url);
-
-        if (url.Contains("https://x.com"))
-            return await _tweetService.GetDirectTweetImageLinkAsync(url);
 
         var result = await _httpClient.SendAsync(new(HttpMethod.Head, url));
 

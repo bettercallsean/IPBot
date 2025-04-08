@@ -2,7 +2,7 @@ namespace IPBot.Interfaces;
 
 public interface ITweetService
 {
-    Task<string> GetDirectTweetImageLinkAsync(string twitterUrl);
-    string GetFixUpXLink(string messageContent);
+    Task<List<string>> GetTweetVideoLinksAsync(TweetDetails tweetDetails);
     bool ContentContainsTweetLink(string content);
+    TweetDetails GetTweetDetails(string tweetLink);
 }

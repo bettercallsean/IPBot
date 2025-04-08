@@ -1,15 +1,11 @@
-using System.Text.RegularExpressions;
-using Discord;
 using IPBot.Helpers;
 using IPBot.Interfaces;
+using IPBot.Models.FixUpXModels;
 
 namespace IPBot.Services.Bot;
 
 public class TweetService : ITweetService
 {
-    private const string XUrl = "https://x.com";
-    private const string FixUpXUrl = "https://fixupx.com";
-    
     private readonly HttpClient _httpClient;
 
     public TweetService(HttpClient httpClient)
@@ -17,27 +13,29 @@ public class TweetService : ITweetService
         _httpClient = httpClient;
     }
     
-    public async Task<string> GetDirectTweetImageLinkAsync(string twitterUrl)
+    public async Task<List<string>> GetTweetVideoLinksAsync(TweetDetails tweetDetails)
     {
-        var extractedLink = GetFixUpXLink(twitterUrl);
-
-        if (string.IsNullOrEmpty(extractedLink)) return string.Empty;
+        var tweet = await GetTweetAsync(tweetDetails);
         
-        var stringBuilder = new StringBuilder(extractedLink);
-        stringBuilder.Append(".jpg");
-
-        var response = await _httpClient.GetAsync(stringBuilder.ToString());
-        var imageUrl = response.RequestMessage?.RequestUri?.ToString();
-
-        return imageUrl.Contains("twimg.com") ? imageUrl : string.Empty;
-    }
-
-    public string GetFixUpXLink(string messageContent)
-    {
-        var tweetLink = RegexHelper.TwitterLinkRegex().Match(messageContent);
-        
-        return tweetLink.Success ? tweetLink.Value.Replace(XUrl, FixUpXUrl) : string.Empty;
+        return tweet.Media.Videos.Count > 0 ? tweet.Media.Videos.Select(x => x.Variants.MaxBy(y => y.Bitrate).Url).ToList() : [];
     }
     
     public bool ContentContainsTweetLink(string content) => RegexHelper.TwitterLinkRegex().Match(content).Success;
+    
+    public TweetDetails GetTweetDetails(string tweetLink)
+    {
+        var tweetRegex = RegexHelper.TwitterLinkRegex().Match(tweetLink);
+
+        return new TweetDetails(tweetRegex.Groups[2].Value, ulong.Parse(tweetRegex.Groups[4].Value));
+    }
+    
+    private async Task<Tweet> GetTweetAsync(TweetDetails tweetDetails)
+    {
+        const string UserAgent = "IPBot/1.0.0.0 Discord Bot";
+        _httpClient.DefaultRequestHeaders.Add("User-Agent", UserAgent);
+
+        var fixUpX = await _httpClient.GetFromJsonAsync<Root>($"https://api.fxtwitter.com/{tweetDetails.Username}/status/{tweetDetails.Id}");
+
+        return fixUpX.Tweet;
+    }
 }
