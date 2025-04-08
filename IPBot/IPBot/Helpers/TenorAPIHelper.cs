@@ -1,7 +1,7 @@
 using System.Net.Http.Headers;
 using System.Web;
 using IPBot.Configuration;
-using IPBot.Interfaces;
+using IPBot.Interfaces.Helpers;
 using IPBot.Models.TenorModels;
 
 namespace IPBot.Helpers;
