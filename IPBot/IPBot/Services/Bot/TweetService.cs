@@ -33,7 +33,7 @@ public class TweetService : ITweetService
 
     private async Task<Tweet> GetTweetAsync(TweetDetails tweetDetails)
     {
-        const string UserAgent = "IPBot/1.0.0.0 Discord Bot";
+        const string UserAgent = "IPBot/1.0 +https://github.com/bettercallsean/IPBot Discord Bot";
         _httpClient.DefaultRequestHeaders.Add("User-Agent", UserAgent);
 
         var fixUpX = await _httpClient.GetFromJsonAsync<Root>($"https://api.fxtwitter.com/{tweetDetails.Username}/status/{tweetDetails.Id}");
