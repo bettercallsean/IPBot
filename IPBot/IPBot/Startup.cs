@@ -62,7 +62,7 @@ public class Startup
             .AddSingleton(x => new InteractionService(x.GetRequiredService<DiscordSocketClient>()))
             .AddSingleton<CommandHandler>()
             .AddScoped<StartupService>()
-            .AddScoped<MessageMediaAnalyserService>()
+            .AddScoped<IMessageMediaAnalyserService, MessageMediaAnalyserService>()
             .AddSingleton<IGameService, GameService>()
             .AddSingleton<IIPService, IPService>()
             .AddSingleton<IImageAnalyserService, ImageAnalyserService>()
