@@ -2,7 +2,7 @@
 using IPBot.Common.Services;
 using IPBot.Configuration;
 using IPBot.Helpers;
-using IPBot.Interfaces;
+using IPBot.Interfaces.Services;
 using Microsoft.AspNetCore.SignalR.Client;
 
 namespace IPBot.Services.Bot;

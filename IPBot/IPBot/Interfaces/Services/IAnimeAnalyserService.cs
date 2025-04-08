@@ -1,4 +1,4 @@
-﻿namespace IPBot.Interfaces;
+﻿namespace IPBot.Interfaces.Services;
 
 public interface IAnimeAnalyserService
 {

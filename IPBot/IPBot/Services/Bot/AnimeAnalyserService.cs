@@ -1,7 +1,7 @@
 ﻿using Discord;
 using IPBot.Common.Services;
 using IPBot.Constants;
-using IPBot.Interfaces;
+using IPBot.Interfaces.Services;
 using Microsoft.IdentityModel.Tokens;
 
 namespace IPBot.Services.Bot;

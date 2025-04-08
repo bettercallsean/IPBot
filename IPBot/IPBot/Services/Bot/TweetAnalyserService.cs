@@ -1,7 +1,7 @@
 using Discord;
 using IPBot.Common.Services;
 using IPBot.Helpers;
-using IPBot.Interfaces;
+using IPBot.Interfaces.Services;
 using IPBot.Models.FixUpXModels;
 
 namespace IPBot.Services.Bot;

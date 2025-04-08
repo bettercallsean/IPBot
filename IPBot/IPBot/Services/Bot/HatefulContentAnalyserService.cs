@@ -3,7 +3,7 @@ using IPBot.Common.Dtos;
 using IPBot.Common.Services;
 using IPBot.Constants;
 using IPBot.Helpers;
-using IPBot.Interfaces;
+using IPBot.Interfaces.Services;
 using Microsoft.IdentityModel.Tokens;
 
 namespace IPBot.Services.Bot;

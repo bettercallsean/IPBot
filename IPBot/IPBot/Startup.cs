@@ -2,7 +2,8 @@
 using IPBot.Common.Services;
 using IPBot.Configuration;
 using IPBot.Helpers;
-using IPBot.Interfaces;
+using IPBot.Interfaces.Helpers;
+using IPBot.Interfaces.Services;
 using IPBot.Services.API;
 using IPBot.Services.Bot;
 using RestSharp;
