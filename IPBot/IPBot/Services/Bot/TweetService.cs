@@ -28,7 +28,9 @@ public class TweetService : ITweetService
 
         return new TweetDetails(tweetRegex.Groups[2].Value, ulong.Parse(tweetRegex.Groups[4].Value));
     }
-    
+
+    public string GetFixUpXLink(TweetDetails tweetDetails) => $"https://fixupx.com/{tweetDetails.Username}/status/{tweetDetails.Id}";
+
     private async Task<Tweet> GetTweetAsync(TweetDetails tweetDetails)
     {
         const string UserAgent = "IPBot/1.0.0.0 Discord Bot";

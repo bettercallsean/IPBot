@@ -124,14 +124,12 @@ public class MessageAnalyserService
         if (_tweetService.ContentContainsTweetLink(message.Content) && message is IUserMessage userMessage)
         {
             var tweetDetails = _tweetService.GetTweetDetails(userMessage.Content);
-            var tweetVideoLinks = await _tweetService.GetTweetVideoLinksAsync(tweetDetails);
-
-            if (tweetVideoLinks.Count == 0) return;
-
+            var fixUpXLink = _tweetService.GetFixUpXLink(tweetDetails);
+            
             _logger.LogInformation("Responding to {Username} in {GuildName}:{ChannelName} with fixed link {Url}",
-                message.Author.Username, channel.Guild.Name, channel.Name, string.Join(", ", tweetVideoLinks));
+                message.Author.Username, channel.Guild.Name, channel.Name, fixUpXLink);
 
-            await userMessage.ReplyAsync(string.Join(" ", tweetVideoLinks));
+            await userMessage.Channel.SendMessageAsync($"[Tweet from {tweetDetails.Username}]({fixUpXLink})");
         }
     }
 
