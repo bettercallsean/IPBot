@@ -61,13 +61,15 @@ public class Startup
             .AddSingleton(x => new InteractionService(x.GetRequiredService<DiscordSocketClient>()))
             .AddSingleton<CommandHandler>()
             .AddScoped<StartupService>()
-            .AddScoped<MessageAnalyserService>()
+            .AddScoped<MessageMediaAnalyserService>()
             .AddSingleton<IGameService, GameService>()
             .AddSingleton<IIPService, IPService>()
             .AddSingleton<IImageAnalyserService, ImageAnalyserService>()
             .AddSingleton<IDiscordService, DiscordService>()
             .AddSingleton<ITenorApiHelper, TenorApiHelper>()
-            .AddSingleton<ITweetService, TweetService>()
+            .AddSingleton<ITweetAnalyserService, TweetAnalyserService>()
+            .AddSingleton<IAnimeAnalyserService, AnimeAnalyserService>()
+            .AddSingleton<IHatefulContentAnalyserService, HatefulContentAnalyserService>()
             .AddSingleton(_config.Get<BotConfiguration>())
             .AddLogging(config =>
             {
