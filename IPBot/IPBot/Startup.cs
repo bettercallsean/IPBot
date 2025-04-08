@@ -2,7 +2,8 @@
 using IPBot.Common.Services;
 using IPBot.Configuration;
 using IPBot.Helpers;
-using IPBot.Interfaces;
+using IPBot.Interfaces.Helpers;
+using IPBot.Interfaces.Services;
 using IPBot.Services.API;
 using IPBot.Services.Bot;
 using RestSharp;
@@ -61,13 +62,15 @@ public class Startup
             .AddSingleton(x => new InteractionService(x.GetRequiredService<DiscordSocketClient>()))
             .AddSingleton<CommandHandler>()
             .AddScoped<StartupService>()
-            .AddScoped<MessageAnalyserService>()
+            .AddScoped<IMessageMediaAnalyserService, MessageMediaAnalyserService>()
             .AddSingleton<IGameService, GameService>()
             .AddSingleton<IIPService, IPService>()
             .AddSingleton<IImageAnalyserService, ImageAnalyserService>()
             .AddSingleton<IDiscordService, DiscordService>()
             .AddSingleton<ITenorApiHelper, TenorApiHelper>()
-            .AddSingleton<ITweetService, TweetService>()
+            .AddSingleton<ITweetAnalyserService, TweetAnalyserService>()
+            .AddSingleton<IAnimeAnalyserService, AnimeAnalyserService>()
+            .AddSingleton<IHatefulContentAnalyserService, HatefulContentAnalyserService>()
             .AddSingleton(_config.Get<BotConfiguration>())
             .AddLogging(config =>
             {

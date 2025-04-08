@@ -2,6 +2,7 @@
 using IPBot.Common.Services;
 using IPBot.Configuration;
 using IPBot.Helpers;
+using IPBot.Interfaces.Services;
 using Microsoft.AspNetCore.SignalR.Client;
 
 namespace IPBot.Services.Bot;
@@ -9,20 +10,22 @@ namespace IPBot.Services.Bot;
 public class StartupService
 {
     private readonly HubConnection _hubConnection;
-
-    private string _serverDomain;
-    private bool _initialConnection = true;
     private readonly ILogger<StartupService> _logger;
     private readonly BotConfiguration _botConfiguration;
     private readonly IIPService _ipService;
     private readonly DiscordSocketClient _discord;
     private readonly InteractionService _commands;
     private readonly IDiscordService _discordService;
-    private readonly MessageAnalyserService _messageAnalyserService;
+    private readonly ITweetAnalyserService _tweetService;
+    private readonly IAnimeAnalyserService _animeAnalyserService;
+    private readonly IHatefulContentAnalyserService _hatefulContentAnalyserService;
+
+    private string _serverDomain;
+    private bool _initialConnection = true;
 
     public StartupService(ILogger<StartupService> logger, BotConfiguration botConfiguration, IIPService ipService,
-        DiscordSocketClient discord, InteractionService commands, IDiscordService discordService,
-        MessageAnalyserService messageAnalyserService)
+        DiscordSocketClient discord, InteractionService commands, IDiscordService discordService, ITweetAnalyserService tweetService, 
+        IAnimeAnalyserService animeAnalyserService, IHatefulContentAnalyserService hatefulContentAnalyserService)
     {
         _logger = logger;
         _botConfiguration = botConfiguration;
@@ -30,7 +33,9 @@ public class StartupService
         _discord = discord;
         _commands = commands;
         _discordService = discordService;
-        _messageAnalyserService = messageAnalyserService;
+        _tweetService = tweetService;
+        _animeAnalyserService = animeAnalyserService;
+        _hatefulContentAnalyserService = hatefulContentAnalyserService;
         _hubConnection = new HubConnectionBuilder()
             .WithUrl($"{botConfiguration.APIEndpoint}/hubs/iphub")
             .WithAutomaticReconnect()
@@ -58,9 +63,9 @@ public class StartupService
     {
         if (arg.Author.IsBot) return;
         
-        await _messageAnalyserService.CheckMessageForAnimeAsync(arg);
-        await _messageAnalyserService.CheckMessageForHatefulContentAsync(arg);
-        await _messageAnalyserService.CheckForTwitterLinksAsync(arg);
+        await _animeAnalyserService.CheckMessageForAnimeAsync(arg);
+        await _hatefulContentAnalyserService.CheckMessageForHatefulContentAsync(arg);
+        await _tweetService.CheckForTwitterLinksAsync(arg);
     }
 
     private async Task DiscordOnConnectedAsync()

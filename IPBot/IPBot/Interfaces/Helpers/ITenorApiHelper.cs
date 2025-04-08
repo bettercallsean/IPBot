@@ -1,4 +1,4 @@
-namespace IPBot.Interfaces;
+namespace IPBot.Interfaces.Helpers;
 
 public interface ITenorApiHelper
 {

@@ -1,7 +1,6 @@
 using AutoMapper;
 using IPBot.API.Domain.Entities;
 using IPBot.API.Domain.Interfaces;
-using IPBot.API.Domain.Repositories;
 using IPBot.Common.Dtos;
 using IPBot.Common.Services;
 
