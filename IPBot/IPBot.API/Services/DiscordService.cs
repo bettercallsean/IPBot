@@ -79,4 +79,13 @@ public class DiscordService : IDiscordService
 
         return guild.CheckForTwitterLinks;
     }
+
+    public async Task<bool> ToggleTwitterLinkScanningAsync(ulong guildId)
+    {
+        var guild = await _discordGuildRepository.GetByIdAsync(guildId);
+
+        guild.CheckForTwitterLinks = !guild.CheckForTwitterLinks;
+
+        return await _discordGuildRepository.UpdateAsync(guild);
+    }
 }

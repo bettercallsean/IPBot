@@ -70,7 +70,7 @@ public class TweetAnalyserService : ITweetAnalyserService
             _logger.LogInformation("Responding to {Username} in {GuildName}:{ChannelName} with fixed link {Url}",
                 message.Author.Username, channel.Guild.Name, channel.Name, fixUpXLink);
 
-            await userMessage.Channel.SendMessageAsync($"[Tweet from {tweetDetails.Username}]({fixUpXLink})");
+            await userMessage.Channel.SendMessageAsync($"{tweetDetails.Username}]({fixUpXLink})");
         }
     }
 }
