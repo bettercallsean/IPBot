@@ -57,7 +57,6 @@ public class ServiceBase
 
         return await _client.PatchAsync<T>(new RestRequest(url, Method.Patch)
         {
-            RequestFormat = DataFormat.Json,
             Authenticator = new JwtAuthenticator(_jwt)
         });
     }

@@ -51,6 +51,6 @@ public class DiscordService(IRestClient client, BotConfiguration botConfiguratio
 
     public async Task<bool> ToggleTwitterLinkScanningAsync(ulong guildId)
     {
-        return await PatchAsync<bool>($"{BaseUri}/GuidIsBeingCheckedForTwitterLinks?guildId={guildId}");
+        return await PatchAsync<bool>($"{BaseUri}/ToggleTwitterLinkScanning?guildId={guildId}");
     }
 }
