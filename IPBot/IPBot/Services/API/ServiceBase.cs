@@ -40,6 +40,39 @@ public class ServiceBase
         }.AddBody(dto));
     }
 
+    protected async Task<T> PatchAsync<T>(string url, object dto)
+    {
+        await ValidateJwtAsync();
+
+        return await _client.PatchAsync<T>(new RestRequest(url, Method.Patch)
+        {
+            RequestFormat = DataFormat.Json,
+            Authenticator = new JwtAuthenticator(_jwt)
+        }.AddBody(dto));
+    }
+
+    protected async Task<T> PatchAsync<T>(string url)
+    {
+        await ValidateJwtAsync();
+
+        return await _client.PatchAsync<T>(new RestRequest(url, Method.Patch)
+        {
+            RequestFormat = DataFormat.Json,
+            Authenticator = new JwtAuthenticator(_jwt)
+        });
+    }
+
+    protected async Task<T> PutAsync<T>(string url, object dto)
+    {
+        await ValidateJwtAsync();
+
+        return await _client.PutAsync<T>(new RestRequest(url, Method.Put)
+        {
+            RequestFormat = DataFormat.Json,
+            Authenticator = new JwtAuthenticator(_jwt)
+        }.AddBody(dto));
+    }
+
     private async Task ValidateJwtAsync()
     {
         if (JwtHelper.CheckTokenIsValid(_jwt)) return;

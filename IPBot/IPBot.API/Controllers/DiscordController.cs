@@ -121,4 +121,17 @@ public class DiscordController : MainController
             return Problem("500", ex.Message);
         }
     }
+
+    [HttpPatch]
+    public async Task<ActionResult<bool>> ToggleTwitterLinkScanningAsync(ulong guildId)
+    {
+        try
+        {
+            return Ok(await _discordService.ToggleTwitterLinkScanningAsync(guildId));
+        }
+        catch (Exception ex)
+        {
+            return Problem("500", ex.Message);
+        }
+    }
 }
