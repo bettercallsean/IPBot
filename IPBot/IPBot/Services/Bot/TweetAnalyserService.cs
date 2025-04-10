@@ -70,11 +70,7 @@ public class TweetAnalyserService : ITweetAnalyserService
             _logger.LogInformation("Responding to {Username} in {GuildName}:{ChannelName} with fixed link {Url}",
                 message.Author.Username, channel.Guild.Name, channel.Name, fixUpXLink);
 
-            await userMessage.DeleteAsync();
-
-            var user = userMessage.Author as IGuildUser;
-
-            await userMessage.Channel.SendMessageAsync($"[{user.DisplayName} posted a tweet by {tweetDetails.Username}]({fixUpXLink})");
+            await userMessage.Channel.SendMessageAsync($"{tweetDetails.Username}]({fixUpXLink})");
         }
     }
 }
