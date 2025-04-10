@@ -1,15 +1,18 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+  
   <PropertyGroup>
     <TargetFramework>net9.0</TargetFramework>
     <Nullable>disable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UserSecretsId>c54ce14f-e382-4807-a4d0-caadbffe7ec5</UserSecretsId>
   </PropertyGroup>
+  
   <PropertyGroup>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     <EnableSdkContainerDebugging>True</EnableSdkContainerDebugging>
     <ContainerImageTag>latest</ContainerImageTag>
   </PropertyGroup>
+  
   <ItemGroup>
     <PackageReference Include="Azure.AI.ContentSafety" Version="1.0.0" />
     <PackageReference Include="Azure.AI.Vision.ImageAnalysis" Version="1.0.0" />
@@ -38,17 +41,38 @@
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite.Core" Version="9.0.1" />
     <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.3.1" />
   </ItemGroup>
+  
   <ItemGroup>
     <ProjectReference Include="..\IPBot.Common\IPBot.Common.csproj" />
     <ProjectReference Include="..\IPBot.API.Domain\IPBot.API.Domain.csproj" />
     <ProjectReference Include="..\IPBot.Common\IPBot.Common.csproj" />
   </ItemGroup>
+
   <ItemGroup>
-    <Content Update="appsettings.Production.json">
-      <DependentUpon>appsettings.json</DependentUpon>
-    </Content>
-    <Content Update="appsettings.Development.json">
-      <DependentUpon>appsettings.json</DependentUpon>
-    </Content>
+    <Content Remove="appsettings.Development.json" />
+    <Content Remove="appsettings.json" />
   </ItemGroup>
+
+  <ItemGroup>
+    <None Include="appsettings.Development.json">
+      <DependentUpon>appsettings.json</DependentUpon>
+    </None>
+    <None Include="appsettings.json" />
+  </ItemGroup>
+
+  <Choose>
+    <When Condition="'$(Configuration)' == 'Debug'">
+      <ItemGroup>
+        <None Include="appsettings.json" CopyToOutputDirectory="Always" CopyToPublishDirectory="Always" />
+        <None Include="appsettings.Development.json" CopyToOutputDirectory="Always" CopyToPublishDirectory="Always" />
+      </ItemGroup>
+    </When>
+    <When Condition="'$(Configuration)' == 'Release'">
+      <ItemGroup>
+        <None Include="appsettings.json" CopyToOutputDirectory="Always" CopyToPublishDirectory="Always" />
+        <None Include="appsettings.Development.json" CopyToOutputDirectory="Never" CopyToPublishDirectory="Never" />
+      </ItemGroup>
+    </When>
+  </Choose>
+  
 </Project>
