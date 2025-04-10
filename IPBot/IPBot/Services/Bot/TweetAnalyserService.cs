@@ -35,12 +35,12 @@ public class TweetAnalyserService : ITweetAnalyserService
     public async Task<List<string>> GetTweetVideoLinksAsync(TweetDetails tweetDetails)
     {
         var tweet = await GetTweetAsync(tweetDetails);
-        
+
         return tweet.Media.Videos.Count > 0 ? tweet.Media.Videos.Select(x => x.Variants.MaxBy(y => y.Bitrate).Url).ToList() : [];
     }
-    
+
     public bool ContentContainsTweetLink(string content) => RegexHelper.TwitterLinkRegex().Match(content).Success;
-    
+
     public TweetDetails GetTweetDetails(string tweetLink)
     {
         var tweetRegex = RegexHelper.TwitterLinkRegex().Match(tweetLink);
@@ -70,7 +70,7 @@ public class TweetAnalyserService : ITweetAnalyserService
             _logger.LogInformation("Responding to {Username} in {GuildName}:{ChannelName} with fixed link {Url}",
                 message.Author.Username, channel.Guild.Name, channel.Name, fixUpXLink);
 
-            await userMessage.Channel.SendMessageAsync($"{tweetDetails.Username}]({fixUpXLink})");
+            await userMessage.Channel.SendMessageAsync($"[{tweetDetails.Username}]({fixUpXLink})");
         }
     }
 }
