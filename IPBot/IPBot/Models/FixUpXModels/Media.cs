@@ -7,4 +7,7 @@ public class Media
 
     [JsonProperty("videos")]
     public List<Video> Videos { get; set; }
+
+    [JsonProperty("mosaic")]
+    public Mosaic Mosaic { get; set; }
 }

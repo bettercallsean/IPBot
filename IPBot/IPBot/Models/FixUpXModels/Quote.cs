@@ -1,6 +1,6 @@
-namespace IPBot.Models.FixUpXModels;
+﻿namespace IPBot.Models.FixUpXModels;
 
-public class Tweet
+public class Quote
 {
     [JsonProperty("url")]
     public string Url { get; set; }
@@ -67,7 +67,4 @@ public class Tweet
 
     [JsonProperty("provider")]
     public string Provider { get; set; }
-
-    [JsonProperty("quote")]
-    public Quote Quote { get; set; }
 }
