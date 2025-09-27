@@ -72,7 +72,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
     ?? throw new Exception("DefaultConnection is empty. Check that a value is set in appsettings or in environment variables");
 builder.Services.AddDbContext<IIPBotDataContext, IPBotDbContext>(
-    options => options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
+    options => options.UseNpgsql(connectionString));
 
 var app = builder.Build();
 
