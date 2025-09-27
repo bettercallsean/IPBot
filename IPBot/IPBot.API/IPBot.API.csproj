@@ -49,11 +49,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Remove="appsettings.Development.json" />
-    <Content Remove="appsettings.json" />
-  </ItemGroup>
-
-  <ItemGroup>
     <None Include="appsettings.Development.json">
       <DependentUpon>appsettings.json</DependentUpon>
     </None>
@@ -61,16 +56,9 @@
   </ItemGroup>
 
   <Choose>
-    <When Condition="'$(Configuration)' == 'Debug'">
-      <ItemGroup>
-        <None Include="appsettings.json" CopyToOutputDirectory="Always" CopyToPublishDirectory="Always" />
-        <None Include="appsettings.Development.json" CopyToOutputDirectory="Always" CopyToPublishDirectory="Always" />
-      </ItemGroup>
-    </When>
     <When Condition="'$(Configuration)' == 'Release'">
       <ItemGroup>
-        <None Include="appsettings.json" CopyToOutputDirectory="Always" CopyToPublishDirectory="Always" />
-        <None Include="appsettings.Development.json" CopyToOutputDirectory="Never" CopyToPublishDirectory="Never" />
+        <Content Remove="appsettings.Development.json" />
       </ItemGroup>
     </When>
   </Choose>
