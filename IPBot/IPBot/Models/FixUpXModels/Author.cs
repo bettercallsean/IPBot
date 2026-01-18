@@ -38,6 +38,12 @@ public class Author
     [JsonProperty("likes")]
     public int Likes { get; set; }
 
+    [JsonProperty("media_count")]
+    public int MediaCount { get; set; }
+
+    [JsonProperty("protected")]
+    public bool Protected { get; set; }
+
     [JsonProperty("website")]
     public Website Website { get; set; }
 

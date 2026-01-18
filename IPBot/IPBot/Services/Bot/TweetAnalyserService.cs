@@ -48,14 +48,15 @@ public class TweetAnalyserService : ITweetAnalyserService
         return new TweetDetails(tweetRegex.Groups[2].Value, ulong.Parse(tweetRegex.Groups[4].Value));
     }
 
-    public string GetFixUpXLink(TweetDetails tweetDetails) => $"https://fixupx.com/{tweetDetails.Username}/status/{tweetDetails.Id}";
+    private static string GetFixUpXLink(Tweet tweet) => $"https://fixupx.com/{tweet.Author.Name}/status/{tweet.Id}";
 
     private async Task<Tweet> GetTweetAsync(TweetDetails tweetDetails)
     {
-        const string UserAgent = "IPBot/1.0 +https://github.com/bettercallsean/IPBot Discord Bot";
+        const string UserAgent = "Mozilla/5.0 (IPBot/1.0; +https://github.com/bettercallsean/IPBot; Discord Bot)";
         _httpClient.DefaultRequestHeaders.Add("User-Agent", UserAgent);
 
-        var fixUpX = await _httpClient.GetFromJsonAsync<Root>($"https://api.fxtwitter.com/{tweetDetails.Username}/status/{tweetDetails.Id}");
+        var tweetJson = await _httpClient.GetStringAsync($"https://api.fxtwitter.com/status/{tweetDetails.Id}");
+        var fixUpX = JsonConvert.DeserializeObject<Root>(tweetJson);
 
         return fixUpX.Tweet;
     }
@@ -65,12 +66,13 @@ public class TweetAnalyserService : ITweetAnalyserService
         if (ContentContainsTweetLink(message.Content) && message is IUserMessage userMessage)
         {
             var tweetDetails = GetTweetDetails(userMessage.Content);
-            var fixUpXLink = GetFixUpXLink(tweetDetails);
+            var tweet = await GetTweetAsync(tweetDetails);
+            var fixUpXLink = GetFixUpXLink(tweet);
 
             _logger.LogInformation("Responding to {Username} in {GuildName}:{ChannelName} with fixed link {Url}",
                 message.Author.Username, channel.Guild.Name, channel.Name, fixUpXLink);
 
-            await userMessage.Channel.SendMessageAsync($"[{tweetDetails.Username}]({fixUpXLink})");
+            await userMessage.Channel.SendMessageAsync($"[{tweet.Author.ScreenName}]({fixUpXLink})");
         }
     }
 }
