@@ -1,10 +1,12 @@
+using System.Text.Json.Serialization;
+
 namespace IPBot.Models.FixUpXModels;
 
 public class RawText
 {
-    [JsonProperty("text")]
+    [JsonPropertyName("text")]
     public string Text { get; set; }
 
-    [JsonProperty("facets")]
+    [JsonPropertyName("facets")]
     public List<Facet> Facets { get; set; }
 }

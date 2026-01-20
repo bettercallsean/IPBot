@@ -1,15 +1,17 @@
+using System.Text.Json.Serialization;
+
 namespace IPBot.Models.FixUpXModels;
 
 // Root myDeserializedClass = JsonConvert.DeserializeObject<Root>(myJsonResponse);
 
 public class Root
 {
-    [JsonProperty("code")]
+    [JsonPropertyName("code")]
     public int Code { get; set; }
 
-    [JsonProperty("message")]
+    [JsonPropertyName("message")]
     public string Message { get; set; }
 
-    [JsonProperty("tweet")]
+    [JsonPropertyName("tweet")]
     public Tweet Tweet { get; set; }
 }

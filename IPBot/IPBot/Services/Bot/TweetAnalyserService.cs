@@ -55,8 +55,7 @@ public class TweetAnalyserService : ITweetAnalyserService
         const string UserAgent = "Mozilla/5.0 (IPBot/1.0; +https://github.com/bettercallsean/IPBot; Discord Bot)";
         _httpClient.DefaultRequestHeaders.Add("User-Agent", UserAgent);
 
-        var tweetJson = await _httpClient.GetStringAsync($"https://api.fxtwitter.com/status/{tweetDetails.Id}");
-        var fixUpX = JsonConvert.DeserializeObject<Root>(tweetJson);
+        var fixUpX = await _httpClient.GetFromJsonAsync<Root>($"https://api.fxtwitter.com/status/{tweetDetails.Id}");
 
         return fixUpX.Tweet;
     }

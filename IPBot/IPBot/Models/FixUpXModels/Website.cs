@@ -1,10 +1,12 @@
+using System.Text.Json.Serialization;
+
 namespace IPBot.Models.FixUpXModels;
 
 public class Website
 {
-    [JsonProperty("url")]
+    [JsonPropertyName("url")]
     public string Url { get; set; }
 
-    [JsonProperty("display_url")]
+    [JsonPropertyName("display_url")]
     public string DisplayUrl { get; set; }
 }

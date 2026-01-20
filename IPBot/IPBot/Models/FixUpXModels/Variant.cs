@@ -1,13 +1,15 @@
+using System.Text.Json.Serialization;
+
 namespace IPBot.Models.FixUpXModels;
 
 public class Variant
 {
-    [JsonProperty("content_type")]
+    [JsonPropertyName("content_type")]
     public string ContentType { get; set; }
 
-    [JsonProperty("url")]
+    [JsonPropertyName("url")]
     public string Url { get; set; }
 
-    [JsonProperty("bitrate")]
+    [JsonPropertyName("bitrate")]
     public int? Bitrate { get; set; }
 }

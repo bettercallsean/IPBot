@@ -1,28 +1,30 @@
+using System.Text.Json.Serialization;
+
 namespace IPBot.Models.FixUpXModels;
 
 public class All
 {
-    [JsonProperty("url")]
+    [JsonPropertyName("url")]
     public string Url { get; set; }
 
-    [JsonProperty("thumbnail_url")]
+    [JsonPropertyName("thumbnail_url")]
     public string ThumbnailUrl { get; set; }
 
-    [JsonProperty("duration")]
+    [JsonPropertyName("duration")]
     public double Duration { get; set; }
 
-    [JsonProperty("width")]
+    [JsonPropertyName("width")]
     public int Width { get; set; }
 
-    [JsonProperty("height")]
+    [JsonPropertyName("height")]
     public int Height { get; set; }
 
-    [JsonProperty("format")]
+    [JsonPropertyName("format")]
     public string Format { get; set; }
 
-    [JsonProperty("type")]
+    [JsonPropertyName("type")]
     public string Type { get; set; }
 
-    [JsonProperty("variants")]
+    [JsonPropertyName("variants")]
     public List<Variant> Variants { get; set; }
 }

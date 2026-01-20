@@ -1,22 +1,24 @@
+using System.Text.Json.Serialization;
+
 namespace IPBot.Models.FixUpXModels;
 
 public class Facet
 {
-    [JsonProperty("type")]
+    [JsonPropertyName("type")]
     public string Type { get; set; }
 
-    [JsonProperty("indices")]
+    [JsonPropertyName("indices")]
     public List<int> Indices { get; set; }
 
-    [JsonProperty("id")]
+    [JsonPropertyName("id")]
     public string Id { get; set; }
 
-    [JsonProperty("display")]
+    [JsonPropertyName("display")]
     public string Display { get; set; }
 
-    [JsonProperty("original")]
+    [JsonPropertyName("original")]
     public string Original { get; set; }
 
-    [JsonProperty("replacement")]
+    [JsonPropertyName("replacement")]
     public string Replacement { get; set; }
 }

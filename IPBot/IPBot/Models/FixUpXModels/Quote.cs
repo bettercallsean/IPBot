@@ -1,70 +1,72 @@
-﻿namespace IPBot.Models.FixUpXModels;
+﻿using System.Text.Json.Serialization;
+
+namespace IPBot.Models.FixUpXModels;
 
 public class Quote
 {
-    [JsonProperty("url")]
+    [JsonPropertyName("url")]
     public string Url { get; set; }
 
-    [JsonProperty("id")]
+    [JsonPropertyName("id")]
     public string Id { get; set; }
 
-    [JsonProperty("text")]
+    [JsonPropertyName("text")]
     public string Text { get; set; }
 
-    [JsonProperty("raw_text")]
+    [JsonPropertyName("raw_text")]
     public RawText RawText { get; set; }
 
-    [JsonProperty("author")]
+    [JsonPropertyName("author")]
     public Author Author { get; set; }
 
-    [JsonProperty("replies")]
+    [JsonPropertyName("replies")]
     public int Replies { get; set; }
 
-    [JsonProperty("retweets")]
+    [JsonPropertyName("retweets")]
     public int Retweets { get; set; }
 
-    [JsonProperty("likes")]
+    [JsonPropertyName("likes")]
     public int Likes { get; set; }
 
-    [JsonProperty("created_at")]
+    [JsonPropertyName("created_at")]
     public string CreatedAt { get; set; }
 
-    [JsonProperty("created_timestamp")]
+    [JsonPropertyName("created_timestamp")]
     public int CreatedTimestamp { get; set; }
 
-    [JsonProperty("possibly_sensitive")]
+    [JsonPropertyName("possibly_sensitive")]
     public bool PossiblySensitive { get; set; }
 
-    [JsonProperty("views")]
+    [JsonPropertyName("views")]
     public int Views { get; set; }
 
-    [JsonProperty("is_note_tweet")]
+    [JsonPropertyName("is_note_tweet")]
     public bool IsNoteTweet { get; set; }
 
-    [JsonProperty("community_note")]
+    [JsonPropertyName("community_note")]
     public object CommunityNote { get; set; }
 
-    [JsonProperty("lang")]
+    [JsonPropertyName("lang")]
     public string Lang { get; set; }
 
-    [JsonProperty("replying_to")]
+    [JsonPropertyName("replying_to")]
     public object ReplyingTo { get; set; }
 
-    [JsonProperty("replying_to_status")]
+    [JsonPropertyName("replying_to_status")]
     public object ReplyingToStatus { get; set; }
 
-    [JsonProperty("media")]
+    [JsonPropertyName("media")]
     public Media Media { get; set; }
 
-    [JsonProperty("source")]
+    [JsonPropertyName("source")]
     public string Source { get; set; }
 
-    [JsonProperty("twitter_card")]
+    [JsonPropertyName("twitter_card")]
     public string TwitterCard { get; set; }
 
-    [JsonProperty("color")]
+    [JsonPropertyName("color")]
     public object Color { get; set; }
 
-    [JsonProperty("provider")]
+    [JsonPropertyName("provider")]
     public string Provider { get; set; }
 }

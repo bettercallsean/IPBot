@@ -3,6 +3,7 @@ using System.Web;
 using IPBot.Configuration;
 using IPBot.Interfaces.Helpers;
 using IPBot.Models.TenorModels;
+using JsonSerializer = System.Text.Json.JsonSerializer;
 
 namespace IPBot.Helpers;
 
@@ -60,7 +61,7 @@ public class TenorApiHelper : ITenorApiHelper
 
     private static string ParseTenorApiJson(string jsonString)
     {
-        var jsonRoot = JsonConvert.DeserializeObject<Root>(jsonString);
+        var jsonRoot = JsonSerializer.Deserialize<Root>(jsonString);
 
         return jsonRoot?.Results.FirstOrDefault()?.Media.FirstOrDefault()?.Tinygif.Url;
     }

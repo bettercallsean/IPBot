@@ -1,13 +1,15 @@
+using System.Text.Json.Serialization;
+
 namespace IPBot.Models.FixUpXModels;
 
 public class Media
 {
-    [JsonProperty("all")]
+    [JsonPropertyName("all")]
     public List<All> All { get; set; }
 
-    [JsonProperty("videos")]
+    [JsonPropertyName("videos")]
     public List<Video> Videos { get; set; }
 
-    [JsonProperty("mosaic")]
+    [JsonPropertyName("mosaic")]
     public Mosaic Mosaic { get; set; }
 }

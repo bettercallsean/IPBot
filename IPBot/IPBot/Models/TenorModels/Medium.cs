@@ -1,13 +1,15 @@
+using System.Text.Json.Serialization;
+
 namespace IPBot.Models.TenorModels;
 
 public class Medium
 {
-    [JsonProperty("gif")]
+    [JsonPropertyName("gif")]
     public Gif Gif { get; set; }
 
-    [JsonProperty("mp4")]
+    [JsonPropertyName("mp4")]
     public Mp4 Mp4 { get; set; }
 
-    [JsonProperty("tinygif")]
+    [JsonPropertyName("tinygif")]
     public Tinygif Tinygif { get; set; }
 }

@@ -1,10 +1,12 @@
-﻿namespace IPBot.Models.FixUpXModels;
+﻿using System.Text.Json.Serialization;
+
+namespace IPBot.Models.FixUpXModels;
 
 public class Formats
 {
-    [JsonProperty("jpeg")]
+    [JsonPropertyName("jpeg")]
     public string Jpeg { get; set; }
 
-    [JsonProperty("webp")]
+    [JsonPropertyName("webp")]
     public string Webp { get; set; }
 }

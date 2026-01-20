@@ -1,55 +1,57 @@
+using System.Text.Json.Serialization;
+
 namespace IPBot.Models.FixUpXModels;
 
 public class Author
 {
-    [JsonProperty("id")]
+    [JsonPropertyName("id")]
     public string Id { get; set; }
 
-    [JsonProperty("name")]
+    [JsonPropertyName("name")]
     public string Name { get; set; }
 
-    [JsonProperty("screen_name")]
+    [JsonPropertyName("screen_name")]
     public string ScreenName { get; set; }
 
-    [JsonProperty("avatar_url")]
+    [JsonPropertyName("avatar_url")]
     public string AvatarUrl { get; set; }
 
-    [JsonProperty("banner_url")]
+    [JsonPropertyName("banner_url")]
     public string BannerUrl { get; set; }
 
-    [JsonProperty("description")]
+    [JsonPropertyName("description")]
     public string Description { get; set; }
 
-    [JsonProperty("location")]
+    [JsonPropertyName("location")]
     public string Location { get; set; }
 
-    [JsonProperty("url")]
+    [JsonPropertyName("url")]
     public string Url { get; set; }
 
-    [JsonProperty("followers")]
+    [JsonPropertyName("followers")]
     public int Followers { get; set; }
 
-    [JsonProperty("following")]
+    [JsonPropertyName("following")]
     public int Following { get; set; }
 
-    [JsonProperty("joined")]
+    [JsonPropertyName("joined")]
     public string Joined { get; set; }
 
-    [JsonProperty("likes")]
+    [JsonPropertyName("likes")]
     public int Likes { get; set; }
 
-    [JsonProperty("media_count")]
+    [JsonPropertyName("media_count")]
     public int MediaCount { get; set; }
 
-    [JsonProperty("protected")]
+    [JsonPropertyName("protected")]
     public bool Protected { get; set; }
 
-    [JsonProperty("website")]
+    [JsonPropertyName("website")]
     public Website Website { get; set; }
 
-    [JsonProperty("tweets")]
+    [JsonPropertyName("tweets")]
     public int Tweets { get; set; }
 
-    [JsonProperty("avatar_color")]
+    [JsonPropertyName("avatar_color")]
     public object AvatarColor { get; set; }
 }

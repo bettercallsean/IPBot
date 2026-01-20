@@ -1,16 +1,18 @@
+using System.Text.Json.Serialization;
+
 namespace IPBot.Models.TenorModels;
 
 public class Gif
 {
-    [JsonProperty("preview")]
+    [JsonPropertyName("preview")]
     public string Preview { get; set; }
 
-    [JsonProperty("size")]
+    [JsonPropertyName("size")]
     public int Size { get; set; }
 
-    [JsonProperty("dims")]
+    [JsonPropertyName("dims")]
     public List<int> Dims { get; set; }
 
-    [JsonProperty("url")]
+    [JsonPropertyName("url")]
     public string Url { get; set; }
 }

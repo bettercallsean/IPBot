@@ -1,12 +1,13 @@
-﻿using Discord;
+﻿using System.Text.Json.Serialization;
+using Discord;
 
 namespace IPBot.Models.FixUpXModels;
 
 public class Mosaic
 {
-    [JsonProperty("type")]
+    [JsonPropertyName("type")]
     public string Type { get; set; }
 
-    [JsonProperty("formats")]
+    [JsonPropertyName("formats")]
     public Formats Formats { get; set; }
 }

@@ -1,55 +1,57 @@
+using System.Text.Json.Serialization;
+
 namespace IPBot.Models.TenorModels;
 
 public class Result
 {
-    [JsonProperty("id")]
+    [JsonPropertyName("id")]
     public string Id { get; set; }
 
-    [JsonProperty("title")]
+    [JsonPropertyName("title")]
     public string Title { get; set; }
 
-    [JsonProperty("content_description")]
+    [JsonPropertyName("content_description")]
     public string ContentDescription { get; set; }
 
-    [JsonProperty("content_rating")]
+    [JsonPropertyName("content_rating")]
     public string ContentRating { get; set; }
 
-    [JsonProperty("h1_title")]
+    [JsonPropertyName("h1_title")]
     public string H1Title { get; set; }
 
-    [JsonProperty("media")]
+    [JsonPropertyName("media")]
     public List<Medium> Media { get; set; }
 
-    [JsonProperty("bg_color")]
+    [JsonPropertyName("bg_color")]
     public string BgColor { get; set; }
 
-    [JsonProperty("created")]
+    [JsonPropertyName("created")]
     public double Created { get; set; }
 
-    [JsonProperty("itemurl")]
+    [JsonPropertyName("itemurl")]
     public string Itemurl { get; set; }
 
-    [JsonProperty("url")]
+    [JsonPropertyName("url")]
     public string Url { get; set; }
 
-    [JsonProperty("tags")]
+    [JsonPropertyName("tags")]
     public List<object> Tags { get; set; }
 
-    [JsonProperty("flags")]
+    [JsonPropertyName("flags")]
     public List<object> Flags { get; set; }
 
-    [JsonProperty("shares")]
+    [JsonPropertyName("shares")]
     public int Shares { get; set; }
 
-    [JsonProperty("hasaudio")]
+    [JsonPropertyName("hasaudio")]
     public bool Hasaudio { get; set; }
 
-    [JsonProperty("hascaption")]
+    [JsonPropertyName("hascaption")]
     public bool Hascaption { get; set; }
 
-    [JsonProperty("source_id")]
+    [JsonPropertyName("source_id")]
     public string SourceId { get; set; }
 
-    [JsonProperty("composite")]
+    [JsonPropertyName("composite")]
     public object Composite { get; set; }
 }
