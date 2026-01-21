@@ -48,7 +48,7 @@ public class TweetAnalyserService : ITweetAnalyserService
         return new TweetDetails(tweetRegex.Groups[2].Value, ulong.Parse(tweetRegex.Groups[4].Value));
     }
 
-    private static string GetFixUpXLink(Tweet tweet) => $"https://fixupx.com/{tweet.Author.Name}/status/{tweet.Id}";
+    private static string GetFixUpXLink(Tweet tweet) => $"https://fixupx.com/{tweet.Author.Username}/status/{tweet.Id}";
 
     private async Task<Tweet> GetTweetAsync(TweetDetails tweetDetails)
     {
@@ -71,7 +71,7 @@ public class TweetAnalyserService : ITweetAnalyserService
             _logger.LogInformation("Responding to {Username} in {GuildName}:{ChannelName} with fixed link {Url}",
                 message.Author.Username, channel.Guild.Name, channel.Name, fixUpXLink);
 
-            await userMessage.Channel.SendMessageAsync($"[{tweet.Author.ScreenName}]({fixUpXLink})");
+            await userMessage.Channel.SendMessageAsync($"[{tweet.Author.Username}]({fixUpXLink})");
         }
     }
 }
