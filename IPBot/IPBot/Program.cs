@@ -1,12 +1,9 @@
-﻿namespace IPBot;
+﻿using IPBot;
 
-public static class Program
-{
-    public static void Main() => CreateHostBuilder().Build().Run();
+CreateHostBuilder().Build().Run();
 
-    private static IHostBuilder CreateHostBuilder() =>
-        Host.CreateDefaultBuilder().ConfigureWebHostDefaults(webHost =>
-        {
-            webHost.UseStartup<Startup>();
-        });
-}
+static IHostBuilder CreateHostBuilder() =>
+    Host.CreateDefaultBuilder().ConfigureWebHostDefaults(webHost =>
+    {
+        webHost.UseStartup<Startup>();
+    });
