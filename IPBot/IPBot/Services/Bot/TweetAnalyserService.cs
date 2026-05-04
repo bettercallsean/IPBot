@@ -36,10 +36,10 @@ public class TweetAnalyserService : ITweetAnalyserService
     {
         var tweet = await GetTweetAsync(tweetDetails);
 
-        return tweet.Media.Videos.Count > 0 ? tweet.Media.Videos.Select(x => x.Variants.MaxBy(y => y.Bitrate).Url).ToList() : [];
+        return tweet.Media.Videos.Count > 0 ? [.. tweet.Media.Videos.Select(x => x.Variants.MaxBy(y => y.Bitrate).Url)] : [];
     }
 
-    public bool ContentContainsTweetLink(string content) => RegexHelper.TwitterLinkRegex().Match(content).Success;
+    public bool ContentContainsTweetLink(string content) => RegexHelper.TwitterLinkRegex().IsMatch(content);
 
     public TweetDetails GetTweetDetails(string tweetLink)
     {
