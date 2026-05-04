@@ -1,3 +1,5 @@
+using IPBot.Models.FixUpXModels;
+
 namespace IPBot.Interfaces.Services;
 
 public interface ITweetAnalyserService
@@ -6,4 +8,5 @@ public interface ITweetAnalyserService
     bool ContentContainsTweetLink(string content);
     TweetDetails GetTweetDetails(string tweetLink);
     Task CheckForTwitterLinksAsync(SocketMessage message);
+    Tweet GetTweetFromMessageContent(SocketMessage message);
 }

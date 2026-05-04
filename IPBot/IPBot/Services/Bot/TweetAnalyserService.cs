@@ -48,6 +48,17 @@ public class TweetAnalyserService : ITweetAnalyserService
         return new TweetDetails(tweetRegex.Groups[2].Value, ulong.Parse(tweetRegex.Groups[4].Value));
     }
 
+    public Tweet GetTweetFromMessageContent(SocketMessage message)
+    {
+        if (ContentContainsTweetLink(message.Content))
+        {
+            var tweetDetails = GetTweetDetails(message.Content);
+            return GetTweetAsync(tweetDetails).GetAwaiter().GetResult();
+        }
+
+        return null;
+    }
+
     private static string GetFixUpXLink(Tweet tweet) => $"https://fixupx.com/{tweet.Author.Username}/status/{tweet.Id}";
 
     private async Task<Tweet> GetTweetAsync(TweetDetails tweetDetails)

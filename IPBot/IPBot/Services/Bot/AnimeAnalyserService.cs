@@ -11,10 +11,10 @@ public class AnimeAnalyserService : IAnimeAnalyserService
     private readonly List<string> _responseList = [.. Resources.Resources.ResponseGifs.Split(Environment.NewLine)];
     private readonly IDiscordService _discordService;
     private readonly ILogger<AnimeAnalyserService> _logger;
-    private readonly IImageAnalyserService _imageAnalyserService;
+    private readonly IContentAnalyserService _imageAnalyserService;
     private readonly IMessageMediaAnalyserService _messageAnalyserService;
 
-    public AnimeAnalyserService(IDiscordService discordService, ILogger<AnimeAnalyserService> logger, IImageAnalyserService imageAnalyserService, IMessageMediaAnalyserService messageAnalyserService)
+    public AnimeAnalyserService(IDiscordService discordService, ILogger<AnimeAnalyserService> logger, IContentAnalyserService imageAnalyserService, IMessageMediaAnalyserService messageAnalyserService)
     {
         _discordService = discordService;
         _logger = logger;

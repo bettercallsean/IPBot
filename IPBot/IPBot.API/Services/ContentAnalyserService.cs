@@ -8,13 +8,13 @@ using IPBot.Common.Services;
 
 namespace IPBot.API.Services;
 
-public class ImageAnalyserService : IImageAnalyserService
+public class ContentAnalyserService : IContentAnalyserService
 {
     private readonly ImageAnalysisClient _imageAnalysisClient;
     private readonly ContentSafetyClient _contentSafetyClient;
-    private readonly ILogger<ImageAnalyserService> _logger;
+    private readonly ILogger<ContentAnalyserService> _logger;
 
-    public ImageAnalyserService(ILogger<ImageAnalyserService> logger, AzureSettings azureSettings)
+    public ContentAnalyserService(ILogger<ContentAnalyserService> logger, AzureSettings azureSettings)
     {
         _logger = logger;
         _imageAnalysisClient = CreateImageAnalysisClient(azureSettings.ImageAnalysisSettings);
@@ -40,7 +40,7 @@ public class ImageAnalyserService : IImageAnalyserService
         return imageTags.Value.Tags.Values.Where(x => x.Name == "anime").Select(x => x.Confidence).FirstOrDefault();
     }
 
-    public async Task<List<CategoryAnalysisDto>> GetContentSafetyAnalysisAsync(string imageUrl)
+    public async Task<List<CategoryAnalysisDto>> GetImageContentSafetyAnalysisAsync(string imageUrl)
     {
         var image = new ContentSafetyImageData(new Uri(imageUrl));
         var request = new AnalyzeImageOptions(image);
@@ -56,11 +56,33 @@ public class ImageAnalyserService : IImageAnalyserService
             throw;
         }
 
-        return response.Value.CategoriesAnalysis.Select(x => new CategoryAnalysisDto
+        return [.. response.Value.CategoriesAnalysis.Select(x => new CategoryAnalysisDto
         {
             Category = x.Category.ToString(),
             Severity = x.Severity ?? 0
-        }).ToList();
+        })];
+    }
+
+    public async Task<List<CategoryAnalysisDto>> GetTextContentSafetyAnalysisAsync(string text)
+    {
+        var request = new AnalyzeTextOptions(text);
+
+        Response<AnalyzeTextResult> response;
+        try
+        {
+            response = await _contentSafetyClient.AnalyzeTextAsync(request);
+        }
+        catch (RequestFailedException ex)
+        {
+            _logger.LogError("Analyze image failed. Status code: {Status}, Error code: {ErrorCode}, Error message: {Message}", ex.Status, ex.ErrorCode, ex.Message);
+            throw;
+        }
+
+        return [.. response.Value.CategoriesAnalysis.Select(x => new CategoryAnalysisDto
+        {
+            Category = x.Category.ToString(),
+            Severity = x.Severity ?? 0
+        })];
     }
 
     private static ContentSafetyClient CreateContentSafetyClient(ContentSafetyAnalysisSettings contentSafetyAnalysisSettings)

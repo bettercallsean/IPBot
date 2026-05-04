@@ -1,4 +1,6 @@
-﻿namespace IPBot.Interfaces.Services;
+﻿using IPBot.Common.Dtos;
+
+namespace IPBot.Interfaces.Services;
 
 public interface IHatefulContentAnalyserService
 {

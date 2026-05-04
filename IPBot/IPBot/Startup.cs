@@ -65,7 +65,7 @@ public class Startup
             .AddScoped<IMessageMediaAnalyserService, MessageMediaAnalyserService>()
             .AddSingleton<IGameService, GameService>()
             .AddSingleton<IIPService, IPService>()
-            .AddSingleton<IImageAnalyserService, ImageAnalyserService>()
+            .AddSingleton<IContentAnalyserService, ContentAnalyserService>()
             .AddSingleton<IDiscordService, DiscordService>()
             .AddSingleton<ITenorApiHelper, TenorApiHelper>()
             .AddSingleton<ITweetAnalyserService, TweetAnalyserService>()
