@@ -73,7 +73,10 @@ public class DiscordCommands : InteractionModuleBase<SocketInteractionContext>
 
         var flaggedUsers = await _discordService.GetFlaggedUsersAsync();
 
-        await FollowupAsync(string.Join($"{Environment.NewLine}", flaggedUsers.Select(x => $"User: {x.Username} | Flagged Count: {x.FlaggedCount}")));
+        if (flaggedUsers.Count == 0)
+            await FollowupAsync("No flagged users!");
+        else
+            await FollowupAsync(string.Join($"{Environment.NewLine}", flaggedUsers.Select(x => $"User: {x.Username} | Flagged Count: {x.FlaggedCount}")));
     }
 
 #if DEBUG
