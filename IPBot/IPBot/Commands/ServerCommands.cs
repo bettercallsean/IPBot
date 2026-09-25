@@ -128,6 +128,6 @@ public class ServerCommands : InteractionModuleBase<SocketInteractionContext>
         _logger.LogInformation("Updating map information for {Port}. Map updating from {SavedMap} to {NewMap}", gameServer.Port, gameServer.Map, serverInfo.Map);
 
         gameServer.Map = serverInfo.Map;
-        await _gameService.UpdateGameServerInformationAsync(gameServer);
+        await _gameService.UpdateGameServerAsync(gameServer);
     }
 }

@@ -46,7 +46,7 @@ public class HatefulContentAnalyserService : IHatefulContentAnalyserService
             if (flaggedUser.FlaggedCount >= BotConstants.MaxHatefulImageFlaggedCount && !DebugHelper.IsDebug())
                 await user.BanAsync(reason: $"Banned for posting hateful content. Categories: {hateCategories}");
             else
-                await _discordService.UpdateUserFlaggedCountAsync(user.Id);
+                await _discordService.IncrementUserFlaggedCountAsync(user.Id);
         }
         else
         {

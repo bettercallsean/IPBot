@@ -95,7 +95,7 @@ public class StartupService
 
     private async Task PostUpdatedIPAsync(string ip)
     {
-        var discordChannels = await _discordService.GetInUseDiscordChannelsAsync();
+        var discordChannels = await _discordService.GetActiveDiscordChannelsAsync();
 
         _logger.LogInformation("Server IP updated to {IP}", ip);
         var ipUpdatedMessage = $"⚠️ Beep boop. The server IP has changed to `{ip}` ⚠️";

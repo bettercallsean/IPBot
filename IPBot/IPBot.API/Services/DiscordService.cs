@@ -6,22 +6,14 @@ using IPBot.Common.Services;
 
 namespace IPBot.API.Services;
 
-public class DiscordService : IDiscordService
+public class DiscordService(IMapper mapper, IDiscordChannelRepository discordChannelRepository, IFlaggedUserRepository flaggedUserRepository, IDiscordGuildRepository discordGuildRepository) : IDiscordService
 {
-    private readonly IMapper _mapper;
-    private readonly IDiscordChannelRepository _discordChannelRepository;
-    private readonly IFlaggedUserRepository _flaggedUserRepository;
-    private readonly IDiscordGuildRepository _discordGuildRepository;
+    private readonly IMapper _mapper = mapper;
+    private readonly IDiscordChannelRepository _discordChannelRepository = discordChannelRepository;
+    private readonly IFlaggedUserRepository _flaggedUserRepository = flaggedUserRepository;
+    private readonly IDiscordGuildRepository _discordGuildRepository = discordGuildRepository;
 
-    public DiscordService(IMapper mapper, IDiscordChannelRepository discordChannelRepository, IFlaggedUserRepository flaggedUserRepository, IDiscordGuildRepository discordGuildRepository)
-    {
-        _mapper = mapper;
-        _discordChannelRepository = discordChannelRepository;
-        _flaggedUserRepository = flaggedUserRepository;
-        _discordGuildRepository = discordGuildRepository;
-    }
-
-    public async Task<List<DiscordChannelDto>> GetInUseDiscordChannelsAsync()
+    public async Task<List<DiscordChannelDto>> GetActiveDiscordChannelsAsync()
     {
         var channels = await _discordChannelRepository.GetAllWhereAsync(x => x.UseForBotMessages);
 
@@ -30,10 +22,9 @@ public class DiscordService : IDiscordService
 
     public async Task<bool> ChannelIsBeingAnalysedForAnimeAsync(ulong guildId, ulong channelId)
     {
-        var discordChannel = await _discordChannelRepository.GetWhereAsync(x => x.GuildId == guildId
-                                                                                && x.Id == channelId);
+        var discordChannel = await _discordChannelRepository.GetWhereAsync(x => x.GuildId == guildId && x.Id == channelId);
 
-        return discordChannel?.AnalyseForAnime == true;
+        return discordChannel.AnalyseForAnime;
     }
 
     public async Task<FlaggedUserDto> GetFlaggedUserAsync(ulong userId)
@@ -43,7 +34,7 @@ public class DiscordService : IDiscordService
         return _mapper.Map<FlaggedUserDto>(user);
     }
 
-    public async Task<bool> UpdateUserFlaggedCountAsync(ulong userId)
+    public async Task<bool> IncrementUserFlaggedCountAsync(ulong userId)
     {
         var user = await _flaggedUserRepository.GetByIdAsync(userId);
 
@@ -73,7 +64,7 @@ public class DiscordService : IDiscordService
         return await _flaggedUserRepository.DeleteAsync(user);
     }
 
-    public async Task<bool> GuidIsBeingCheckedForTwitterLinksAsync(ulong guildId)
+    public async Task<bool> GuildIsBeingCheckedForTwitterLinksAsync(ulong guildId)
     {
         var guild = await _discordGuildRepository.GetByIdAsync(guildId);
 

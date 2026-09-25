@@ -90,7 +90,7 @@ public class DiscordCommands : InteractionModuleBase<SocketInteractionContext>
     {
         _logger.LogInformation("ToggleTwitterLinkScanningAsync executed");
 
-        var guildIsBeingScannedForTweets = await _discordService.GuidIsBeingCheckedForTwitterLinksAsync(Context.Guild.Id);
+        var guildIsBeingScannedForTweets = await _discordService.GuildIsBeingCheckedForTwitterLinksAsync(Context.Guild.Id);
 
         var toggledSuccessfully = await _discordService.ToggleTwitterLinkScanningAsync(Context.Guild.Id);
 

@@ -11,11 +11,11 @@ public class ImageAnalyserService(IRestClient client, BotConfiguration botConfig
 
     public async Task<double> GetAnimeScoreAsync(string imageUrl)
     {
-        return await GetAsync<double>($"{BaseUri}/GetAnimeScore/{imageUrl}");
+        return await GetAsync<double>($"{BaseUri}/scores/anime/{imageUrl}");
     }
 
     public async Task<List<CategoryAnalysisDto>> GetContentSafetyAnalysisAsync(string imageUrl)
     {
-        return await GetAsync<List<CategoryAnalysisDto>>($"{BaseUri}/GetContentSafetyAnalysis/{imageUrl}");
+        return await GetAsync<List<CategoryAnalysisDto>>($"{BaseUri}/content-safety/{imageUrl}");
     }
 }

@@ -5,16 +5,11 @@ using Microsoft.AspNetCore.Authorization;
 namespace IPBot.API.Controllers;
 
 [Authorize]
-public class GameServerController : MainController
+public class GameServerController(IGameService gameService) : MainController
 {
-    private readonly IGameService _gameService;
+    private readonly IGameService _gameService = gameService;
 
-    public GameServerController(IGameService gameService)
-    {
-        _gameService = gameService;
-    }
-
-    [HttpGet("{portNumber:int}")]
+    [HttpGet("minecraft/{portNumber:int}")]
     [ResponseCache(Duration = 60, Location = ResponseCacheLocation.Any, NoStore = false)]
     public async Task<ActionResult<ServerInfoDto>> GetMinecraftServerStatusAsync(int portNumber)
     {
@@ -28,7 +23,7 @@ public class GameServerController : MainController
         }
     }
 
-    [HttpGet("{portNumber:int}")]
+    [HttpGet("steam/{portNumber:int}")]
     [ResponseCache(Duration = 60, Location = ResponseCacheLocation.Any, NoStore = false)]
     public async Task<ActionResult<ServerInfoDto>> GetSteamServerStatusAsync(int portNumber)
     {
@@ -42,7 +37,7 @@ public class GameServerController : MainController
         }
     }
 
-    [HttpGet("{gameName}")]
+    [HttpGet("active/{gameName}")]
     public async Task<ActionResult<List<GameServerDto>>> GetActiveServersAsync(string gameName)
     {
         try
@@ -54,13 +49,13 @@ public class GameServerController : MainController
             return Problem("500", ex.Message);
         }
     }
-    
+
     [HttpPost]
-    public async Task<ActionResult<bool>> UpdateGameServerInformationAsync(GameServerDto dto)
+    public async Task<ActionResult<bool>> UpdateGameServerAsync(GameServerDto dto)
     {
         try
         {
-            return Ok(await _gameService.UpdateGameServerInformationAsync(dto));
+            return Ok(await _gameService.UpdateGameServerAsync(dto));
         }
         catch (Exception ex)
         {

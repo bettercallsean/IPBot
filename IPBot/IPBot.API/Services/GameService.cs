@@ -9,22 +9,13 @@ using IPBot.Common.Services;
 
 namespace IPBot.API.Services;
 
-public class GameService : IGameService
+public class GameService(IMapper mapper, IIPService ipService, IGameRepository gameRepository, IGameServerRepository gameServerRepository, IHttpClientFactory httpClientFactory) : IGameService
 {
-    private readonly IMapper _mapper;
-    private readonly IIPService _ipService;
-    private readonly IGameRepository _gameRepository;
-    private readonly IGameServerRepository _gameServerRepository;
-    private readonly IHttpClientFactory _httpClientFactory;
-
-    public GameService(IMapper mapper, IIPService ipService, IGameRepository gameRepository, IGameServerRepository gameServerRepository, IHttpClientFactory httpClientFactory)
-    {
-        _mapper = mapper;
-        _ipService = ipService;
-        _gameRepository = gameRepository;
-        _gameServerRepository = gameServerRepository;
-        _httpClientFactory = httpClientFactory;
-    }
+    private readonly IMapper _mapper = mapper;
+    private readonly IIPService _ipService = ipService;
+    private readonly IGameRepository _gameRepository = gameRepository;
+    private readonly IGameServerRepository _gameServerRepository = gameServerRepository;
+    private readonly IHttpClientFactory _httpClientFactory = httpClientFactory;
 
     public async Task<ServerInfoDto> GetMinecraftServerStatusAsync(int portNumber)
     {
@@ -48,7 +39,7 @@ public class GameService : IGameService
         return _mapper.Map<List<GameServerDto>>(gameServers);
     }
 
-    public async Task<bool> UpdateGameServerInformationAsync(GameServerDto dto)
+    public async Task<bool> UpdateGameServerAsync(GameServerDto dto)
     {
         var gameServer = _mapper.Map<GameServer>(dto);
 

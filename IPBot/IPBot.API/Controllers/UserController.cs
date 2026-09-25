@@ -4,24 +4,19 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace IPBot.API.Controllers;
 
-public class UserController : MainController
+public class UserController(IUserService userService) : MainController
 {
-    private readonly IUserService _userService;
-
-    public UserController(IUserService userService)
-    {
-        _userService = userService;
-    }
+    private readonly IUserService _userService = userService;
 
     [Authorize]
-    [HttpPost]
+    [HttpPost("register")]
     public async Task<ActionResult<bool>> RegisterAsync(UserDto dto)
     {
         var result = await _userService.RegisterUserAsync(dto);
         return result ? Ok() : Problem();
     }
 
-    [HttpPost]
+    [HttpPost("login")]
     public async Task<ActionResult<string>> LoginAsync(UserDto dto)
     {
         var token = await _userService.LoginUserAsync(dto);

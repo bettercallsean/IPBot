@@ -72,6 +72,16 @@ public class ServiceBase
         }.AddBody(dto));
     }
 
+    protected async Task<T> DeleteAsync<T>(string url)
+    {
+        await ValidateJwtAsync();
+
+        return await _client.DeleteAsync<T>(new RestRequest(url, Method.Delete)
+        {
+            Authenticator = new JwtAuthenticator(_jwt)
+        });
+    }
+
     private async Task ValidateJwtAsync()
     {
         if (JwtHelper.CheckTokenIsValid(_jwt)) return;

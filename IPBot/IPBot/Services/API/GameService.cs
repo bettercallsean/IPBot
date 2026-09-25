@@ -11,21 +11,21 @@ public class GameService(IRestClient client, BotConfiguration botConfiguration) 
 
     public async Task<ServerInfoDto> GetMinecraftServerStatusAsync(int portNumber)
     {
-        return await GetAsync<ServerInfoDto>($"{BaseUri}/GetMinecraftServerStatus/{portNumber}");
+        return await GetAsync<ServerInfoDto>($"{BaseUri}/minecraft/{portNumber}");
     }
 
     public async Task<ServerInfoDto> GetSteamServerStatusAsync(int portNumber)
     {
-        return await GetAsync<ServerInfoDto>($"{BaseUri}/GetSteamServerStatus/{portNumber}");
+        return await GetAsync<ServerInfoDto>($"{BaseUri}/steam/{portNumber}");
     }
 
     public async Task<List<GameServerDto>> GetActiveServersAsync(string gameName)
     {
-        return await GetAsync<List<GameServerDto>>($"{BaseUri}/GetActiveServers/{gameName}");
+        return await GetAsync<List<GameServerDto>>($"{BaseUri}/active/{gameName}");
     }
 
-    public async Task<bool> UpdateGameServerInformationAsync(GameServerDto dto)
+    public async Task<bool> UpdateGameServerAsync(GameServerDto dto)
     {
-        return await PostAsync<bool>($"{BaseUri}/UpdateGameServerInformation", dto);
+        return await PostAsync<bool>($"{BaseUri}", dto);
     }
 }
