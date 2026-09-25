@@ -24,7 +24,7 @@ public class StartupService
     private bool _initialConnection = true;
 
     public StartupService(ILogger<StartupService> logger, BotConfiguration botConfiguration, IIPService ipService,
-        DiscordSocketClient discord, InteractionService commands, IDiscordService discordService, ITweetAnalyserService tweetService, 
+        DiscordSocketClient discord, InteractionService commands, IDiscordService discordService, ITweetAnalyserService tweetService,
         IAnimeAnalyserService animeAnalyserService, IHatefulContentAnalyserService hatefulContentAnalyserService)
     {
         _logger = logger;
@@ -62,7 +62,7 @@ public class StartupService
     private async Task OnMessageReceivedAsync(SocketMessage arg)
     {
         if (arg.Author.IsBot) return;
-        
+
         await _animeAnalyserService.CheckMessageForAnimeAsync(arg);
         await _hatefulContentAnalyserService.CheckMessageForHatefulContentAsync(arg);
         await _tweetService.CheckForTwitterLinksAsync(arg);
