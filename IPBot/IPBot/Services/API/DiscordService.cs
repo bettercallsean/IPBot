@@ -14,9 +14,9 @@ public class DiscordService(IRestClient client, BotConfiguration botConfiguratio
         return await GetAsync<List<DiscordChannelDto>>($"{BaseUri}/channels/active");
     }
 
-    public async Task<bool> ChannelIsBeingAnalysedForAnimeAsync(ulong guildId, ulong channelId)
+    public async Task<DiscordChannelDto> GetDiscordChannelAsync(ulong guildId, ulong channelId)
     {
-        return await GetAsync<bool>($"{BaseUri}/guilds/{guildId}/channels/{channelId}/analyse-for-anime");
+        return await GetAsync<DiscordChannelDto>($"{BaseUri}/guilds/{guildId}/channels/{channelId}");
     }
 
     public async Task<FlaggedUserDto> GetFlaggedUserAsync(ulong userId)
@@ -44,9 +44,9 @@ public class DiscordService(IRestClient client, BotConfiguration botConfiguratio
         return await DeleteAsync<bool>($"{BaseUri}/users/flagged/{userId}");
     }
 
-    public async Task<bool> GuildIsBeingCheckedForTwitterLinksAsync(ulong guildId)
+    public async Task<DiscordGuildDto> GetDiscordGuildAsync(ulong guildId)
     {
-        return await GetAsync<bool>($"{BaseUri}/guilds/{guildId}/twitter-links");
+        return await GetAsync<DiscordGuildDto>($"{BaseUri}/guilds/{guildId}");
     }
 
     public async Task<bool> ToggleTwitterLinkScanningAsync(ulong guildId)

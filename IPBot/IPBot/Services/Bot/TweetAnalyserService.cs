@@ -23,7 +23,7 @@ public class TweetAnalyserService : ITweetAnalyserService
     {
         var channel = message.Channel as SocketGuildChannel;
         var guildIsBeingCheckedForTwitterLinks =
-            await _discordService.GuildIsBeingCheckedForTwitterLinksAsync(channel.Guild.Id);
+            await _discordService.GetDiscordGuildAsync(channel.Guild.Id);
 
         if (!guildIsBeingCheckedForTwitterLinks) return;
 

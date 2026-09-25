@@ -20,11 +20,11 @@ public class DiscordService(IMapper mapper, IDiscordChannelRepository discordCha
         return _mapper.Map<List<DiscordChannelDto>>(channels);
     }
 
-    public async Task<bool> ChannelIsBeingAnalysedForAnimeAsync(ulong guildId, ulong channelId)
+    public async Task<DiscordChannelDto> GetDiscordChannelAsync(ulong guildId, ulong channelId)
     {
         var discordChannel = await _discordChannelRepository.GetWhereAsync(x => x.GuildId == guildId && x.Id == channelId);
 
-        return discordChannel.AnalyseForAnime;
+        return _mapper.Map<DiscordChannelDto>(discordChannel);
     }
 
     public async Task<FlaggedUserDto> GetFlaggedUserAsync(ulong userId)
@@ -64,11 +64,11 @@ public class DiscordService(IMapper mapper, IDiscordChannelRepository discordCha
         return await _flaggedUserRepository.DeleteAsync(user);
     }
 
-    public async Task<bool> GuildIsBeingCheckedForTwitterLinksAsync(ulong guildId)
+    public async Task<DiscordGuildDto> GetDiscordGuildAsync(ulong guildId)
     {
         var guild = await _discordGuildRepository.GetByIdAsync(guildId);
 
-        return guild.CheckForTwitterLinks;
+        return _mapper.Map<DiscordGuildDto>(guild);
     }
 
     public async Task<bool> ToggleTwitterLinkScanningAsync(ulong guildId)

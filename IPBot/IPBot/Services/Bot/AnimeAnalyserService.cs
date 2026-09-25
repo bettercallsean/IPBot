@@ -26,7 +26,7 @@ public class AnimeAnalyserService : IAnimeAnalyserService
     public async Task CheckMessageForAnimeAsync(SocketMessage message)
     {
         var user = message.Author as IGuildUser;
-        var channelIsBeingAnalysedForAnime = await _discordService.ChannelIsBeingAnalysedForAnimeAsync(user.Guild.Id, message.Channel.Id);
+        var channelIsBeingAnalysedForAnime = await _discordService.GetDiscordChannelAsync(user.Guild.Id, message.Channel.Id);
 
         if (!channelIsBeingAnalysedForAnime) return;
 
