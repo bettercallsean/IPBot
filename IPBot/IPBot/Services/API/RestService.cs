@@ -8,62 +8,40 @@ internal class RestService(IRestClient client)
 
     protected async Task<T> GetAsync<T>(string url)
     {
-        var result = await _client.ExecuteAsync<T>(new RestRequest(url));
+        var response = await _client.ExecuteAsync<T>(new RestRequest(url));
 
-        return await ParseResultAsync(result);
+        return await ParseResponseAsync(response);
     }
 
     protected async Task<T> PostAsync<T>(string url, object dto)
     {
-        var result = await _client.ExecutePostAsync<T>(new RestRequest(url, Method.Post)
-        {
-            RequestFormat = DataFormat.Json
-        }.AddBody(dto));
+        var response = await _client.ExecutePostAsync<T>(new RestRequest(url, Method.Post).AddJsonBody(dto));
 
-        return await ParseResultAsync(result);
+        return await ParseResponseAsync(response);
     }
 
     protected async Task<T> PatchAsync<T>(string url, object dto)
     {
-        var result = await _client.ExecutePatchAsync<T>(new RestRequest(url, Method.Patch)
-        {
-            RequestFormat = DataFormat.Json
-        }.AddBody(dto));
+        var response = await _client.ExecutePatchAsync<T>(new RestRequest(url, Method.Patch).AddJsonBody(dto));
 
-        return await ParseResultAsync(result);
-    }
-
-    protected async Task<T> PatchAsync<T>(string url)
-    {
-        var result = await _client.ExecutePatchAsync<T>(new RestRequest(url, Method.Patch)
-        {
-            RequestFormat = DataFormat.Json
-        });
-
-        return await ParseResultAsync(result);
+        return await ParseResponseAsync(response);
     }
 
     protected async Task<T> PutAsync<T>(string url, object dto)
     {
-        var result = await _client.ExecutePutAsync<T>(new RestRequest(url, Method.Put)
-        {
-            RequestFormat = DataFormat.Json
-        }.AddBody(dto));
+        var response = await _client.ExecutePutAsync<T>(new RestRequest(url, Method.Put).AddJsonBody(dto));
 
-        return await ParseResultAsync(result);
+        return await ParseResponseAsync(response);
     }
 
     protected async Task<T> DeleteAsync<T>(string url)
     {
-        var result = await _client.ExecuteDeleteAsync<T>(new RestRequest(url, Method.Delete)
-        {
-            RequestFormat = DataFormat.Json
-        });
+        var response = await _client.ExecuteDeleteAsync<T>(new RestRequest(url, Method.Delete));
 
-        return await ParseResultAsync(result);
+        return await ParseResponseAsync(response);
     }
 
-    private static async Task<T> ParseResultAsync<T>(RestResponse<T> response)
+    private static async Task<T> ParseResponseAsync<T>(RestResponse<T> response)
     {
         if (!response.IsSuccessful)
         {

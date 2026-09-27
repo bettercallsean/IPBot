@@ -4,7 +4,7 @@ using RestSharp;
 
 namespace IPBot.Services.API;
 
-internal class GameService(IRestClient client) : RestService(client), IGameService
+internal sealed class GameService(IRestClient client) : RestService(client), IGameService
 {
     private const string BaseUri = "/GameServer";
 

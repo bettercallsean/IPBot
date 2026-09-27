@@ -3,7 +3,7 @@ using RestSharp;
 
 namespace IPBot.Services.API;
 
-internal class IPService(IRestClient client) : RestService(client), IIPService
+internal sealed class IPService(IRestClient client) : RestService(client), IIPService
 {
     private const string BaseUri = "/IP";
 

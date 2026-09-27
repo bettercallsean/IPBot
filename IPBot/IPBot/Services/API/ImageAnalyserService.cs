@@ -4,7 +4,7 @@ using RestSharp;
 
 namespace IPBot.Services.API;
 
-internal class ImageAnalyserService(IRestClient client) : RestService(client), IImageAnalyserService
+internal sealed class ImageAnalyserService(IRestClient client) : RestService(client), IImageAnalyserService
 {
     private const string BaseUri = "/ImageAnalyser";
 

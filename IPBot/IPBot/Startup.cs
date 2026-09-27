@@ -2,7 +2,7 @@
 using IPBot.Configuration;
 using IPBot.Extensions;
 using IPBot.Helpers;
-using IPBot.Services.API.Authoriser;
+using IPBot.Services.API.Authenticator;
 using IPBot.Services.Bot;
 using RestSharp;
 using Serilog;
@@ -11,8 +11,6 @@ namespace IPBot;
 
 internal class Startup
 {
-    private readonly IConfigurationRoot _config;
-
     public Startup()
     {
         var builder = new ConfigurationBuilder()
@@ -23,21 +21,21 @@ internal class Startup
             .AddJsonFile($"appsettings.{environment}.json", optional: true)
             .AddEnvironmentVariables();
 
-        _config = builder.Build();
+        var config = builder.Build();
 
         Log.Logger = new LoggerConfiguration()
             .ReadFrom
-            .Configuration(_config)
+            .Configuration(config)
             .CreateLogger();
     }
 
     public static async void Configure()
     {
-        var startup = new Startup();
-        await startup.ConfigureBotAsync();
+        var _ = new Startup();
+        await ConfigureBotAsync();
     }
 
-    private async Task ConfigureBotAsync()
+    private static async Task ConfigureBotAsync()
     {
         var services = new ServiceCollection();
         ConfigureServices(services);
@@ -50,7 +48,7 @@ internal class Startup
         await Task.Delay(Timeout.Infinite);
     }
 
-    private void ConfigureServices(IServiceCollection services)
+    private static void ConfigureServices(IServiceCollection services)
     {
         services
             .AddSingleton(new DiscordSocketClient(new DiscordSocketConfig
@@ -61,16 +59,18 @@ internal class Startup
                 AlwaysDownloadUsers = true
             }))
             .AddSingleton<CommandHandler>()
-            .RegisterServices()
-            .AddSingleton(_config.Get<BotConfiguration>() ?? throw new Exception("BotConfiguration secttion is empty"))
             .AddLogging(config =>
             {
                 config.AddSerilog();
             })
+            .RegisterServices()
+            .AddSingleton(x => x.GetRequiredService<BotConfiguration>())
+            .AddSingleton<JwtAuthenticator>()
             .AddSingleton<IRestClient>(x =>
             {
-                var botConfiguration = _config.Get<BotConfiguration>();
-                var authenticator = new JwtAuthoriser(botConfiguration.APILogin);
+                var botConfiguration = x.GetRequiredService<BotConfiguration>();
+                var authenticator = x.GetRequiredService<JwtAuthenticator>();
+
                 var options = new RestClientOptions(botConfiguration.APIEndpoint)
                 {
                     Authenticator = authenticator

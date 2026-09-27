@@ -4,7 +4,7 @@ using RestSharp;
 
 namespace IPBot.Services.API;
 
-internal class DiscordService(IRestClient client) : RestService(client), IDiscordService
+internal sealed class DiscordService(IRestClient client) : RestService(client), IDiscordService
 {
     private const string BaseUri = "/Discord";
 

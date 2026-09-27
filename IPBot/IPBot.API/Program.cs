@@ -33,8 +33,7 @@ builder.Services.AddResponseCompression(opts =>
         ["application/octet-stream"]);
 });
 
-var azureSettings = builder.Configuration.GetRequiredSection("AzureSettings").Get<AzureSettings>()
-    ?? throw new Exception("SecurityKeyToken is empty. Check that a value is set in appsettings or in environment variables");
+var azureSettings = builder.Configuration.GetRequiredSection("AzureSettings").Get<AzureSettings>();
 builder.Services.AddSingleton(azureSettings);
 
 builder.Services.RegisterServices();
@@ -54,8 +53,7 @@ builder.Services.AddSwaggerGen(options =>
     options.OperationFilter<SecurityRequirementsOperationFilter>();
 });
 
-var securityKeyToken = builder.Configuration.GetValue<string>("SecurityKeyToken")
-    ?? throw new Exception("SecurityKeyToken is empty. Check that a value is set in appsettings or in environment variables");
+var securityKeyToken = builder.Configuration.GetRequiredSection("SecurityKeyToken").Get<string>();
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
