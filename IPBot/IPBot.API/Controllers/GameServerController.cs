@@ -37,7 +37,7 @@ public class GameServerController(IGameService gameService) : MainController
         }
     }
 
-    [HttpGet("active/{gameName}")]
+    [HttpGet("{gameName}/active")]
     public async Task<ActionResult<List<GameServerDto>>> GetActiveServersAsync(string gameName)
     {
         try

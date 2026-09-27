@@ -20,7 +20,7 @@ internal class GameService(IRestClient client) : RestService(client), IGameServi
 
     public async Task<List<GameServerDto>> GetActiveServersAsync(string gameName)
     {
-        return await GetAsync<List<GameServerDto>>($"{BaseUri}/active/{gameName}");
+        return await GetAsync<List<GameServerDto>>($"{BaseUri}/{gameName}/active");
     }
 
     public async Task<bool> UpdateGameServerAsync(GameServerDto dto)
