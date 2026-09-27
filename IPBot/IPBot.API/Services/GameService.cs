@@ -1,27 +1,25 @@
 ﻿using AutoMapper;
-using IPBot.API.Constants;
+using IPBot.API.Clients.Interfaces;
 using IPBot.API.Domain.Entities;
 using IPBot.API.Domain.Interfaces;
-using IPBot.API.Domain.Models;
 using IPBot.API.Domain.Utilities;
 using IPBot.Common.Dtos;
 using IPBot.Common.Services;
 
 namespace IPBot.API.Services;
 
-internal class GameService(IMapper mapper, IIPService ipService, IGameRepository gameRepository, IGameServerRepository gameServerRepository, IHttpClientFactory httpClientFactory) : IGameService
+internal class GameService(IMapper mapper, IIPService ipService, IGameRepository gameRepository, IGameServerRepository gameServerRepository, IMinecraftClient minecraftClient) : IGameService
 {
     private readonly IMapper _mapper = mapper;
     private readonly IIPService _ipService = ipService;
     private readonly IGameRepository _gameRepository = gameRepository;
     private readonly IGameServerRepository _gameServerRepository = gameServerRepository;
-    private readonly IHttpClientFactory _httpClientFactory = httpClientFactory;
+    private readonly IMinecraftClient _minecraftClient = minecraftClient;
 
     public async Task<ServerInfoDto> GetMinecraftServerStatusAsync(int portNumber)
     {
         var serverIP = await _ipService.GetServerIPAsync();
-        var httpClient = _httpClientFactory.CreateClient(KeyedHttpClientNames.MinecraftServerClient);
-        var minecraftServerInfo = await httpClient.GetFromJsonAsync<MinecraftServerInfo>($"/status/java/{serverIP}:{portNumber}");
+        var minecraftServerInfo = await _minecraftClient.GetServerStatusAsync(serverIP, portNumber);
 
         return _mapper.Map<ServerInfoDto>(minecraftServerInfo);
     }

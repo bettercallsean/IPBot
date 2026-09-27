@@ -10,11 +10,11 @@ internal class ImageAnalyserService(IRestClient client) : RestService(client), I
 
     public async Task<double> GetAnimeScoreAsync(string imageUrl)
     {
-        return await GetAsync<double>($"{BaseUri}/scores/anime/{imageUrl}");
+        return await GetAsync<double>($"{BaseUri}/{imageUrl}/anime-score");
     }
 
     public async Task<List<CategoryAnalysisDto>> GetContentSafetyAnalysisAsync(string imageUrl)
     {
-        return await GetAsync<List<CategoryAnalysisDto>>($"{BaseUri}/content-safety/{imageUrl}");
+        return await GetAsync<List<CategoryAnalysisDto>>($"{BaseUri}/{imageUrl}/content-safety");
     }
 }

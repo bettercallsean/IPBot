@@ -1,5 +1,5 @@
 using System.Net;
-using IPBot.API.Constants;
+using IPBot.API.Clients.Interfaces;
 using IPBot.API.Domain.Interfaces;
 using IPBot.API.Hubs;
 using IPBot.Common.Constants;
@@ -8,13 +8,11 @@ using Microsoft.AspNetCore.SignalR;
 
 namespace IPBot.API.Services;
 
-internal class IPService(IDomainRepository domainRepository, IHubContext<IPHub> hubContext, IHttpClientFactory httpClientFactory) : IIPService
+internal class IPService(IDomainRepository domainRepository, IHubContext<IPHub> hubContext, IIPClient ipClient) : IIPService
 {
     private readonly IDomainRepository _domainRepository = domainRepository;
     private readonly IHubContext<IPHub> _hubContext = hubContext;
-    private readonly IHttpClientFactory _httpClientFactory = httpClientFactory;
-    private static readonly string LatestIPFilePath = Path.Combine(AppContext.BaseDirectory, "../latest_ip.txt");
-    private static readonly string IPChangedFilePath = Path.Combine(AppContext.BaseDirectory, "../ip_changed");
+    private readonly IIPClient _ipClient = ipClient;
     private static string _localIp = string.Empty;
     private static string _serverIP = string.Empty;
 
@@ -26,25 +24,9 @@ internal class IPService(IDomainRepository domainRepository, IHubContext<IPHub> 
 
     public async Task<string> GetLocalIPAsync()
     {
-        string ip;
-        if (File.Exists(IPChangedFilePath))
-        {
-            ip = await File.ReadAllTextAsync(LatestIPFilePath);
-            File.Delete(IPChangedFilePath);
-        }
-        else if (!string.IsNullOrWhiteSpace(_localIp)) return _localIp;
-        else
-        {
-            if (!File.Exists(LatestIPFilePath))
-            {
-                var httpClient = _httpClientFactory.CreateClient(KeyedHttpClientNames.LocalIPClient);
-                ip = await httpClient.GetStringAsync("https://api.ipify.org");
-            }
-            else
-            {
-                ip = await File.ReadAllTextAsync(LatestIPFilePath);
-            }
-        }
+        if (!string.IsNullOrWhiteSpace(_localIp)) return _localIp;
+
+        var ip = await _ipClient.GetLocalIPAsync();
 
         _localIp = ip.TrimEnd();
 

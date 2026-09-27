@@ -10,7 +10,7 @@ public class ImageAnalyserController(IImageAnalyserService animeAnalyserService)
 {
     private readonly IImageAnalyserService _animeAnalyserService = animeAnalyserService;
 
-    [HttpGet("anime-score/{encodedUrl}")]
+    [HttpGet("{encodedUrl}/anime-score")]
     [ResponseCache(Duration = 60, Location = ResponseCacheLocation.Any, NoStore = false)]
     public async Task<ActionResult<double>> GetAnimeScoreAsync(string encodedUrl)
     {
@@ -25,7 +25,7 @@ public class ImageAnalyserController(IImageAnalyserService animeAnalyserService)
         }
     }
 
-    [HttpGet("content-safety/{encodedUrl}")]
+    [HttpGet("{encodedUrl}/content-safety")]
     [ResponseCache(Duration = 60, Location = ResponseCacheLocation.Any, NoStore = false)]
     public async Task<ActionResult<List<CategoryAnalysisDto>>> GetContentSafetyAnalysisAsync(string encodedUrl)
     {
