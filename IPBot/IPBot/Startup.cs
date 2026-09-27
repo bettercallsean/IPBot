@@ -28,7 +28,10 @@ internal class Startup
 
         _config = builder.Build();
 
-        Log.Logger = new LoggerConfiguration().ReadFrom.Configuration(_config).CreateLogger();
+        Log.Logger = new LoggerConfiguration()
+            .ReadFrom
+            .Configuration(_config)
+            .CreateLogger();
     }
 
     public static async void Configure()
