@@ -4,7 +4,7 @@ using IPBot.Interfaces.Services;
 
 namespace IPBot.Services.Bot;
 
-internal class MessageMediaAnalyserService : IMessageMediaAnalyserService
+internal class MessageMediaAnalyserService(ITenorApiHelper tenorApiHelper, HttpClient httpClient) : IMessageMediaAnalyserService
 {
     private readonly List<string> _imageFormats =
     [
@@ -24,14 +24,8 @@ internal class MessageMediaAnalyserService : IMessageMediaAnalyserService
         "image/tiff"
     ];
 
-    private readonly ITenorApiHelper _tenorApiHelper;
-    private readonly HttpClient _httpClient;
-
-    public MessageMediaAnalyserService(ITenorApiHelper tenorApiHelper, HttpClient httpClient)
-    {
-        _tenorApiHelper = tenorApiHelper;
-        _httpClient = httpClient;
-    }
+    private readonly ITenorApiHelper _tenorApiHelper = tenorApiHelper;
+    private readonly HttpClient _httpClient = httpClient;
 
     public async Task<List<string>> GetContentUrlsAsync(SocketMessage message)
     {

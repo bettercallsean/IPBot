@@ -8,19 +8,11 @@ using Microsoft.AspNetCore.SignalR;
 
 namespace IPBot.API.Services;
 
-public class IPService : IIPService
+public class IPService(IDomainRepository domainRepository, IHubContext<IPHub> hubContext, IHttpClientFactory httpClientFactory) : IIPService
 {
-    private readonly IDomainRepository _domainRepository;
-    private readonly IHubContext<IPHub> _hubContext;
-    private readonly IHttpClientFactory _httpClientFactory;
-
-    public IPService(IDomainRepository domainRepository, IHubContext<IPHub> hubContext, IHttpClientFactory httpClientFactory)
-    {
-        _domainRepository = domainRepository;
-        _hubContext = hubContext;
-        _httpClientFactory = httpClientFactory;
-    }
-
+    private readonly IDomainRepository _domainRepository = domainRepository;
+    private readonly IHubContext<IPHub> _hubContext = hubContext;
+    private readonly IHttpClientFactory _httpClientFactory = httpClientFactory;
     private static readonly string LatestIPFilePath = Path.Combine(AppContext.BaseDirectory, "../latest_ip.txt");
     private static readonly string IPChangedFilePath = Path.Combine(AppContext.BaseDirectory, "../ip_changed");
     private static string _localIp = string.Empty;

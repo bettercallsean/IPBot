@@ -8,20 +8,12 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace IPBot.Services.Bot;
 
-internal class HatefulContentAnalyserService : IHatefulContentAnalyserService
+internal class HatefulContentAnalyserService(IDiscordService discordService, ILogger<HatefulContentAnalyserService> logger, IImageAnalyserService imageAnalyserService, IMessageMediaAnalyserService messageAnalyserService) : IHatefulContentAnalyserService
 {
-    private readonly IDiscordService _discordService;
-    private readonly ILogger<HatefulContentAnalyserService> _logger;
-    private readonly IImageAnalyserService _imageAnalyserService;
-    private readonly IMessageMediaAnalyserService _messageAnalyserService;
-
-    public HatefulContentAnalyserService(IDiscordService discordService, ILogger<HatefulContentAnalyserService> logger, IImageAnalyserService imageAnalyserService, IMessageMediaAnalyserService messageAnalyserService)
-    {
-        _discordService = discordService;
-        _logger = logger;
-        _imageAnalyserService = imageAnalyserService;
-        _messageAnalyserService = messageAnalyserService;
-    }
+    private readonly IDiscordService _discordService = discordService;
+    private readonly ILogger<HatefulContentAnalyserService> _logger = logger;
+    private readonly IImageAnalyserService _imageAnalyserService = imageAnalyserService;
+    private readonly IMessageMediaAnalyserService _messageAnalyserService = messageAnalyserService;
 
     public async Task CheckMessageForHatefulContentAsync(SocketMessage message)
     {

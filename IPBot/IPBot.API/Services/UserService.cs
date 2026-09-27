@@ -9,16 +9,11 @@ using IPBot.Common.Services;
 using Microsoft.IdentityModel.Tokens;
 
 namespace IPBot.API.Services;
-public class UserService : IUserService
-{
-    private readonly IConfiguration _configuration;
-    private readonly IUserRepository _userRepository;
 
-    public UserService(IConfiguration configuration, IUserRepository userRepository)
-    {
-        _configuration = configuration;
-        _userRepository = userRepository;
-    }
+public class UserService(IConfiguration configuration, IUserRepository userRepository) : IUserService
+{
+    private readonly IConfiguration _configuration = configuration;
+    private readonly IUserRepository _userRepository = userRepository;
 
     public async Task<bool> RegisterUserAsync(UserDto dto)
     {
