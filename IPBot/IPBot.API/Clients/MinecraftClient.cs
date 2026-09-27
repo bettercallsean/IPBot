@@ -3,7 +3,7 @@ using IPBot.Common.Dtos;
 
 namespace IPBot.API.Clients;
 
-public class MinecraftClient(HttpClient httpClient) : IMinecraftClient
+internal class MinecraftClient(HttpClient httpClient) : IMinecraftClient
 {
     private readonly HttpClient _httpClient = httpClient;
 
