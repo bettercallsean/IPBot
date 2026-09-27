@@ -9,12 +9,14 @@ public class IPController(IIPService ipService) : MainController
     private readonly IIPService _ipService = ipService;
 
     [HttpGet("current-domain")]
+    [ResponseCache(Duration = 3600, Location = ResponseCacheLocation.Any, NoStore = false)]
     public async Task<ActionResult<string>> GetCurrentServerDomainAsync()
     {
         return Ok(await _ipService.GetCurrentServerDomainAsync());
     }
 
     [HttpGet("local")]
+    [ResponseCache(Duration = 300, Location = ResponseCacheLocation.Any, NoStore = false)]
     public async Task<ActionResult<string>> GetLocalIPAsync()
     {
         return Ok(await _ipService.GetLocalIPAsync());

@@ -13,7 +13,6 @@ internal class IPService(IDomainRepository domainRepository, IHubContext<IPHub> 
     private readonly IDomainRepository _domainRepository = domainRepository;
     private readonly IHubContext<IPHub> _hubContext = hubContext;
     private readonly IIPClient _ipClient = ipClient;
-    private static string _localIp = string.Empty;
     private static string _serverIP = string.Empty;
 
     public async Task<string> GetCurrentServerDomainAsync()
@@ -24,19 +23,12 @@ internal class IPService(IDomainRepository domainRepository, IHubContext<IPHub> 
 
     public async Task<string> GetLocalIPAsync()
     {
-        if (!string.IsNullOrWhiteSpace(_localIp)) return _localIp;
-
         var ip = await _ipClient.GetLocalIPAsync();
-
-        _localIp = ip.TrimEnd();
-
-        return _localIp;
+        return ip.TrimEnd();
     }
 
     public async Task<string> GetServerIPAsync()
     {
-        if (!string.IsNullOrWhiteSpace(_serverIP)) return _serverIP;
-
         var serverDomain = new Uri($"https://{await GetCurrentServerDomainAsync()}");
         var ips = await Dns.GetHostAddressesAsync(serverDomain.Host);
 
