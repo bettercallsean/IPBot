@@ -1,10 +1,7 @@
 ﻿using Discord;
-using IPBot.Common.Services;
 using IPBot.Configuration;
+using IPBot.Extensions;
 using IPBot.Helpers;
-using IPBot.Interfaces.Helpers;
-using IPBot.Interfaces.Services;
-using IPBot.Services.API;
 using IPBot.Services.API.Authoriser;
 using IPBot.Services.Bot;
 using RestSharp;
@@ -63,18 +60,8 @@ internal class Startup
                 GatewayIntents = GatewayIntents.All,
                 AlwaysDownloadUsers = true
             }))
-            .AddSingleton(x => new InteractionService(x.GetRequiredService<DiscordSocketClient>()))
             .AddSingleton<CommandHandler>()
-            .AddScoped<StartupService>()
-            .AddScoped<IMessageMediaAnalyserService, MessageMediaAnalyserService>()
-            .AddSingleton<IGameService, GameService>()
-            .AddSingleton<IIPService, IPService>()
-            .AddSingleton<IImageAnalyserService, ImageAnalyserService>()
-            .AddSingleton<IDiscordService, DiscordService>()
-            .AddSingleton<ITenorApiHelper, TenorApiHelper>()
-            .AddSingleton<ITweetAnalyserService, TweetAnalyserService>()
-            .AddSingleton<IAnimeAnalyserService, AnimeAnalyserService>()
-            .AddSingleton<IHatefulContentAnalyserService, HatefulContentAnalyserService>()
+            .RegisterServices()
             .AddSingleton(_config.Get<BotConfiguration>() ?? throw new Exception("BotConfiguration secttion is empty"))
             .AddLogging(config =>
             {
