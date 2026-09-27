@@ -6,7 +6,7 @@ using IPBot.Common.Services;
 
 namespace IPBot.API.Services;
 
-public class DiscordService(IMapper mapper, IDiscordChannelRepository discordChannelRepository, IFlaggedUserRepository flaggedUserRepository, IDiscordGuildRepository discordGuildRepository) : IDiscordService
+internal class DiscordService(IMapper mapper, IDiscordChannelRepository discordChannelRepository, IFlaggedUserRepository flaggedUserRepository, IDiscordGuildRepository discordGuildRepository) : IDiscordService
 {
     private readonly IMapper _mapper = mapper;
     private readonly IDiscordChannelRepository _discordChannelRepository = discordChannelRepository;

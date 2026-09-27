@@ -2,7 +2,7 @@
 
 namespace IPBot.API.Hubs;
 
-public class IPHub : Hub
+internal class IPHub : Hub
 {
     public Task SendIP(string ip)
     {

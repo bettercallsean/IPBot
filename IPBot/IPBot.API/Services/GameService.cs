@@ -9,7 +9,7 @@ using IPBot.Common.Services;
 
 namespace IPBot.API.Services;
 
-public class GameService(IMapper mapper, IIPService ipService, IGameRepository gameRepository, IGameServerRepository gameServerRepository, IHttpClientFactory httpClientFactory) : IGameService
+internal class GameService(IMapper mapper, IIPService ipService, IGameRepository gameRepository, IGameServerRepository gameServerRepository, IHttpClientFactory httpClientFactory) : IGameService
 {
     private readonly IMapper _mapper = mapper;
     private readonly IIPService _ipService = ipService;

@@ -8,7 +8,7 @@ using IPBot.Common.Services;
 
 namespace IPBot.API.Services;
 
-public class ImageAnalyserService(ILogger<ImageAnalyserService> logger, AzureSettings azureSettings) : IImageAnalyserService
+internal class ImageAnalyserService(ILogger<ImageAnalyserService> logger, AzureSettings azureSettings) : IImageAnalyserService
 {
     private readonly ImageAnalysisClient _imageAnalysisClient = CreateImageAnalysisClient(azureSettings.ImageAnalysisSettings);
     private readonly ContentSafetyClient _contentSafetyClient = CreateContentSafetyClient(azureSettings.ContentSafetyAnalysisSettings);

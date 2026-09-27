@@ -10,7 +10,7 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace IPBot.API.Services;
 
-public class UserService(IConfiguration configuration, IUserRepository userRepository) : IUserService
+internal class UserService(IConfiguration configuration, IUserRepository userRepository) : IUserService
 {
     private readonly IConfiguration _configuration = configuration;
     private readonly IUserRepository _userRepository = userRepository;

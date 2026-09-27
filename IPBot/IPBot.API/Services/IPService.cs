@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.SignalR;
 
 namespace IPBot.API.Services;
 
-public class IPService(IDomainRepository domainRepository, IHubContext<IPHub> hubContext, IHttpClientFactory httpClientFactory) : IIPService
+internal class IPService(IDomainRepository domainRepository, IHubContext<IPHub> hubContext, IHttpClientFactory httpClientFactory) : IIPService
 {
     private readonly IDomainRepository _domainRepository = domainRepository;
     private readonly IHubContext<IPHub> _hubContext = hubContext;
