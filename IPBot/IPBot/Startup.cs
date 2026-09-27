@@ -87,11 +87,9 @@ internal class Startup
                 var options = new RestClientOptions(botConfiguration.APIEndpoint)
                 {
                     Authenticator = authenticator
-                }
-            ;
-                var client = new RestClient(options);
+                };
 
-                return client;
+                return new RestClient(options);
             })
             .AddHttpClient();
     }
