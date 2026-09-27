@@ -12,7 +12,7 @@ using Serilog;
 
 namespace IPBot;
 
-public class Startup
+internal class Startup
 {
     private readonly IConfigurationRoot _config;
 
