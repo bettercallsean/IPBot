@@ -1,16 +1,16 @@
 namespace IPBot.Configuration;
 
-public class BotConfiguration
+public record BotConfiguration
 {
-    public string APIEndpoint { get; set; }
-    public string TenorAPIKey { get; set; }
-    public string BotToken { get; set; }
-    public string TestGuild { get; set; }
-    public APILogin APILogin { get; set; }
+    public required string APIEndpoint { get; set; }
+    public required string TenorAPIKey { get; set; }
+    public required string BotToken { get; set; }
+    public required string TestGuild { get; set; }
+    public required APILogin APILogin { get; set; }
 }
 
-public class APILogin
+public record APILogin
 {
-    public string Username { get; set; }
-    public string Password { get; set; }
+    public required string Username { get; set; }
+    public required string Password { get; set; }
 }

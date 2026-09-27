@@ -11,6 +11,8 @@ namespace IPBot;
 
 internal class Startup
 {
+    private readonly IConfigurationRoot _config;
+
     public Startup()
     {
         var builder = new ConfigurationBuilder()
@@ -21,35 +23,35 @@ internal class Startup
             .AddJsonFile($"appsettings.{environment}.json", optional: true)
             .AddEnvironmentVariables();
 
-        var config = builder.Build();
+        _config = builder.Build();
 
         Log.Logger = new LoggerConfiguration()
             .ReadFrom
-            .Configuration(config)
+            .Configuration(_config)
             .CreateLogger();
     }
 
-    public static async void Configure()
+    public async void Configure()
     {
         var _ = new Startup();
         await ConfigureBotAsync();
     }
 
-    private static async Task ConfigureBotAsync()
+    private async Task ConfigureBotAsync()
     {
-        var services = new ServiceCollection();
-        ConfigureServices(services);
+        var services = ConfigureServices();
 
         var provider = services.BuildServiceProvider();
         await provider.GetRequiredService<CommandHandler>().InitializeAsync();
-
         await provider.GetRequiredService<StartupService>().StartAsync();
 
         await Task.Delay(Timeout.Infinite);
     }
 
-    private static void ConfigureServices(IServiceCollection services)
+    private ServiceCollection ConfigureServices()
     {
+        var services = new ServiceCollection();
+
         services
             .AddSingleton(new DiscordSocketClient(new DiscordSocketConfig
             {
@@ -58,14 +60,13 @@ internal class Startup
                 GatewayIntents = GatewayIntents.All,
                 AlwaysDownloadUsers = true
             }))
-            .AddSingleton<CommandHandler>()
             .AddLogging(config =>
             {
                 config.AddSerilog();
             })
             .RegisterServices()
-            .AddSingleton(x => x.GetRequiredService<BotConfiguration>())
             .AddSingleton<JwtAuthenticator>()
+            .AddSingleton(x => _config.GetRequiredSection("BotConfiguration").Get<BotConfiguration>())
             .AddSingleton<IRestClient>(x =>
             {
                 var botConfiguration = x.GetRequiredService<BotConfiguration>();
@@ -79,5 +80,7 @@ internal class Startup
                 return new RestClient(options);
             })
             .AddHttpClient();
+
+        return services;
     }
 }

@@ -22,8 +22,8 @@ internal static class ServiceCollectionExtensions
     private static void RegisterDiscordService(IServiceCollection services)
     {
         services.AddSingleton(x => new InteractionService(x.GetRequiredService<DiscordSocketClient>()));
+        services.AddSingleton<CommandHandler>();
         services.AddScoped<StartupService>();
-        services.AddScoped<IMessageMediaAnalyserService, MessageMediaAnalyserService>();
     }
 
     private static void RegisterDataServices(IServiceCollection services)
@@ -36,9 +36,10 @@ internal static class ServiceCollectionExtensions
 
     private static void RegisterAnalyserServices(IServiceCollection services)
     {
-        services.AddSingleton<ITweetAnalyserService, TweetAnalyserService>();
-        services.AddSingleton<IAnimeAnalyserService, AnimeAnalyserService>();
-        services.AddSingleton<IHatefulContentAnalyserService, HatefulContentAnalyserService>();
+        services.AddScoped<IMessageMediaAnalyserService, MessageMediaAnalyserService>();
+        services.AddScoped<ITweetAnalyserService, TweetAnalyserService>();
+        services.AddScoped<IAnimeAnalyserService, AnimeAnalyserService>();
+        services.AddScoped<IHatefulContentAnalyserService, HatefulContentAnalyserService>();
     }
 
     private static void RegisterHelperServices(IServiceCollection services)
