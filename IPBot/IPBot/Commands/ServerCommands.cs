@@ -4,7 +4,7 @@ using IPBot.Helpers;
 
 namespace IPBot.Commands;
 
-internal class ServerCommands(ILogger<ServerCommands> logger, IGameService gameService) : InteractionModuleBase<SocketInteractionContext>
+public class ServerCommands(ILogger<ServerCommands> logger, IGameService gameService) : InteractionModuleBase<SocketInteractionContext>
 {
     private readonly ILogger<ServerCommands> _logger = logger;
     private readonly IGameService _gameService = gameService;

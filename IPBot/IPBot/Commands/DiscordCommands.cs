@@ -4,7 +4,7 @@ using IPBot.Common.Services;
 
 namespace IPBot.Commands;
 
-internal class DiscordCommands(ILogger<IPCommands> logger, IDiscordService discordService) : InteractionModuleBase<SocketInteractionContext>
+public class DiscordCommands(ILogger<IPCommands> logger, IDiscordService discordService) : InteractionModuleBase<SocketInteractionContext>
 {
     private readonly ILogger<IPCommands> _logger = logger;
     private readonly IDiscordService _discordService = discordService;
