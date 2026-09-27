@@ -8,6 +8,7 @@ public class DiscordChannelProfile : Profile
 {
     public DiscordChannelProfile()
     {
-        CreateMap<DiscordChannel, DiscordChannelDto>();
+        CreateMap<DiscordChannel, DiscordChannelDto>().ReverseMap();
+        CreateMap<DiscordGuild, DiscordGuildDto>().ReverseMap();
     }
 }

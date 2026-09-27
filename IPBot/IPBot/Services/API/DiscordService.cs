@@ -1,11 +1,10 @@
 using IPBot.Common.Dtos;
 using IPBot.Common.Services;
-using IPBot.Configuration;
 using RestSharp;
 
 namespace IPBot.Services.API;
 
-public class DiscordService(IRestClient client, BotConfiguration botConfiguration) : ServiceBase(client, botConfiguration.APILogin), IDiscordService
+internal class DiscordService(IRestClient client) : RestService(client), IDiscordService
 {
     private const string BaseUri = "/Discord";
 
@@ -49,8 +48,8 @@ public class DiscordService(IRestClient client, BotConfiguration botConfiguratio
         return await GetAsync<DiscordGuildDto>($"{BaseUri}/guilds/{guildId}");
     }
 
-    public async Task<bool> ToggleTwitterLinkScanningAsync(ulong guildId)
+    public async Task<bool> UpdateDiscordGuild(ulong guildId, DiscordGuildDto guildDto)
     {
-        return await PatchAsync<bool>($"{BaseUri}/guilds/{guildId}/twitter-links");
+        return await PutAsync<bool>($"{BaseUri}/guilds/{guildId}", guildDto);
     }
 }

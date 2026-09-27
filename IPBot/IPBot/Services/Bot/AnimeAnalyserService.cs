@@ -6,7 +6,7 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace IPBot.Services.Bot;
 
-public class AnimeAnalyserService : IAnimeAnalyserService
+internal class AnimeAnalyserService : IAnimeAnalyserService
 {
     private readonly List<string> _responseList = [.. Resources.Resources.ResponseGifs.Split(Environment.NewLine)];
     private readonly IDiscordService _discordService;
@@ -26,9 +26,9 @@ public class AnimeAnalyserService : IAnimeAnalyserService
     public async Task CheckMessageForAnimeAsync(SocketMessage message)
     {
         var user = message.Author as IGuildUser;
-        var channelIsBeingAnalysedForAnime = await _discordService.GetDiscordChannelAsync(user.Guild.Id, message.Channel.Id);
+        var discordChannel = await _discordService.GetDiscordChannelAsync(user.Guild.Id, message.Channel.Id);
 
-        if (!channelIsBeingAnalysedForAnime) return;
+        if (!discordChannel.AnalyseForAnime) return;
 
         if (await MessageContainsAnimeAsync(message))
         {

@@ -1,10 +1,9 @@
 ﻿using IPBot.Common.Services;
-using IPBot.Configuration;
 using RestSharp;
 
 namespace IPBot.Services.API;
 
-public class IPService(IRestClient client, BotConfiguration botConfiguration) : ServiceBase(client, botConfiguration.APILogin), IIPService
+internal class IPService(IRestClient client) : RestService(client), IIPService
 {
     private const string BaseUri = "/IP";
 

@@ -8,7 +8,7 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace IPBot.Services.Bot;
 
-public class HatefulContentAnalyserService : IHatefulContentAnalyserService
+internal class HatefulContentAnalyserService : IHatefulContentAnalyserService
 {
     private readonly IDiscordService _discordService;
     private readonly ILogger<HatefulContentAnalyserService> _logger;

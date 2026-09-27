@@ -4,7 +4,7 @@ using IPBot.Interfaces.Services;
 
 namespace IPBot.Services.Bot;
 
-public class MessageMediaAnalyserService : IMessageMediaAnalyserService
+internal class MessageMediaAnalyserService : IMessageMediaAnalyserService
 {
     private readonly List<string> _imageFormats =
     [

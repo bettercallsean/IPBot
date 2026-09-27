@@ -5,6 +5,7 @@ using IPBot.Helpers;
 using IPBot.Interfaces.Helpers;
 using IPBot.Interfaces.Services;
 using IPBot.Services.API;
+using IPBot.Services.API.Authoriser;
 using IPBot.Services.Bot;
 using RestSharp;
 using Serilog;
@@ -71,15 +72,24 @@ public class Startup
             .AddSingleton<ITweetAnalyserService, TweetAnalyserService>()
             .AddSingleton<IAnimeAnalyserService, AnimeAnalyserService>()
             .AddSingleton<IHatefulContentAnalyserService, HatefulContentAnalyserService>()
-            .AddSingleton(_config.Get<BotConfiguration>())
+            .AddSingleton(_config.Get<BotConfiguration>() ?? throw new Exception("BotConfiguration secttion is empty"))
             .AddLogging(config =>
             {
                 config.AddSerilog();
             })
-            .AddSingleton<IRestClient>(new RestClient(new HttpClient
+            .AddSingleton<IRestClient>(x =>
             {
-                BaseAddress = new Uri(_config.GetValue<string>("APIEndpoint") ?? throw new Exception("APIEndpoint is empty"))
-            }))
+                var botConfiguration = _config.Get<BotConfiguration>();
+                var authenticator = new JwtAuthoriser(botConfiguration.APILogin);
+                var options = new RestClientOptions(botConfiguration.APIEndpoint)
+                {
+                    Authenticator = authenticator
+                }
+            ;
+                var client = new RestClient(options);
+
+                return client;
+            })
             .AddHttpClient();
     }
 }

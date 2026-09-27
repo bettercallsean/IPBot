@@ -23,13 +23,13 @@ public class DiscordController(IDiscordService discordService) : MainController
         }
     }
 
-    [HttpGet("guilds/{guildId:long}/channels/{channelId:long}/analyse-for-anime")]
+    [HttpGet("guilds/{guildId:long}/channels/{channelId:long}")]
     [ResponseCache(Duration = 60, Location = ResponseCacheLocation.Any, NoStore = false)]
-    public async Task<ActionResult<bool>> ChannelIsBeingAnalysedForAnimeAsync(ulong guildId, ulong channelId)
+    public async Task<ActionResult<bool>> GetDiscordChannelAsync(ulong guildId, ulong channelId)
     {
         try
         {
-            return Ok(await _discordService.ChannelIsBeingAnalysedForAnimeAsync(guildId, channelId));
+            return Ok(await _discordService.GetDiscordChannelAsync(guildId, channelId));
         }
         catch (Exception ex)
         {
@@ -104,12 +104,12 @@ public class DiscordController(IDiscordService discordService) : MainController
         }
     }
 
-    [HttpGet("guilds/{guildId:long}/twitter-links")]
-    public async Task<ActionResult<bool>> GuildIsBeingCheckedForTwitterLinksAsync(ulong guildId)
+    [HttpGet("guilds/{guildId:long}")]
+    public async Task<ActionResult<DiscordGuildDto>> GetDiscordGuildAsync(ulong guildId)
     {
         try
         {
-            return Ok(await _discordService.GuildIsBeingCheckedForTwitterLinksAsync(guildId));
+            return Ok(await _discordService.GetDiscordGuildAsync(guildId));
         }
         catch (Exception ex)
         {
@@ -117,12 +117,12 @@ public class DiscordController(IDiscordService discordService) : MainController
         }
     }
 
-    [HttpPatch("guilds/{guildId:long}/twitter-links")]
-    public async Task<ActionResult<bool>> ToggleTwitterLinkScanningAsync(ulong guildId)
+    [HttpPut("guilds/{guildId:long}")]
+    public async Task<ActionResult<bool>> UpdateDiscordGuild(ulong guildId, [FromBody] DiscordGuildDto guildDto)
     {
         try
         {
-            return Ok(await _discordService.ToggleTwitterLinkScanningAsync(guildId));
+            return Ok(await _discordService.UpdateDiscordGuild(guildId, guildDto));
         }
         catch (Exception ex)
         {

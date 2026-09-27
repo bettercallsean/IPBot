@@ -1,11 +1,10 @@
 ﻿using IPBot.Common.Dtos;
 using IPBot.Common.Services;
-using IPBot.Configuration;
 using RestSharp;
 
 namespace IPBot.Services.API;
 
-public class ImageAnalyserService(IRestClient client, BotConfiguration botConfiguration) : ServiceBase(client, botConfiguration.APILogin), IImageAnalyserService
+internal class ImageAnalyserService(IRestClient client) : RestService(client), IImageAnalyserService
 {
     private const string BaseUri = "/ImageAnalyser";
 

@@ -3,7 +3,7 @@ using Discord;
 
 namespace IPBot.Services.Bot;
 
-public class CommandHandler
+internal class CommandHandler
 {
     private readonly ILogger<CommandHandler> _logger;
     private readonly IServiceProvider _services;

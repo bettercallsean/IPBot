@@ -1,11 +1,10 @@
 ﻿using IPBot.Common.Dtos;
 using IPBot.Common.Services;
-using IPBot.Configuration;
 using RestSharp;
 
 namespace IPBot.Services.API;
 
-public class GameService(IRestClient client, BotConfiguration botConfiguration) : ServiceBase(client, botConfiguration.APILogin), IGameService
+internal class GameService(IRestClient client) : RestService(client), IGameService
 {
     private const string BaseUri = "/GameServer";
 

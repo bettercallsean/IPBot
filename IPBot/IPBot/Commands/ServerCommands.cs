@@ -4,21 +4,17 @@ using IPBot.Helpers;
 
 namespace IPBot.Commands;
 
-public class ServerCommands : InteractionModuleBase<SocketInteractionContext>
+internal class ServerCommands(ILogger<ServerCommands> logger, IGameService gameService) : InteractionModuleBase<SocketInteractionContext>
 {
-    private readonly ILogger<ServerCommands> _logger;
-    private readonly IGameService _gameService;
-    public ServerCommands(ILogger<ServerCommands> logger, IGameService gameService)
-    {
-        _logger = logger;
-        _gameService = gameService;
-    }
+    private readonly ILogger<ServerCommands> _logger = logger;
+    private readonly IGameService _gameService = gameService;
+
 #if DEBUG
     [SlashCommand("mc_debug", "get the status of the minecraft server")]
 #else
     [SlashCommand("mc", "get the status of the minecraft server")]
 #endif
-    public async Task GetMinecraftServerStatusAsync()
+    protected async Task GetMinecraftServerStatusAsync()
     {
         _logger.LogInformation("GetMinecraftServerStatusAsync executed");
 
@@ -36,7 +32,7 @@ public class ServerCommands : InteractionModuleBase<SocketInteractionContext>
 #else
     [SlashCommand("ark", "get the status of the ark server")]
 #endif
-    public async Task GetArkServerStatusAsync()
+    protected async Task GetArkServerStatusAsync()
     {
         const string ArkShortName = "ark";
 
@@ -58,7 +54,7 @@ public class ServerCommands : InteractionModuleBase<SocketInteractionContext>
 #else
     [SlashCommand("zomboid", "get the status of the zomboid server")]
 #endif
-    public async Task GetProjectZomboidServerStatusAsync()
+    protected async Task GetProjectZomboidServerStatusAsync()
     {
         const string ProjectZomboidShortName = "zomboid";
 

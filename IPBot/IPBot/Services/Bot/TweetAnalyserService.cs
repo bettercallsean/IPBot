@@ -6,26 +6,18 @@ using IPBot.Models.FixUpXModels;
 
 namespace IPBot.Services.Bot;
 
-public class TweetAnalyserService : ITweetAnalyserService
+internal class TweetAnalyserService(HttpClient httpClient, IDiscordService discordService, ILogger<TweetAnalyserService> logger) : ITweetAnalyserService
 {
-    private readonly HttpClient _httpClient;
-    private readonly IDiscordService _discordService;
-    private readonly ILogger<TweetAnalyserService> _logger;
-
-    public TweetAnalyserService(HttpClient httpClient, IDiscordService discordService, ILogger<TweetAnalyserService> logger)
-    {
-        _httpClient = httpClient;
-        _discordService = discordService;
-        _logger = logger;
-    }
+    private readonly HttpClient _httpClient = httpClient;
+    private readonly IDiscordService _discordService = discordService;
+    private readonly ILogger<TweetAnalyserService> _logger = logger;
 
     public async Task CheckForTwitterLinksAsync(SocketMessage message)
     {
         var channel = message.Channel as SocketGuildChannel;
-        var guildIsBeingCheckedForTwitterLinks =
-            await _discordService.GetDiscordGuildAsync(channel.Guild.Id);
+        var discordGuild = await _discordService.GetDiscordGuildAsync(channel.Guild.Id);
 
-        if (!guildIsBeingCheckedForTwitterLinks) return;
+        if (!discordGuild.CheckForTwitterLinks) return;
 
         _logger.LogInformation("Checking message from {User} in {GuildName}:{ChannelName} for twitter links", message.Author.Username, channel.Guild.Name, channel.Name);
 

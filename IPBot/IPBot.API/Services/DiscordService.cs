@@ -71,11 +71,11 @@ public class DiscordService(IMapper mapper, IDiscordChannelRepository discordCha
         return _mapper.Map<DiscordGuildDto>(guild);
     }
 
-    public async Task<bool> ToggleTwitterLinkScanningAsync(ulong guildId)
+    public async Task<bool> UpdateDiscordGuild(ulong guildId, DiscordGuildDto guildDto)
     {
         var guild = await _discordGuildRepository.GetByIdAsync(guildId);
 
-        guild.CheckForTwitterLinks = !guild.CheckForTwitterLinks;
+        _mapper.Map(guildDto, guild);
 
         return await _discordGuildRepository.UpdateAsync(guild);
     }
