@@ -7,40 +7,26 @@ using Microsoft.AspNetCore.SignalR.Client;
 
 namespace IPBot.Services.Bot;
 
-public class StartupService
+internal class StartupService(ILogger<StartupService> logger, BotConfiguration botConfiguration, IIPService ipService,
+    DiscordSocketClient discord, InteractionService commands, IDiscordService discordService, ITweetAnalyserService tweetService,
+    IAnimeAnalyserService animeAnalyserService, IHatefulContentAnalyserService hatefulContentAnalyserService)
 {
-    private readonly HubConnection _hubConnection;
-    private readonly ILogger<StartupService> _logger;
-    private readonly BotConfiguration _botConfiguration;
-    private readonly IIPService _ipService;
-    private readonly DiscordSocketClient _discord;
-    private readonly InteractionService _commands;
-    private readonly IDiscordService _discordService;
-    private readonly ITweetAnalyserService _tweetService;
-    private readonly IAnimeAnalyserService _animeAnalyserService;
-    private readonly IHatefulContentAnalyserService _hatefulContentAnalyserService;
-
-    private string _serverDomain;
-    private bool _initialConnection = true;
-
-    public StartupService(ILogger<StartupService> logger, BotConfiguration botConfiguration, IIPService ipService,
-        DiscordSocketClient discord, InteractionService commands, IDiscordService discordService, ITweetAnalyserService tweetService, 
-        IAnimeAnalyserService animeAnalyserService, IHatefulContentAnalyserService hatefulContentAnalyserService)
-    {
-        _logger = logger;
-        _botConfiguration = botConfiguration;
-        _ipService = ipService;
-        _discord = discord;
-        _commands = commands;
-        _discordService = discordService;
-        _tweetService = tweetService;
-        _animeAnalyserService = animeAnalyserService;
-        _hatefulContentAnalyserService = hatefulContentAnalyserService;
-        _hubConnection = new HubConnectionBuilder()
+    private readonly HubConnection _hubConnection = new HubConnectionBuilder()
             .WithUrl($"{botConfiguration.APIEndpoint}/hubs/iphub")
             .WithAutomaticReconnect()
             .Build();
-    }
+    private readonly ILogger<StartupService> _logger = logger;
+    private readonly BotConfiguration _botConfiguration = botConfiguration;
+    private readonly IIPService _ipService = ipService;
+    private readonly DiscordSocketClient _discord = discord;
+    private readonly InteractionService _commands = commands;
+    private readonly IDiscordService _discordService = discordService;
+    private readonly ITweetAnalyserService _tweetService = tweetService;
+    private readonly IAnimeAnalyserService _animeAnalyserService = animeAnalyserService;
+    private readonly IHatefulContentAnalyserService _hatefulContentAnalyserService = hatefulContentAnalyserService;
+
+    private string _serverDomain;
+    private bool _initialConnection = true;
 
     public async Task StartAsync()
     {
@@ -62,7 +48,7 @@ public class StartupService
     private async Task OnMessageReceivedAsync(SocketMessage arg)
     {
         if (arg.Author.IsBot) return;
-        
+
         await _animeAnalyserService.CheckMessageForAnimeAsync(arg);
         await _hatefulContentAnalyserService.CheckMessageForHatefulContentAsync(arg);
         await _tweetService.CheckForTwitterLinksAsync(arg);
@@ -95,7 +81,7 @@ public class StartupService
 
     private async Task PostUpdatedIPAsync(string ip)
     {
-        var discordChannels = await _discordService.GetInUseDiscordChannelsAsync();
+        var discordChannels = await _discordService.GetActiveDiscordChannelsAsync();
 
         _logger.LogInformation("Server IP updated to {IP}", ip);
         var ipUpdatedMessage = $"⚠️ Beep boop. The server IP has changed to `{ip}` ⚠️";

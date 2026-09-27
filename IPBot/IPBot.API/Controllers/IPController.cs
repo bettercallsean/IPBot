@@ -4,34 +4,31 @@ using Microsoft.AspNetCore.Authorization;
 namespace IPBot.API.Controllers;
 
 [Authorize]
-public class IPController : MainController
+public class IPController(IIPService ipService) : MainController
 {
-    private readonly IIPService _ipService;
+    private readonly IIPService _ipService = ipService;
 
-    public IPController(IIPService ipService)
-    {
-        _ipService = ipService;
-    }
-
-    [HttpGet]
+    [HttpGet("current-domain")]
+    [ResponseCache(Duration = 3600, Location = ResponseCacheLocation.Any, NoStore = false)]
     public async Task<ActionResult<string>> GetCurrentServerDomainAsync()
     {
         return Ok(await _ipService.GetCurrentServerDomainAsync());
     }
 
-    [HttpGet]
+    [HttpGet("local")]
+    [ResponseCache(Duration = 300, Location = ResponseCacheLocation.Any, NoStore = false)]
     public async Task<ActionResult<string>> GetLocalIPAsync()
     {
         return Ok(await _ipService.GetLocalIPAsync());
     }
 
-    [HttpGet]
+    [HttpGet("server")]
     public async Task<ActionResult<string>> GetServerIPAsync()
     {
         return Ok(await _ipService.GetServerIPAsync());
     }
-    
-    [HttpGet("{ip}")]
+
+    [HttpPatch("server")]
     public async Task<ActionResult<bool>> UpdateServerIP(string ip)
     {
         try

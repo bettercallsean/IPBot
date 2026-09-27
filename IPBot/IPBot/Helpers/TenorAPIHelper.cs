@@ -7,17 +7,12 @@ using JsonSerializer = System.Text.Json.JsonSerializer;
 
 namespace IPBot.Helpers;
 
-public class TenorApiHelper : ITenorApiHelper
+public class TenorApiHelper(BotConfiguration botConfiguration) : ITenorApiHelper
 {
     private const string TenorGifEndpoint = "https://g.tenor.com/v1/gifs?";
 
-    private readonly BotConfiguration _botConfiguration;
+    private readonly BotConfiguration _botConfiguration = botConfiguration;
 
-    public TenorApiHelper(BotConfiguration botConfiguration)
-    {
-        _botConfiguration = botConfiguration;
-    }
-    
     public async Task<string> GetDirectTenorGifUrlAsync(string tenorUrl)
     {
         var tenorGifId = GetTenorGifIdFromUrl(tenorUrl);

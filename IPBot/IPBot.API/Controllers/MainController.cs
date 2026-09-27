@@ -1,5 +1,5 @@
 namespace IPBot.API.Controllers;
 
 [ApiController]
-[Route("[controller]/[action]")]
+[Route("[controller]")]
 public class MainController : ControllerBase;

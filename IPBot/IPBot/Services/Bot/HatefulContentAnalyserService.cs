@@ -8,20 +8,12 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace IPBot.Services.Bot;
 
-public class HatefulContentAnalyserService : IHatefulContentAnalyserService
+internal class HatefulContentAnalyserService(IDiscordService discordService, ILogger<HatefulContentAnalyserService> logger, IImageAnalyserService imageAnalyserService, IMessageMediaAnalyserService messageAnalyserService) : IHatefulContentAnalyserService
 {
-    private readonly IDiscordService _discordService;
-    private readonly ILogger<HatefulContentAnalyserService> _logger;
-    private readonly IImageAnalyserService _imageAnalyserService;
-    private readonly IMessageMediaAnalyserService _messageAnalyserService;
-
-    public HatefulContentAnalyserService(IDiscordService discordService, ILogger<HatefulContentAnalyserService> logger, IImageAnalyserService imageAnalyserService, IMessageMediaAnalyserService messageAnalyserService)
-    {
-        _discordService = discordService;
-        _logger = logger;
-        _imageAnalyserService = imageAnalyserService;
-        _messageAnalyserService = messageAnalyserService;
-    }
+    private readonly IDiscordService _discordService = discordService;
+    private readonly ILogger<HatefulContentAnalyserService> _logger = logger;
+    private readonly IImageAnalyserService _imageAnalyserService = imageAnalyserService;
+    private readonly IMessageMediaAnalyserService _messageAnalyserService = messageAnalyserService;
 
     public async Task CheckMessageForHatefulContentAsync(SocketMessage message)
     {
@@ -46,7 +38,7 @@ public class HatefulContentAnalyserService : IHatefulContentAnalyserService
             if (flaggedUser.FlaggedCount >= BotConstants.MaxHatefulImageFlaggedCount && !DebugHelper.IsDebug())
                 await user.BanAsync(reason: $"Banned for posting hateful content. Categories: {hateCategories}");
             else
-                await _discordService.UpdateUserFlaggedCountAsync(user.Id);
+                await _discordService.IncrementUserFlaggedCountAsync(user.Id);
         }
         else
         {

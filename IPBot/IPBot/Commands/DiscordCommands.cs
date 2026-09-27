@@ -4,16 +4,10 @@ using IPBot.Common.Services;
 
 namespace IPBot.Commands;
 
-public class DiscordCommands : InteractionModuleBase<SocketInteractionContext>
+public class DiscordCommands(ILogger<IPCommands> logger, IDiscordService discordService) : InteractionModuleBase<SocketInteractionContext>
 {
-    private readonly ILogger<IPCommands> _logger;
-    private readonly IDiscordService _discordService;
-
-    public DiscordCommands(ILogger<IPCommands> logger, IDiscordService discordService)
-    {
-        _logger = logger;
-        _discordService = discordService;
-    }
+    private readonly ILogger<IPCommands> _logger = logger;
+    private readonly IDiscordService _discordService = discordService;
 
 #if DEBUG
     [SlashCommand("flag_user_debug", "flag user for hateful content analysis")]
@@ -21,7 +15,7 @@ public class DiscordCommands : InteractionModuleBase<SocketInteractionContext>
     [SlashCommand("flag_user", "flag user for hateful content analysis")]
 #endif
     [DefaultMemberPermissions(GuildPermission.Administrator)]
-    public async Task FlagUserAsync([Summary("user", "user that you want to be flagged")] IGuildUser user)
+    protected async Task FlagUserAsync([Summary("user", "user that you want to be flagged")] IGuildUser user)
     {
         await DeferAsync(ephemeral: true);
 
@@ -45,7 +39,7 @@ public class DiscordCommands : InteractionModuleBase<SocketInteractionContext>
     [SlashCommand("delete_flagged_user", "delete flagged user from hateful content analysis list")]
 #endif
     [DefaultMemberPermissions(GuildPermission.Administrator)]
-    public async Task DeleteFlaggedUserAsync([Summary("user", "user that you want to remove from list")] IGuildUser user)
+    protected async Task DeleteFlaggedUserAsync([Summary("user", "user that you want to remove from list")] IGuildUser user)
     {
         await DeferAsync(ephemeral: true);
 
@@ -65,7 +59,7 @@ public class DiscordCommands : InteractionModuleBase<SocketInteractionContext>
     [SlashCommand("get_flagged_users", "get list of flagged users")]
 #endif
     [DefaultMemberPermissions(GuildPermission.Administrator)]
-    public async Task GetFlaggedUsersAsync()
+    protected async Task GetFlaggedUsersAsync()
     {
         await DeferAsync(ephemeral: true);
 
@@ -86,17 +80,18 @@ public class DiscordCommands : InteractionModuleBase<SocketInteractionContext>
 #endif
     [DefaultMemberPermissions(GuildPermission.Administrator)]
     [RequireContext(ContextType.Guild)]
-    public async Task ToggleTwitterLinkScanningAsync()
+    protected async Task ToggleTwitterLinkScanningAsync()
     {
         _logger.LogInformation("ToggleTwitterLinkScanningAsync executed");
 
-        var guildIsBeingScannedForTweets = await _discordService.GuidIsBeingCheckedForTwitterLinksAsync(Context.Guild.Id);
+        var guild = await _discordService.GetDiscordGuildAsync(Context.Guild.Id);
 
-        var toggledSuccessfully = await _discordService.ToggleTwitterLinkScanningAsync(Context.Guild.Id);
+        guild.CheckForTwitterLinks = !guild.CheckForTwitterLinks;
+        var toggledSuccessfully = await _discordService.UpdateDiscordGuild(Context.Guild.Id, guild);
 
         if (toggledSuccessfully)
-            await RespondAsync($"Tweet scanning has been toggled {(guildIsBeingScannedForTweets ? "off" : "on")}", ephemeral: true);
+            await RespondAsync($"Tweet scanning has been toggled {(guild.CheckForTwitterLinks ? "off" : "on")}", ephemeral: true);
         else
-            await RespondAsync($"Failed to toggle tweet scanning {(guildIsBeingScannedForTweets ? "off" : "on")}, please trying again later", ephemeral: true);
+            await RespondAsync($"Failed to toggle tweet scanning {(guild.CheckForTwitterLinks ? "off" : "on")}, please trying again later", ephemeral: true);
     }
 }

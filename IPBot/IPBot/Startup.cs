@@ -1,17 +1,15 @@
 ﻿using Discord;
-using IPBot.Common.Services;
 using IPBot.Configuration;
+using IPBot.Extensions;
 using IPBot.Helpers;
-using IPBot.Interfaces.Helpers;
-using IPBot.Interfaces.Services;
-using IPBot.Services.API;
+using IPBot.Services.API.Authoriser;
 using IPBot.Services.Bot;
 using RestSharp;
 using Serilog;
 
 namespace IPBot;
 
-public class Startup
+internal class Startup
 {
     private readonly IConfigurationRoot _config;
 
@@ -27,7 +25,10 @@ public class Startup
 
         _config = builder.Build();
 
-        Log.Logger = new LoggerConfiguration().ReadFrom.Configuration(_config).CreateLogger();
+        Log.Logger = new LoggerConfiguration()
+            .ReadFrom
+            .Configuration(_config)
+            .CreateLogger();
     }
 
     public static async void Configure()
@@ -59,27 +60,24 @@ public class Startup
                 GatewayIntents = GatewayIntents.All,
                 AlwaysDownloadUsers = true
             }))
-            .AddSingleton(x => new InteractionService(x.GetRequiredService<DiscordSocketClient>()))
             .AddSingleton<CommandHandler>()
-            .AddScoped<StartupService>()
-            .AddScoped<IMessageMediaAnalyserService, MessageMediaAnalyserService>()
-            .AddSingleton<IGameService, GameService>()
-            .AddSingleton<IIPService, IPService>()
-            .AddSingleton<IImageAnalyserService, ImageAnalyserService>()
-            .AddSingleton<IDiscordService, DiscordService>()
-            .AddSingleton<ITenorApiHelper, TenorApiHelper>()
-            .AddSingleton<ITweetAnalyserService, TweetAnalyserService>()
-            .AddSingleton<IAnimeAnalyserService, AnimeAnalyserService>()
-            .AddSingleton<IHatefulContentAnalyserService, HatefulContentAnalyserService>()
-            .AddSingleton(_config.Get<BotConfiguration>())
+            .RegisterServices()
+            .AddSingleton(_config.Get<BotConfiguration>() ?? throw new Exception("BotConfiguration secttion is empty"))
             .AddLogging(config =>
             {
                 config.AddSerilog();
             })
-            .AddSingleton<IRestClient>(new RestClient(new HttpClient
+            .AddSingleton<IRestClient>(x =>
             {
-                BaseAddress = new Uri(_config.GetValue<string>("APIEndpoint") ?? throw new Exception("APIEndpoint is empty"))
-            }))
+                var botConfiguration = _config.Get<BotConfiguration>();
+                var authenticator = new JwtAuthoriser(botConfiguration.APILogin);
+                var options = new RestClientOptions(botConfiguration.APIEndpoint)
+                {
+                    Authenticator = authenticator
+                };
+
+                return new RestClient(options);
+            })
             .AddHttpClient();
     }
 }

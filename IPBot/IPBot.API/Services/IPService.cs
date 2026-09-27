@@ -1,5 +1,5 @@
 using System.Net;
-using IPBot.API.Constants;
+using IPBot.API.Clients.Interfaces;
 using IPBot.API.Domain.Interfaces;
 using IPBot.API.Hubs;
 using IPBot.Common.Constants;
@@ -8,22 +8,11 @@ using Microsoft.AspNetCore.SignalR;
 
 namespace IPBot.API.Services;
 
-public class IPService : IIPService
+internal class IPService(IDomainRepository domainRepository, IHubContext<IPHub> hubContext, IIPClient ipClient) : IIPService
 {
-    private readonly IDomainRepository _domainRepository;
-    private readonly IHubContext<IPHub> _hubContext;
-    private readonly IHttpClientFactory _httpClientFactory;
-
-    public IPService(IDomainRepository domainRepository, IHubContext<IPHub> hubContext, IHttpClientFactory httpClientFactory)
-    {
-        _domainRepository = domainRepository;
-        _hubContext = hubContext;
-        _httpClientFactory = httpClientFactory;
-    }
-
-    private static readonly string LatestIPFilePath = Path.Combine(AppContext.BaseDirectory, "../latest_ip.txt");
-    private static readonly string IPChangedFilePath = Path.Combine(AppContext.BaseDirectory, "../ip_changed");
-    private static string _localIp = string.Empty;
+    private readonly IDomainRepository _domainRepository = domainRepository;
+    private readonly IHubContext<IPHub> _hubContext = hubContext;
+    private readonly IIPClient _ipClient = ipClient;
     private static string _serverIP = string.Empty;
 
     public async Task<string> GetCurrentServerDomainAsync()
@@ -34,35 +23,12 @@ public class IPService : IIPService
 
     public async Task<string> GetLocalIPAsync()
     {
-        string ip;
-        if (File.Exists(IPChangedFilePath))
-        {
-            ip = await File.ReadAllTextAsync(LatestIPFilePath);
-            File.Delete(IPChangedFilePath);
-        }
-        else if (!string.IsNullOrWhiteSpace(_localIp)) return _localIp;
-        else
-        {
-            if (!File.Exists(LatestIPFilePath))
-            {
-                var httpClient = _httpClientFactory.CreateClient(KeyedHttpClientNames.LocalIPClient);
-                ip = await httpClient.GetStringAsync("https://api.ipify.org");
-            }
-            else
-            {
-                ip = await File.ReadAllTextAsync(LatestIPFilePath);
-            }
-        }
-
-        _localIp = ip.TrimEnd();
-
-        return _localIp;
+        var ip = await _ipClient.GetLocalIPAsync();
+        return ip.TrimEnd();
     }
 
     public async Task<string> GetServerIPAsync()
     {
-        if (!string.IsNullOrWhiteSpace(_serverIP)) return _serverIP;
-
         var serverDomain = new Uri($"https://{await GetCurrentServerDomainAsync()}");
         var ips = await Dns.GetHostAddressesAsync(serverDomain.Host);
 

@@ -8,18 +8,11 @@ using IPBot.Common.Services;
 
 namespace IPBot.API.Services;
 
-public class ImageAnalyserService : IImageAnalyserService
+internal class ImageAnalyserService(ILogger<ImageAnalyserService> logger, AzureSettings azureSettings) : IImageAnalyserService
 {
-    private readonly ImageAnalysisClient _imageAnalysisClient;
-    private readonly ContentSafetyClient _contentSafetyClient;
-    private readonly ILogger<ImageAnalyserService> _logger;
-
-    public ImageAnalyserService(ILogger<ImageAnalyserService> logger, AzureSettings azureSettings)
-    {
-        _logger = logger;
-        _imageAnalysisClient = CreateImageAnalysisClient(azureSettings.ImageAnalysisSettings);
-        _contentSafetyClient = CreateContentSafetyClient(azureSettings.ContentSafetyAnalysisSettings);
-    }
+    private readonly ImageAnalysisClient _imageAnalysisClient = CreateImageAnalysisClient(azureSettings.ImageAnalysisSettings);
+    private readonly ContentSafetyClient _contentSafetyClient = CreateContentSafetyClient(azureSettings.ContentSafetyAnalysisSettings);
+    private readonly ILogger<ImageAnalyserService> _logger = logger;
 
     public async Task<double> GetAnimeScoreAsync(string url)
     {

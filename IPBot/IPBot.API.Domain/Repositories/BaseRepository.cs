@@ -6,14 +6,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace IPBot.API.Domain.Repositories;
 
-public class BaseRepository<T> : IBaseRepository<T> where T : class
+public class BaseRepository<T>(IIPBotDataContext ipBotDataContext) : IBaseRepository<T> where T : class
 {
-    private readonly IIPBotDataContext _ipBotDataContext;
-
-    protected BaseRepository(IIPBotDataContext ipBotDataContext)
-    {
-        _ipBotDataContext = ipBotDataContext;
-    }
+    private readonly IIPBotDataContext _ipBotDataContext = ipBotDataContext;
 
     public async Task<T> GetByIdAsync(object id)
     {
@@ -22,12 +17,15 @@ public class BaseRepository<T> : IBaseRepository<T> where T : class
 
     public async Task<IList<T>> GetAllAsync()
     {
-        return await _ipBotDataContext.Set<T>().ToListAsync();
+        return await _ipBotDataContext.Set<T>()
+            .AsNoTracking()
+            .ToListAsync();
     }
 
     public async Task<IList<T>> GetAllWhereAsync(Expression<Func<T, bool>> expression, params Expression<Func<T, object>>[] includes)
     {
         return await _ipBotDataContext.Set<T>()
+            .AsNoTracking()
             .Where(expression)
             .IncludeProperties(includes)
             .ToListAsync();
@@ -36,6 +34,7 @@ public class BaseRepository<T> : IBaseRepository<T> where T : class
     public async Task<T> GetWhereAsync(Expression<Func<T, bool>> expression, params Expression<Func<T, object>>[] includes)
     {
         return await _ipBotDataContext.Set<T>()
+            .AsNoTracking()
             .Where(expression)
             .IncludeProperties(includes)
             .FirstOrDefaultAsync();

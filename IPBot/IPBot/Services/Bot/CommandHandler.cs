@@ -3,20 +3,12 @@ using Discord;
 
 namespace IPBot.Services.Bot;
 
-public class CommandHandler
+internal class CommandHandler(ILogger<CommandHandler> logger, IServiceProvider services, DiscordSocketClient client, InteractionService commands)
 {
-    private readonly ILogger<CommandHandler> _logger;
-    private readonly IServiceProvider _services;
-    private readonly DiscordSocketClient _client;
-    private readonly InteractionService _commands;
-
-    public CommandHandler(ILogger<CommandHandler> logger, IServiceProvider services, DiscordSocketClient client, InteractionService commands)
-    {
-        _logger = logger;
-        _services = services;
-        _client = client;
-        _commands = commands;
-    }
+    private readonly ILogger<CommandHandler> _logger = logger;
+    private readonly IServiceProvider _services = services;
+    private readonly DiscordSocketClient _client = client;
+    private readonly InteractionService _commands = commands;
 
     public async Task InitializeAsync()
     {

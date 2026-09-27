@@ -2,21 +2,17 @@
 
 namespace IPBot.Commands;
 
-public class IPCommands : InteractionModuleBase<SocketInteractionContext>
+public class IPCommands(ILogger<IPCommands> logger, IIPService ipService) : InteractionModuleBase<SocketInteractionContext>
 {
-    private readonly ILogger<IPCommands> _logger;
-    private readonly IIPService _ipService;
-    public IPCommands(ILogger<IPCommands> logger, IIPService ipService)
-    {
-        _logger = logger;
-        _ipService = ipService;
-    }
+    private readonly ILogger<IPCommands> _logger = logger;
+    private readonly IIPService _ipService = ipService;
+
 #if DEBUG
     [SlashCommand("ip_debug", "get the current IP of the server")]
 #else
     [SlashCommand("ip", "get the current IP of the server")]
 #endif
-    public async Task GetSeverDomainNameAsync()
+    protected async Task GetSeverDomainNameAsync()
     {
         _logger.LogInformation("GetSeverDomainNameAsync executed");
 

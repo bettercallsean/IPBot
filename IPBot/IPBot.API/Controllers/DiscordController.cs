@@ -5,22 +5,17 @@ using Microsoft.AspNetCore.Authorization;
 namespace IPBot.API.Controllers;
 
 [Authorize]
-public class DiscordController : MainController
+public class DiscordController(IDiscordService discordService) : MainController
 {
-    private readonly IDiscordService _discordService;
+    private readonly IDiscordService _discordService = discordService;
 
-    public DiscordController(IDiscordService discordService)
-    {
-        _discordService = discordService;
-    }
-
-    [HttpGet]
+    [HttpGet("channels/active")]
     [ResponseCache(Duration = 60, Location = ResponseCacheLocation.Any, NoStore = false)]
-    public async Task<ActionResult<string>> GetInUseDiscordChannelsAsync()
+    public async Task<ActionResult<List<DiscordChannelDto>>> GetActiveDiscordChannelsAsync()
     {
         try
         {
-            return Ok(await _discordService.GetInUseDiscordChannelsAsync());
+            return Ok(await _discordService.GetActiveDiscordChannelsAsync());
         }
         catch (Exception ex)
         {
@@ -28,13 +23,13 @@ public class DiscordController : MainController
         }
     }
 
-    [HttpGet]
+    [HttpGet("guilds/{guildId:long}/channels/{channelId:long}")]
     [ResponseCache(Duration = 60, Location = ResponseCacheLocation.Any, NoStore = false)]
-    public async Task<ActionResult<bool>> ChannelIsBeingAnalysedForAnimeAsync(ulong guildId, ulong channelId)
+    public async Task<ActionResult<bool>> GetDiscordChannelAsync(ulong guildId, ulong channelId)
     {
         try
         {
-            return Ok(await _discordService.ChannelIsBeingAnalysedForAnimeAsync(guildId, channelId));
+            return Ok(await _discordService.GetDiscordChannelAsync(guildId, channelId));
         }
         catch (Exception ex)
         {
@@ -42,7 +37,7 @@ public class DiscordController : MainController
         }
     }
 
-    [HttpGet]
+    [HttpGet("users/flagged/{userId:long}")]
     [ResponseCache(Duration = 300, Location = ResponseCacheLocation.Any, NoStore = false)]
     public async Task<ActionResult<FlaggedUserDto>> GetFlaggedUserAsync(ulong userId)
     {
@@ -56,12 +51,12 @@ public class DiscordController : MainController
         }
     }
 
-    [HttpGet]
-    public async Task<ActionResult<bool>> UpdateUserFlaggedCountAsync(ulong userId)
+    [HttpPatch("users/flagged/{userId:long}/increment")]
+    public async Task<ActionResult<bool>> IncrementUserFlaggedCountAsync(ulong userId)
     {
         try
         {
-            return Ok(await _discordService.UpdateUserFlaggedCountAsync(userId));
+            return Ok(await _discordService.IncrementUserFlaggedCountAsync(userId));
         }
         catch (Exception ex)
         {
@@ -69,7 +64,7 @@ public class DiscordController : MainController
         }
     }
 
-    [HttpPost]
+    [HttpPost("users/flagged")]
     public async Task<ActionResult<bool>> CreateFlaggedUserAsync(FlaggedUserDto dto)
     {
         try
@@ -82,9 +77,9 @@ public class DiscordController : MainController
         }
     }
 
-    [HttpGet]
+    [HttpGet("users/flagged")]
     [ResponseCache(Duration = 300, Location = ResponseCacheLocation.Any, NoStore = false)]
-    public async Task<ActionResult<bool>> GetFlaggedUsersAsync()
+    public async Task<ActionResult<List<FlaggedUserDto>>> GetFlaggedUsersAsync()
     {
         try
         {
@@ -96,7 +91,7 @@ public class DiscordController : MainController
         }
     }
 
-    [HttpGet]
+    [HttpDelete("users/flagged/{userId:long}")]
     public async Task<ActionResult<bool>> DeleteFlaggedUserAsync(ulong userId)
     {
         try
@@ -108,13 +103,13 @@ public class DiscordController : MainController
             return Problem("500", ex.Message);
         }
     }
-    
-    [HttpGet]
-    public async Task<ActionResult<bool>> GuidIsBeingCheckedForTwitterLinksAsync(ulong guildId)
+
+    [HttpGet("guilds/{guildId:long}")]
+    public async Task<ActionResult<DiscordGuildDto>> GetDiscordGuildAsync(ulong guildId)
     {
         try
         {
-            return Ok(await _discordService.GuidIsBeingCheckedForTwitterLinksAsync(guildId));
+            return Ok(await _discordService.GetDiscordGuildAsync(guildId));
         }
         catch (Exception ex)
         {
@@ -122,12 +117,12 @@ public class DiscordController : MainController
         }
     }
 
-    [HttpPatch]
-    public async Task<ActionResult<bool>> ToggleTwitterLinkScanningAsync(ulong guildId)
+    [HttpPut("guilds/{guildId:long}")]
+    public async Task<ActionResult<bool>> UpdateDiscordGuild(ulong guildId, [FromBody] DiscordGuildDto guildDto)
     {
         try
         {
-            return Ok(await _discordService.ToggleTwitterLinkScanningAsync(guildId));
+            return Ok(await _discordService.UpdateDiscordGuild(guildId, guildDto));
         }
         catch (Exception ex)
         {

@@ -6,29 +6,20 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace IPBot.Services.Bot;
 
-public class AnimeAnalyserService : IAnimeAnalyserService
+internal class AnimeAnalyserService(IDiscordService discordService, ILogger<AnimeAnalyserService> logger, IImageAnalyserService imageAnalyserService, IMessageMediaAnalyserService messageAnalyserService) : IAnimeAnalyserService
 {
     private readonly List<string> _responseList = [.. Resources.Resources.ResponseGifs.Split(Environment.NewLine)];
-    private readonly IDiscordService _discordService;
-    private readonly ILogger<AnimeAnalyserService> _logger;
-    private readonly IImageAnalyserService _imageAnalyserService;
-    private readonly IMessageMediaAnalyserService _messageAnalyserService;
-
-    public AnimeAnalyserService(IDiscordService discordService, ILogger<AnimeAnalyserService> logger, IImageAnalyserService imageAnalyserService, IMessageMediaAnalyserService messageAnalyserService)
-    {
-        _discordService = discordService;
-        _logger = logger;
-        _imageAnalyserService = imageAnalyserService;
-        _messageAnalyserService = messageAnalyserService;
-    }
-
+    private readonly IDiscordService _discordService = discordService;
+    private readonly ILogger<AnimeAnalyserService> _logger = logger;
+    private readonly IImageAnalyserService _imageAnalyserService = imageAnalyserService;
+    private readonly IMessageMediaAnalyserService _messageAnalyserService = messageAnalyserService;
 
     public async Task CheckMessageForAnimeAsync(SocketMessage message)
     {
         var user = message.Author as IGuildUser;
-        var channelIsBeingAnalysedForAnime = await _discordService.ChannelIsBeingAnalysedForAnimeAsync(user.Guild.Id, message.Channel.Id);
+        var discordChannel = await _discordService.GetDiscordChannelAsync(user.Guild.Id, message.Channel.Id);
 
-        if (!channelIsBeingAnalysedForAnime) return;
+        if (!discordChannel.AnalyseForAnime) return;
 
         if (await MessageContainsAnimeAsync(message))
         {
