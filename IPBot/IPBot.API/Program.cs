@@ -37,7 +37,6 @@ var azureSettings = builder.Configuration.GetRequiredSection("AzureSettings").Ge
 builder.Services.AddSingleton(azureSettings);
 
 builder.Services.RegisterServices();
-
 builder.Services.RegisterHttpClients();
 
 builder.Services.AddSwaggerGen(options =>
@@ -60,8 +59,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         options.TokenValidationParameters = new TokenValidationParameters
         {
             ValidateIssuerSigningKey = true,
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8
-                .GetBytes(securityKeyToken)),
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(securityKeyToken)),
             ValidateIssuer = false,
             ValidateAudience = false
         };
