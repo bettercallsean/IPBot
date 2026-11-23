@@ -26,7 +26,7 @@ jobs:
         run: dotnet publish /t:PublishContainer -c Release --os linux --arch x64
 
       - name: Log into Docker Hub
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           registry: ${{ secrets.DOCKER_REGISTRY }}
           username: ${{ secrets.DOCKERHUB_USERNAME }}
@@ -61,7 +61,7 @@ jobs:
         run: dotnet publish /t:PublishContainer -c Release --os linux --arch x64
 
       - name: Log into Docker Hub
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           registry: ${{ secrets.DOCKER_REGISTRY }}
           username: ${{ secrets.DOCKERHUB_USERNAME }}
