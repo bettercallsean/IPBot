@@ -10,7 +10,7 @@ jobs:
     env:
       working-directory: IPBot/IPBot
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Setup .NET
         uses: actions/setup-dotnet@v6
@@ -45,7 +45,7 @@ jobs:
     env:
       working-directory: IPBot/IPBot.API
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Setup .NET
         uses: actions/setup-dotnet@v6
@@ -80,7 +80,7 @@ jobs:
     needs: [build-bot, build-api]
     steps:
       - name: Pull the image to VM
-        uses: appleboy/ssh-action@v1.2.0
+        uses: appleboy/ssh-action@v1
         with:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USERNAME }}
