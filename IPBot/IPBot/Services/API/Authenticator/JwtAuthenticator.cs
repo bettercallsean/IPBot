@@ -15,7 +15,7 @@ public sealed class JwtAuthenticator(BotConfiguration botConfiguration) : IAuthe
 
     private string _jwtToken;
 
-    public async ValueTask Authenticate(IRestClient client, RestRequest request)
+    public async ValueTask Authenticate(IRestClient client, RestRequest request, CancellationToken cancellationToken = default)
     {
         if (!JwtHelper.CheckTokenIsValid(_jwtToken))
         {
@@ -26,7 +26,7 @@ public sealed class JwtAuthenticator(BotConfiguration botConfiguration) : IAuthe
                     Password = _apiLogin.Password
                 });
 
-            var response = await _loginClient.ExecuteAsync<string>(loginRequest);
+            var response = await _loginClient.ExecuteAsync<string>(loginRequest, cancellationToken);
 
             if (!response.IsSuccessful || string.IsNullOrWhiteSpace(response.Data))
             {
