@@ -1,6 +1,7 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
+using System.Text;
 using IPBot.API.Domain.Entities;
 using IPBot.API.Domain.Interfaces;
 using IPBot.API.Domain.Utilities;
@@ -12,8 +13,10 @@ namespace IPBot.API.Services;
 
 internal class UserService(IConfiguration configuration, IUserRepository userRepository) : IUserService
 {
+    private readonly JwtSecurityTokenHandler _jwtSecurityTokenHandler = new();
     private readonly IConfiguration _configuration = configuration;
     private readonly IUserRepository _userRepository = userRepository;
+    private SigningCredentials _signingCredentials;
 
     public async Task<bool> RegisterUserAsync(UserDto dto)
     {
@@ -33,9 +36,9 @@ internal class UserService(IConfiguration configuration, IUserRepository userRep
     {
         var user = await _userRepository.GetWhereAsync(x => x.Username == dto.Username);
 
-        return user == null || !VerifyPasswordHash(dto.Password, user.PasswordHash, user.PasswordSalt)
-            ? string.Empty
-            : CreateToken(user);
+        return user is not null && VerifyPasswordHash(dto.Password, user.PasswordHash, user.PasswordSalt)
+            ? CreateToken(user)
+            : string.Empty;
     }
 
     private static bool VerifyPasswordHash(string password, byte[] passwordHash, byte[] passwordSalt)
@@ -49,21 +52,28 @@ internal class UserService(IConfiguration configuration, IUserRepository userRep
 
     private string CreateToken(User user)
     {
+        _signingCredentials ??= CreateSigningCredentials();
+
         var claims = new List<Claim>
         {
-            new Claim(ClaimTypes.Name, user.Username)
+            new(ClaimTypes.Name, user.Username)
         };
-
-        var key = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(_configuration["SecurityKeyToken"]));
-        var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
 
         var token = new JwtSecurityToken(
             claims: claims,
             expires: DateTime.Now.AddHours(1),
-            signingCredentials: credentials);
+            signingCredentials: _signingCredentials);
 
-        var jwt = new JwtSecurityTokenHandler().WriteToken(token);
+        var jwt = _jwtSecurityTokenHandler.WriteToken(token);
 
         return jwt;
+    }
+
+    private SigningCredentials CreateSigningCredentials()
+    {
+        var securityKeyToken = _configuration["SecurityKeyToken"];
+        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(securityKeyToken));
+
+        return new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
     }
 }
