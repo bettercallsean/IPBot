@@ -6,6 +6,7 @@
     <EnableSdkContainerDebugging>True</EnableSdkContainerDebugging>
     <ContainerImageTag>latest</ContainerImageTag>
     <Configurations>Debug;Release</Configurations>
+	<Features>runtime-async=on</Features>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
     <DebugSymbols>false</DebugSymbols>
